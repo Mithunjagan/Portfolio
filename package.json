@@ -1,0 +1,19 @@
+{
+  "name": "mithun-portfolio-chatbot",
+  "version": "1.0.0",
+  "description": "AI-powered portfolio chatbot for Mithun's static ECE portfolio",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "build": "esbuild components/chat/ChatWidget.tsx --bundle --minify --outfile=components/chat/ChatWidget.js && esbuild data/portfolioKnowledge.ts --bundle --minify --format=esm --outfile=data/portfolioKnowledge.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.2"
+  }
+}
