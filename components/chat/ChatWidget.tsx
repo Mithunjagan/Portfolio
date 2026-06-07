@@ -401,7 +401,7 @@ class PortfolioChatbot {
       </button>
 
       <!-- Chat Window -->
-      <div class="chat-window fixed bottom-24 right-6 w-[380px] h-[520px] max-w-[calc(100vw-32px)] max-h-[calc(100vh-120px)] bg-[#050505]/95 border border-[#2a2a2a] rounded-2xl flex flex-col overflow-hidden backdrop-blur-xl shadow-[0_10px_35px_rgba(0,210,255,0.15)] transition-all duration-300" data-lenis-prevent>
+      <div class="chat-window fixed bottom-20 md:bottom-24 right-4 md:right-6 w-[calc(100vw-32px)] md:w-[380px] h-[450px] md:h-[520px] max-h-[calc(100vh-100px)] md:max-h-[calc(100vh-120px)] bg-[#050505]/95 border border-[#2a2a2a] rounded-2xl flex flex-col overflow-hidden backdrop-blur-xl shadow-[0_10px_35px_rgba(0,210,255,0.15)] transition-all duration-300" data-lenis-prevent>
         <!-- Header -->
         <div class="chat-header px-4 py-3 bg-[#0a0a0a]/60 border-b border-[#2a2a2a]/40 flex items-center justify-between relative overflow-hidden">
           <!-- Subtle animated scanline in header -->
@@ -419,14 +419,18 @@ class PortfolioChatbot {
                   <circle cx="28" cy="22" r="1" fill="currentColor" opacity="0.3"/>
                 </g>
                 <g class="tars-seg tars-seg-2" style="transform-origin: 40px 50px;">
-                  <rect x="34" y="18" width="12" height="64" rx="1.5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.2" />
-                  <line x1="34" y1="35" x2="46" y2="35" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
-                  <line x1="34" y1="65" x2="46" y2="65" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+                  <rect x="33" y="18" width="14" height="64" rx="1.5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.2" />
+                  <line x1="33" y1="35" x2="47" y2="35" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+                  <line x1="33" y1="65" x2="47" y2="65" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+                  <circle cx="37" cy="22" r="1" fill="currentColor" opacity="0.3"/>
+                  <circle cx="43" cy="22" r="1" fill="currentColor" opacity="0.3"/>
                 </g>
                 <g class="tars-seg tars-seg-3" style="transform-origin: 54px 50px;">
-                  <rect x="48" y="18" width="12" height="64" rx="1.5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.2" />
-                  <line x1="48" y1="35" x2="60" y2="35" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
-                  <line x1="48" y1="65" x2="60" y2="65" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+                  <rect x="48" y="18" width="14" height="64" rx="1.5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.2" />
+                  <line x1="48" y1="35" x2="62" y2="35" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+                  <line x1="48" y1="65" x2="62" y2="65" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+                  <circle cx="52" cy="22" r="1" fill="currentColor" opacity="0.3"/>
+                  <circle cx="58" cy="22" r="1" fill="currentColor" opacity="0.3"/>
                 </g>
                 <g class="tars-seg tars-seg-4" style="transform-origin: 68px 50px;">
                   <rect x="62" y="18" width="14" height="64" rx="1.5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.2" />
@@ -459,7 +463,7 @@ class PortfolioChatbot {
             </div>
             <div class="flex items-center gap-1">
               <!-- Maximize Button -->
-              <button class="chat-maximize-btn p-1.5 hover:bg-white/5 rounded text-[#8a8a8a] hover:text-white transition-colors focus:outline-none" title="Toggle Size">
+              <button class="chat-maximize-btn hidden md:inline-block p-1.5 hover:bg-white/5 rounded text-[#8a8a8a] hover:text-white transition-colors focus:outline-none" title="Toggle Size">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 max-icon">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9m5.25 11.25v-4.5m0 4.5h-4.5m4.5 0L15 15" />
                 </svg>

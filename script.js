@@ -692,6 +692,26 @@ function initializeApplication() {
     });
   });
 
+  // 6.5. Mobile Navigation Menu Toggle
+  const menuToggle = document.getElementById('mobile-menu-toggle');
+  const menuDropdown = document.getElementById('mobile-nav-dropdown');
+  if (menuToggle && menuDropdown) {
+    menuToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menuDropdown.classList.toggle('hidden');
+    });
+
+    menuDropdown.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        menuDropdown.classList.add('hidden');
+      });
+    });
+
+    document.addEventListener('click', () => {
+      menuDropdown.classList.add('hidden');
+    });
+  }
+
   // 7. Interactive Liquid-Glass Navigation Bar
   const navContainer = document.getElementById('nav-container');
   const indicator = document.getElementById('nav-indicator');
