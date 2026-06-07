@@ -401,7 +401,7 @@ class PortfolioChatbot {
       </button>
 
       <!-- Chat Window -->
-      <div class="chat-window fixed bottom-24 right-6 w-[380px] h-[520px] max-w-[calc(100vw-32px)] max-h-[calc(100vh-120px)] bg-[#050505]/95 border border-[#2a2a2a] rounded-2xl flex flex-col overflow-hidden backdrop-blur-xl shadow-[0_10px_35px_rgba(0,210,255,0.15)] transition-all duration-300">
+      <div class="chat-window fixed bottom-24 right-6 w-[380px] h-[520px] max-w-[calc(100vw-32px)] max-h-[calc(100vh-120px)] bg-[#050505]/95 border border-[#2a2a2a] rounded-2xl flex flex-col overflow-hidden backdrop-blur-xl shadow-[0_10px_35px_rgba(0,210,255,0.15)] transition-all duration-300" data-lenis-prevent>
         <!-- Header -->
         <div class="chat-header px-4 py-3 bg-[#0a0a0a]/60 border-b border-[#2a2a2a]/40 flex items-center justify-between relative overflow-hidden">
           <!-- Subtle animated scanline in header -->
@@ -475,12 +475,12 @@ class PortfolioChatbot {
         </div>
 
         <!-- Chat Messages -->
-        <div class="chat-messages-container flex-1 overflow-y-auto p-4 space-y-4 flex flex-col">
+        <div class="chat-messages-container flex-1 overflow-y-auto p-4 space-y-4 flex flex-col" data-lenis-prevent>
           <!-- Dynamically populated -->
         </div>
 
         <!-- Suggested Questions -->
-        <div class="chat-suggestions-container px-4 py-2 border-t border-[#2a2a2a]/20 flex flex-wrap gap-1.5 overflow-x-auto whitespace-nowrap bg-black/20">
+        <div class="chat-suggestions-container px-4 py-2 border-t border-[#2a2a2a]/20 flex flex-wrap gap-1.5 overflow-x-auto whitespace-nowrap bg-black/20" data-lenis-prevent>
           <button class="suggested-question-btn text-[10px] font-mono border border-[#2a2a2a] rounded-full px-2.5 py-1 text-[#8a8a8a] hover:text-[#00d2ff] hover:border-[#00d2ff]/40 transition-all select-none cursor-pointer">Tell me about Mithun</button>
           <button class="suggested-question-btn text-[10px] font-mono border border-[#2a2a2a] rounded-full px-2.5 py-1 text-[#8a8a8a] hover:text-[#00d2ff] hover:border-[#00d2ff]/40 transition-all select-none cursor-pointer">What projects has Mithun built?</button>
           <button class="suggested-question-btn text-[10px] font-mono border border-[#2a2a2a] rounded-full px-2.5 py-1 text-[#8a8a8a] hover:text-[#00d2ff] hover:border-[#00d2ff]/40 transition-all select-none cursor-pointer">Explain Ship Spy Live</button>
