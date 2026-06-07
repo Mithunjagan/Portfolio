@@ -138,7 +138,7 @@ function triggerScramble(el, duration = 800) {
 function getFramePath(index) {
   const frameNum = index + frameIndexStart;
   const paddedNum = String(frameNum).padStart(3, '0');
-  return `/ezgif-frame-${paddedNum}.jpg`;
+  return `ezgif-frame-${paddedNum}.jpg`;
 }
 
 // Track image load progress
@@ -380,57 +380,49 @@ function preloadImages() {
   }
 }
 
-// Load remaining frames asynchronously in the background using requestIdleCallback/setTimeout
+// Load remaining frames in the background — uses small batches for speed
 function loadRemainingImages() {
-  // Delay background loading by 2.5 seconds to let page entrance animations complete smoothly
+  // Short delay to let the shutter animation start smoothly
   setTimeout(() => {
     let currentIndex = initialFramesToPreload;
+    const BATCH_SIZE = 4; // Load 4 frames concurrently
 
-    function loadNext() {
+    function loadBatch() {
       if (currentIndex >= totalFrames) {
         console.log("All background frames loaded.");
         return;
       }
 
-      const img = new Image();
-      img.src = getFramePath(currentIndex);
-      
-      const handleLoad = () => {
-        if (img.decode) {
-          img.decode().then(() => {
-            images[currentIndex] = img;
-            currentIndex++;
-            scheduleNext();
-          }).catch(() => {
-            images[currentIndex] = img;
-            currentIndex++;
-            scheduleNext();
-          });
-        } else {
-          images[currentIndex] = img;
-          currentIndex++;
-          scheduleNext();
-        }
-      };
+      let pending = 0;
+      const batchEnd = Math.min(currentIndex + BATCH_SIZE, totalFrames);
 
-      img.onload = handleLoad;
-      img.onerror = () => {
-        console.warn(`Failed to cache background frame ${currentIndex}.`);
-        currentIndex++;
-        scheduleNext();
-      };
-    }
+      for (let i = currentIndex; i < batchEnd; i++) {
+        pending++;
+        const idx = i;
+        const img = new Image();
+        img.src = getFramePath(idx);
 
-    function scheduleNext() {
-      if (window.requestIdleCallback) {
-        window.requestIdleCallback(loadNext);
-      } else {
-        setTimeout(loadNext, 40);
+        img.onload = () => {
+          images[idx] = img;
+          pending--;
+          if (pending === 0) {
+            currentIndex = batchEnd;
+            setTimeout(loadBatch, 16); // Next batch on next frame
+          }
+        };
+        img.onerror = () => {
+          console.warn(`Failed to cache frame ${idx}.`);
+          pending--;
+          if (pending === 0) {
+            currentIndex = batchEnd;
+            setTimeout(loadBatch, 16);
+          }
+        };
       }
     }
 
-    scheduleNext();
-  }, 2500);
+    loadBatch();
+  }, 500);
 }
 
 // Draw a frame centered on the canvas using 'cover' aspect ratio logic to fill the frame
@@ -540,16 +532,12 @@ function initializeApplication() {
     duration: 1.2,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
-    smoothTouch: false
+    smoothTouch: false,
+    autoRaf: false
   });
 
-  function raf(time) {
-    lenis.raf(time);
-    requestAnimationFrame(raf);
-  }
-  requestAnimationFrame(raf);
-
-  // Synchronize ScrollTrigger with Lenis
+  // Synchronize ScrollTrigger with Lenis using ONLY the GSAP ticker
+  // IMPORTANT: Do NOT also use requestAnimationFrame — double raf causes scroll desync
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => {
     lenis.raf(time * 1000);
