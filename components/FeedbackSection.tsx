@@ -90,28 +90,41 @@ export default function FeedbackSection() {
 
   // ── Load on mount ──
   useEffect(() => {
-    // First, load from localStorage for instant render
-    const local = loadReviews();
-    if (local.length > 0) {
-      setReviews(local);
+    // 1. Check if reviews are statically loaded in window context (from reviewsData.js)
+    const globalReviews = (window as any).portfolioReviews;
+    if (Array.isArray(globalReviews) && globalReviews.length > 0) {
+      setReviews(globalReviews);
+      saveReviews(globalReviews);
+    } else {
+      // 2. Fallback to localStorage
+      const local = loadReviews();
+      if (local.length > 0) {
+        setReviews(local);
+      }
     }
 
-    // Fetch global reviews from server
+    // 3. Fetch global reviews from server to sync latest updates
     fetch(getApiUrl('/api/reviews'))
       .then(res => {
         if (!res.ok) throw new Error(`Server returned status ${res.status}`);
         return res.json();
       })
       .then(data => {
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
           setReviews(data);
           saveReviews(data);
           setLoadError(null);
         }
       })
       .catch(err => {
-        console.error('Error fetching global reviews:', err);
-        setLoadError(err.message || 'Connection failed');
+        console.error('Error syncing reviews with backend:', err);
+        // Only set load error if we have no reviews loaded statically or from cache
+        setReviews(prev => {
+          if (prev.length === 0) {
+            setLoadError(err.message || 'Connection failed');
+          }
+          return prev;
+        });
       });
   }, []);
 

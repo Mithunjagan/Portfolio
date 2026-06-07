@@ -340,6 +340,12 @@ app.post('/api/reviews', async (req, res) => {
 
     // Write updated reviews back to file
     fs.writeFileSync(reviewsFilePath, JSON.stringify(reviewsList, null, 2), 'utf8');
+    
+    // Write updated reviews back to reviewsData.js script file for offline file:// support
+    const reviewsDataPath = path.join(dataDir, 'reviewsData.js');
+    const reviewsDataContent = `window.portfolioReviews = ${JSON.stringify(reviewsList, null, 2)};\n`;
+    fs.writeFileSync(reviewsDataPath, reviewsDataContent, 'utf8');
+    
     console.log(`New review saved: ${rating} stars by ${newReview.name}`);
 
     res.json({ success: true, review: newReview });
