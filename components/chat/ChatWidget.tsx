@@ -632,14 +632,27 @@ class PortfolioChatbot {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
 
+    // 1. Code blocks
     html = html.replace(/```([\s\S]+?)```/g, (match, code) => {
       return `<pre class="bg-[#050505]/80 border border-[#2a2a2a] p-2 rounded my-1.5 overflow-x-auto font-mono text-[10px] text-[#00d2ff] leading-normal"><code>${code.trim()}</code></pre>`;
     });
 
+    // 2. Inline code
     html = html.replace(/`([^`]+)`/g, '<code class="bg-[#1e1e1e] text-[#00d2ff] border border-[#2a2a2a]/40 px-1 py-0.5 rounded font-mono text-[10px]">$1</code>');
 
+    // 3. Bold text
     html = html.replace(/\*\*([^*]+)\*\*/g, '<strong class="text-white font-bold">$1</strong>');
 
+    // 4. Markdown links: [Text](URL)
+    html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#00d2ff] hover:underline">$1</a>');
+
+    // 5. Auto-link plain URLs (excluding those already in href or tags)
+    html = html.replace(/(?<!href=")(?<!">)\b(https?:\/\/[^\s<)]*?[^\s<).,;:?!])/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-[#00d2ff] hover:underline">$1</a>');
+
+    // 6. Auto-link emails
+    html = html.replace(/(?<!href="mailto:)(?<!">)\b([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})\b/g, '<a href="mailto:$1" class="text-[#00d2ff] hover:underline">$1</a>');
+
+    // 7. Line breaks
     html = html.replace(/\n/g, '<br>');
 
     return html;
