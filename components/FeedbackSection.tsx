@@ -92,7 +92,7 @@ export default function FeedbackSection() {
   useEffect(() => {
     // 1. Check if reviews are statically loaded in window context (from reviewsData.js)
     const globalReviews = (window as any).portfolioReviews;
-    if (Array.isArray(globalReviews) && globalReviews.length > 0) {
+    if (Array.isArray(globalReviews)) {
       setReviews(globalReviews);
       saveReviews(globalReviews);
     } else {
@@ -110,7 +110,7 @@ export default function FeedbackSection() {
         return res.json();
       })
       .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setReviews(data);
           saveReviews(data);
           setLoadError(null);
