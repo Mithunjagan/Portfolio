@@ -1581,7 +1581,7 @@ window.addEventListener('mousedown', (e) => {
           const source = video.querySelector('source');
           if (source && source.dataset.src) {
             setupVideoAttributes(video);
-            if (!video.src) {
+            if (!video.src || !video.src.includes('.mp4')) {
               video.src = source.dataset.src;
               video.load();
             }
@@ -1606,7 +1606,7 @@ window.addEventListener('mousedown', (e) => {
           });
 
           setupVideoAttributes(video);
-          if (!video.src) {
+          if (!video.src || !video.src.includes('.mp4')) {
             const source = video.querySelector('source');
             if (source && source.dataset.src) {
               video.src = source.dataset.src;
