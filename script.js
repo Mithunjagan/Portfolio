@@ -138,7 +138,7 @@ function triggerScramble(el, duration = 800) {
 function getFramePath(index) {
   const frameNum = index + frameIndexStart;
   const paddedNum = String(frameNum).padStart(3, '0');
-  return `ezgif-frame-${paddedNum}.jpg`;
+  return `/ezgif-frame-${paddedNum}.jpg`;
 }
 
 // Track image load progress
@@ -1562,20 +1562,29 @@ window.addEventListener('mousedown', (e) => {
       ease: 'power2.in'
     });
 
-  // 11. Lazy-load Skills Section Background Videos on Viewport Intersection
+  // 11. Lazy-load & Optimize Skills Section Background Videos on Hover
   if ('IntersectionObserver' in window) {
     const lazyVideos = document.querySelectorAll('.lazy-video');
+    
+    const setupVideoAttributes = (video) => {
+      video.muted = true;
+      video.defaultMuted = true;
+      video.playsInline = true;
+      video.setAttribute('muted', '');
+      video.setAttribute('playsinline', '');
+    };
+
     const videoObserver = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const video = entry.target;
           const source = video.querySelector('source');
           if (source && source.dataset.src) {
-            video.src = source.dataset.src;
-            video.load();
-            video.play().catch(err => {
-              console.warn("Video autoplay failed on intersection:", err);
-            });
+            setupVideoAttributes(video);
+            if (!video.src) {
+              video.src = source.dataset.src;
+              video.load();
+            }
             observer.unobserve(video);
           }
         }
@@ -1586,16 +1595,52 @@ window.addEventListener('mousedown', (e) => {
 
     lazyVideos.forEach(video => {
       videoObserver.observe(video);
+      
+      // Control play/pause on hover/touch of the parent card
+      const parentCard = video.closest('.spec-card');
+      if (parentCard) {
+        const playVideo = () => {
+          // Pause all other videos first to ensure only 1 decoder thread runs
+          lazyVideos.forEach(v => {
+            if (v !== video) v.pause();
+          });
+
+          setupVideoAttributes(video);
+          if (!video.src) {
+            const source = video.querySelector('source');
+            if (source && source.dataset.src) {
+              video.src = source.dataset.src;
+              video.load();
+            }
+          }
+          video.play().catch(err => {
+            console.warn("Muted video play failed:", err);
+          });
+        };
+
+        const pauseVideo = () => {
+          video.pause();
+        };
+
+        parentCard.addEventListener('mouseenter', playVideo);
+        parentCard.addEventListener('touchstart', playVideo, { passive: true });
+        parentCard.addEventListener('mouseleave', pauseVideo);
+        parentCard.addEventListener('touchend', pauseVideo, { passive: true });
+      }
     });
   } else {
-    // Fallback for older browsers: load immediately
+    // Fallback for older browsers
     const lazyVideos = document.querySelectorAll('.lazy-video');
     lazyVideos.forEach(video => {
       const source = video.querySelector('source');
       if (source && source.dataset.src) {
+        video.muted = true;
+        video.defaultMuted = true;
+        video.playsInline = true;
+        video.setAttribute('muted', '');
+        video.setAttribute('playsinline', '');
         video.src = source.dataset.src;
         video.load();
-        video.play().catch(() => {});
       }
     });
   }
