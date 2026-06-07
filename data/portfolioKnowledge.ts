@@ -2,46 +2,44 @@ export const portfolioKnowledge = {
   personal: {
     name: "Mithun",
     origin: "India",
-    role: "Electronics and Communication Engineering Student & Developer",
-    about: "Mithun is an Electronics and Communication Engineering (ECE) student from India. He is passionate about bridging hardware design and software intelligence, with a focus on embedded systems, ARM processors, custom circuit simulations, and machine learning integration.",
+    role: "ECE Undergrad at VIT Chennai & Embedded Electronics Engineer Intern",
+    batch: "2024–2028 (Undergrad Year 2)",
+    institution: "VIT Chennai (Vellore Institute of Technology, Chennai)",
+    collegeSchedule: "6am–6pm college day",
+    brand: {
+      name: "SYNDRIX",
+      status: "Personal electronics/hardware engineering brand, currently shaping its identity"
+    },
+    internship: {
+      role: "Embedded Electronics Engineer Intern",
+      company: "Akvosphere (atmospheric water generation startup)",
+      workDetails: "Built dew point control firmware, MQTT telemetry, PID control, GSM fallback, TCA9543A I2C mux integration, OTA updates, and a React + Claude AI yield forecasting dashboard."
+    },
+    about: "Mithun is a second-year ECE undergrad at VIT Chennai and an Embedded Electronics Engineer Intern at Akvosphere. He works at the intersection of hardware and software, developing firmware, PCB designs, and IoT pipelines while integrating machine learning models for real-world telemetry and robotic systems.",
     interests: [
-      "Embedded Systems",
-      "ARM Architecture",
-      "Artificial Intelligence (AI) & Computer Vision",
-      "Electronics Design & PCB Development",
-      "Advanced Mathematics & Physics (Vector calculus, special functions, probability/statistics)",
-      "Electrical Fundamentals (Analog circuits, digital systems design, signals and systems, electromagnetics, semiconductor devices, optical fiber communication, electrical machines)",
-      "Verilog HDL",
-      "Microprocessors & Microcontrollers (ARM, 8051, 8086)"
+      "Embedded Systems & Firmware (ESP32, Raspberry Pi, Arduino, ARM Cortex-M)",
+      "PCB Design & Hardware Development (KiCad)",
+      "Verilog HDL & Processor Architecture (8051, 8086, ARM)",
+      "Firmware Telemetry & Controls (MQTT, PID control, GSM fallback, I2C mux, OTA)",
+      "Software & Frontend (Python, C, Node.js, React, Flutter, Flask, n8n automation)",
+      "ML/AI (YOLOv8, MediaPipe, Resemblyzer, RandomForest, XGBoost, LLM integration)",
+      "IoT Pipelines (Supabase, Firebase, Google Sheets, MQTT → dashboards)",
+      "Automotive Electronics & CAN bus (studying OBD2/CAN bus theory for Toyota Innova Crysta)"
     ],
-    specificInterestsStatus: "Currently exploring different fields within ECE and keeping an open mind about specific specialization areas.",
-    poetry: {
-      frequency: "Frequently writes poetry",
-      style: "Supportive, selfless, emotive, using subtle imagery"
+    poeticStyle: {
+      description: "Writes minimalistic, emotionally resonant poetry, favoring one powerful line over many average ones.",
+      themes: ["rain", "crows", "celestial objects", "threads"]
     },
-    socialMedia: {
-      preference: "Prefers to stay away from general social media usage",
-      linkedin: "Open to posting professional updates and projects on LinkedIn",
-      contentCreation: "Interested in creating coding-related content for social media channels"
-    },
-    learningStyle: {
-      preferences: [
-        "Deep conceptual understanding over surface-level copy-pasting",
-        "Step-by-step line-by-line explanations",
-        "Real-world implementation and projects combined with theory",
-        "Long, structured study sessions",
-        "Building systems while learning"
-      ],
-      typicalQuestions: [
-        "Why does this work?",
-        "What does each word mean?",
-        "How is this used in real projects?"
-      ]
+    feedbackPreference: "Demands brutally honest, direct feedback with no sugarcoating or empty praise. Prefers assumptions to be challenged and flaws called out directly.",
+    learningGoals: {
+      gapIdentified: "Wants to write code independently without relying on AI scaffolding.",
+      commitment: "Working through the K&R C book (The C Programming Language by Kernighan and Ritchie) chapter by chapter to build core programming fundamentals.",
+      eceDirection: "Currently open to guidance on specific long-term ECE specialization paths."
     }
   },
   education: {
     degree: "Bachelor of Technology in Electronics and Communication Engineering",
-    status: "Ongoing Student (with current assignments to complete)",
+    institution: "VIT Chennai",
     schoolHistory: [
       {
         level: "Primary & Middle School (3rd to 10th grade)",
@@ -50,7 +48,8 @@ export const portfolioKnowledge = {
       {
         level: "High School (11th & 12th grade)",
         institution: "New Prince Shri Bhavani Senior Secondary School",
-        notes: "Did not provide outdoor activities"
+        stream: "Bio-Math stream (came into ECE without a pure Physics-Chemistry-Math background)",
+        notes: "School did not provide outdoor activities"
       },
       {
         level: "Coaching / Prep",
@@ -59,113 +58,75 @@ export const portfolioKnowledge = {
       }
     ],
     relevantCourses: [
-      "Microprocessors and Microcontrollers",
+      "Microprocessors and Microcontrollers (ARM, 8051, 8086)",
       "Embedded System Design",
       "Digital Signal Processing",
       "VLSI Design & Computer Architecture",
       "Signals and Systems",
-      "Object-Oriented Programming",
-      "Generative AI Course by NVIDIA (Completed, non-certified)"
-    ],
-    masteryPlansTargeted: [
-      "Analog Circuits",
-      "Electromagnetics",
-      "Digital Logic",
-      "Verilog HDL",
-      "Signals and Systems",
-      "Probability & Statistics"
+      "Analog & Digital Circuits",
+      "NVIDIA Generative AI Course (non-certified)"
     ]
   },
   skills: {
     hardware: [
-      "ARM Cortex-M (STM32)",
-      "ESP32 & Arduino Platforms",
-      "PCB Design & Layout (Altium, KiCad, CAD tools)",
-      "Communication Protocols (SPI, I2C, UART, CAN)",
-      "Hardware Debugging & Oscilloscopes",
-      "Circuit Simulation (LTspice buck converter circuits, Sentaurus TCAD germanium MOSFET on Ubuntu)"
+      "ARM Cortex-M",
+      "ESP32 & Arduino platforms",
+      "PCB Design (KiCad)",
+      "Sensors & Actuators (MAX30100, MPU6050, MLX90614, environmental sensors)",
+      "I2C Multiplexing (TCA9543A)",
+      "GSM Fallback systems",
+      "LTspice converter simulations & Sentaurus TCAD germanium MOSFET simulation"
     ],
     software: [
-      "Languages: C, C++, Python (beginner to advanced competitive programming goals), JavaScript, TypeScript, HTML/CSS",
-      "AI & CV: OpenCV, PyTorch, TensorFlow Lite, MediaPipe",
-      "Embedded: RTOS (FreeRTOS), Bare-Metal programming",
-      "Web & Cloud: React dashboards, Firebase integration, Supabase cloud databases, Google Sheets automation, GSAP & Locomotive Scroll animations"
-    ],
-    tools: [
-      "Git & GitHub",
-      "Linux environment (Ubuntu)",
-      "Docker",
-      "VS Code & STM32CubeIDE",
-      "MATLAB & Simulink",
-      "WhatsApp integration (Baileys, Rasa, Ngrok)"
-    ],
-    iotFamiliarity: "Note: Mithun is not deeply familiar with IoT and is actively learning about it through project builds."
+      "Languages: C, C++, Python, JavaScript, TypeScript, HTML/CSS, Verilog HDL",
+      "Frameworks & Libraries: React, Vite, TailwindCSS, Flutter, Node.js, Flask, GSAP, Locomotive Scroll",
+      "AI & ML: YOLOv8, MediaPipe, Resemblyzer, RandomForest, XGBoost, LLM APIs (OpenRouter)",
+      "Backends & IoT: Supabase, Firebase, Google Sheets, n8n automation, Baileys, Rasa, Ngrok"
+    ]
   },
   projects: [
     {
-      id: "ship-spy-live",
-      title: "Ship Spy Live",
-      description: "An AI-powered maritime surveillance system that uses real-time computer vision to detect, classify, and track marine vessels from live camera feeds and satellite imagery.",
-      technologies: ["Python", "PyTorch", "OpenCV", "YOLOv8", "Docker", "Streamlit"],
+      id: "aegis-disaster-scout",
+      title: "Autonomous Disaster Scout Robot (Team Aegis)",
+      description: "Led Team Aegis at DevsHouse '26 to build an autonomous disaster search and rescue scout robot integrating mapping and visual intelligence.",
+      technologies: ["ROS2", "YOLOv8", "EKF SLAM", "Embedded Controllers"],
       keyFeatures: [
-        "Real-time vessel detection & classification",
-        "Edge-compatible deployment",
-        "Interactive dashboard mapping vessel trajectories"
+        "Autonomous navigation and SLAM mapping under ROS2",
+        "YOLOv8-based survivor and object detection on the edge",
+        "Sensor fusion using Extended Kalman Filters (EKF)"
       ]
     },
     {
-      id: "embedded-rtos-kernel",
-      title: "Embedded Real-Time OS (RTOS) Kernel",
-      description: "A custom preemptive RTOS kernel built from scratch for ARM Cortex-M4 microcontrollers (STM32F4).",
-      technologies: ["C", "ARM Assembly", "STM32CubeIDE", "STM32F4 Discovery"],
+      id: "raksha-mesh",
+      title: "Raksha Mesh (Women's Safety System)",
+      description: "An ad-hoc mesh communication safety system operating independent of cell coverage, utilizing ESP-NOW mesh networking and edge voice intelligence.",
+      technologies: ["ESP32", "ESP-NOW", "Gemini Flash API", "Audio Processing"],
       keyFeatures: [
-        "Preemptive priority-based round-robin scheduler",
-        "Custom context switching routine in ARM assembly code",
-        "Semaphore and mutex implementations"
+        "Local ad-hoc mesh routing using ESP-NOW for range extension without internet",
+        "Real-time audio stress detection using Gemini Flash API",
+        "Automatic alert propagation through the mesh network"
       ]
     },
     {
-      id: "gesture-robotic-arm",
-      title: "Gesture-Controlled Robotic Arm",
-      description: "A 5-DOF robotic arm controlled remotely using hand gestures captured via a webcam and translated using a MediaPipe hand tracking pipeline.",
-      technologies: ["C++", "Python", "OpenCV", "MediaPipe", "ESP32", "Servo Motors"],
+      id: "akvo-dashboard",
+      title: "AKVO AWG IoT Dashboard",
+      description: "A cross-platform monitoring application for atmospheric water generation systems designed with a premium aesthetic.",
+      technologies: ["Flutter", "MQTT", "Akvosphere AWG Systems"],
       keyFeatures: [
-        "Real-time extraction of hand landmarks with high accuracy",
-        "Low-latency UDP communication between host machine and ESP32 controller",
-        "Inverse kinematics engine resolving coordinate movements smoothly"
+        "Real-time telemetry monitoring via MQTT",
+        "Cryogenic Industrial Glass design language and aesthetics",
+        "Yield logs and operational status reporting"
       ]
     },
     {
       id: "smart-attendance-system",
       title: "Smart Attendance System (RFID + Face Recognition)",
       description: "A secure verification system combining RFID card validation and face-matching algorithms to record attendance.",
-      technologies: ["Arduino", "Python", "OpenCV", "Google Sheets API", "SMTP/Email API"],
+      technologies: ["Arduino", "Python", "OpenCV", "Google Sheets API"],
       keyFeatures: [
         "RFID authentication combined with live face verification",
         "No local UID text-file dependencies (proper face-image database matching)",
         "Google Sheets logging, email alerts, and unauthorized access detection"
-      ]
-    },
-    {
-      id: "alcohol-intoxication-detection",
-      title: "Alcohol Intoxication Detection System",
-      description: "A safety monitoring system integrating sensor verification and conversational AI analysis.",
-      technologies: ["ESP32", "LLM APIs (OpenRouter)", "Voice Processing", "SMS API"],
-      keyFeatures: [
-        "Voice analysis processed using LLM-based understanding",
-        "Alcohol sensor verification and cross-validation logic",
-        "Automatic SMS alerts sent to supervisors for safety compliance"
-      ]
-    },
-    {
-      id: "esp32-supabase-environmental",
-      title: "ESP32 Environmental Monitoring System",
-      description: "A cloud-connected ESP32 sensor node reporting real-time ambient metrics to a cloud data platform.",
-      technologies: ["C", "ESP32 Wi-Fi", "Supabase Backend"],
-      keyFeatures: [
-        "Environmental sensor readings pushed directly to Supabase cloud",
-        "Real-time database integration with security constraints",
-        "C programming optimized for low-power microcontroller hardware"
       ]
     },
     {
@@ -180,39 +141,34 @@ export const portfolioKnowledge = {
       ]
     },
     {
-      id: "interactive-storytelling-poetry",
-      title: "Interactive Poetic Storytelling App",
-      description: "An image-based storytelling GUI platform matching narrative poetry to visual cues.",
-      technologies: ["Python", "Tkinter", "Poetic Narration"],
-      keyFeatures: [
-        "Interactive GUI presenting visual media based on storyline paths",
-        "Narrator voice and text written using custom emotive, supportive poetry style"
-      ]
-    },
-    {
-      id: "formula-ev-automotive",
-      title: "Formula EV Control & Embedded Electronics",
-      description: "Developing electric vehicle control, PCB systems, drone studies, and IEEE robotics activities.",
-      technologies: ["Automotive Electronics", "Altium", "CAD Tools", "Embedded Systems"],
+      id: "shaurya-racing",
+      title: "Formula EV Control & Embedded Electronics (Shaurya Racing)",
+      description: "Involvement in Shaurya Racing (Formula EV team) developing EV control systems and telemetry logic.",
+      technologies: ["Automotive Electronics", "CAN bus", "CAD modeling", "Embedded Systems"],
       keyFeatures: [
         "Formula EV electronics design and telemetry integration",
-        "Drone research and development, CAD modeling, and IEEE RAS tasks",
-        "IIT Shastra hackathon finalist work"
+        "Active member of CAD Club VITC and IEEE RAS VIT Chennai",
+        "IIT Madras Shaastra 2026 - Robo Soccer national finalist (Team GOAL GORITHM)",
+        "SIH Top 50 team selection (~1,700 teams)"
       ]
     }
   ],
   achievements: [
     {
-      title: "First Place - Embedded Systems Hackathon",
-      description: "Won first prize for developing a smart battery management system (BMS) with real-time predictive failure analysis using micro-ML models."
+      title: "National Finals Finalist - IIT Madras Shaastra 2026",
+      description: "Reached national finals in Robo Soccer with team GOAL GORITHM."
     },
     {
-      title: "ARM Architecture Specialist Certification",
-      description: "Completed advanced training in ARM Cortex-M processor architecture, memory maps, and interrupt handling."
+      title: "Top 50 Team Selection - Smart India Hackathon (SIH)",
+      description: "Selected in the top 50 out of ~1,700 teams nationwide."
     },
     {
-      title: "IIT Shastra final round finalist",
-      description: "Finalist in the prestigious IIT-related engineering and robotics competition."
+      title: "DevsHouse '26 Hackathon Leader",
+      description: "Led Team Aegis to develop the Autonomous Disaster Scout Robot."
+    },
+    {
+      title: "Apple Hardware Undergrad Engineering Internship Application",
+      description: "Applied to Apple's Hardware Undergrad Engineering Internship program."
     }
   ],
   contact: {
