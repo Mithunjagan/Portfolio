@@ -1262,3 +1262,70 @@ function animateParallax() {
 
 // Start cursor parallax immediately
 animateParallax();
+
+// -------------------------------------------------------------
+// TARS IMMERSIVE SOUNDTRACK AUDIO CONTROLLER
+// -------------------------------------------------------------
+function initAudioController() {
+  const capsule = document.getElementById('audio-capsule');
+  const bgMusic = document.getElementById('bg-music');
+  const playIcon = document.getElementById('audio-play-icon');
+  const pauseIcon = document.getElementById('audio-pause-icon');
+  const bars = capsule ? capsule.querySelector('.audio-bars') : null;
+  const statusLabel = capsule ? capsule.querySelector('.tars-audio-status') : null;
+
+  if (!capsule || !bgMusic) return;
+
+  // Set volume to a gentle background level
+  bgMusic.volume = 0.35;
+
+  let isPlaying = false;
+
+  const togglePlay = () => {
+    if (isPlaying) {
+      bgMusic.pause();
+      if (playIcon) playIcon.classList.remove('hidden');
+      if (pauseIcon) pauseIcon.classList.add('hidden');
+      if (bars) bars.classList.remove('playing');
+      if (statusLabel) statusLabel.textContent = "SYS.AUD // STANDBY";
+      isPlaying = false;
+    } else {
+      bgMusic.play().then(() => {
+        if (playIcon) playIcon.classList.add('hidden');
+        if (pauseIcon) pauseIcon.classList.remove('hidden');
+        if (bars) bars.classList.add('playing');
+        if (statusLabel) statusLabel.textContent = "SYS.AUD // PLAYING";
+        isPlaying = true;
+      }).catch(err => {
+        console.warn("Autoplay block: User interaction needed to trigger audio play.", err);
+      });
+    }
+  };
+
+  capsule.addEventListener('click', () => {
+    togglePlay();
+  });
+
+  // Custom cursor hover feedback
+  capsule.addEventListener('mouseenter', () => {
+    const cursorDot = document.querySelector('.custom-cursor-dot');
+    const cursorRing = document.querySelector('.custom-cursor-ring');
+    if (cursorDot && cursorRing) {
+      gsap.to(cursorDot, { scale: 1.15, duration: 0.3 });
+      gsap.to(cursorRing, { scale: 1.4, backgroundColor: 'rgba(0, 210, 255, 0.08)', duration: 0.3 });
+    }
+  });
+
+  capsule.addEventListener('mouseleave', () => {
+    const cursorDot = document.querySelector('.custom-cursor-dot');
+    const cursorRing = document.querySelector('.custom-cursor-ring');
+    if (cursorDot && cursorRing) {
+      gsap.to(cursorDot, { scale: 1, duration: 0.3 });
+      gsap.to(cursorRing, { scale: 1, backgroundColor: 'transparent', duration: 0.3 });
+    }
+  });
+}
+
+// Start audio controller on wake
+initAudioController();
+

@@ -83,6 +83,29 @@
                 &gt; RESOLVING CYBERNETIC IMAGE COGNITION DATAPATH...
             </div>
         </div>
+    <!-- AUDIO CONTROLLER CAPSULE (TARS IMMERSIVE SOUNDTRACK) -->
+    <div id="audio-capsule" class="fixed top-6 right-6 z-50 flex items-center gap-2.5 px-3 py-2 rounded-full border border-white/5 bg-black/20 backdrop-blur-md transition-all duration-300 select-none cursor-pointer hover:border-[#00d2ff]/40">
+        <div class="audio-bars flex items-end gap-[2px] h-3.5 w-4.5">
+            <span class="w-[2px] h-1.5 bg-[#00d2ff] rounded-full transition-all duration-300"></span>
+            <span class="w-[2px] h-3 bg-[#00d2ff] rounded-full transition-all duration-300"></span>
+            <span class="w-[2px] h-2 bg-[#00d2ff] rounded-full transition-all duration-300"></span>
+            <span class="w-[2px] h-2.5 bg-[#00d2ff] rounded-full transition-all duration-300"></span>
+        </div>
+        <div class="flex flex-col md:flex">
+            <span class="text-[8px] font-tech font-bold text-white tracking-wider leading-none uppercase tars-audio-status">SYS.AUD // STANDBY</span>
+            <span class="text-[7px] font-mono text-brand-gray/60 leading-none mt-0.5 uppercase tars-audio-label">INTERSTELLAR</span>
+        </div>
+        <button class="audio-toggle-btn ml-1 p-1 hover:bg-white/5 rounded text-brand-gray hover:text-white transition-colors focus:outline-none" aria-label="Toggle Audio">
+            <svg id="audio-play-icon" class="w-3.5 h-3.5 text-[#00d2ff]" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+            </svg>
+            <svg id="audio-pause-icon" class="w-3.5 h-3.5 text-[#00d2ff] hidden" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+        </button>
+        <audio id="bg-music" loop>
+            <source src="Sound/Interstellar%20Main%20Theme%20-%20Extra%20Extended%20-%20Soundtrack%20by%20%20Hans%20Zimmer.mp3" type="audio/mpeg">
+        </audio>
     </div>
 
     <!-- 2. NAVIGATION HEADER -->
