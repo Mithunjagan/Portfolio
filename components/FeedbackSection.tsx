@@ -271,10 +271,6 @@ export default function FeedbackSection() {
               {/* Review Count & Approval */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flexGrow: 1 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'rgba(255,255,255,0.5)' }}>LOGGED TRANSMISSIONS:</span>
-                  <span className="hud-value">{totalReviews}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: 'rgba(255,255,255,0.5)' }}>APPROVAL INDEX:</span>
                   <span className="hud-value" style={{ color: '#00d2ff' }}>{approvalPercent.toFixed(1)}%</span>
                 </div>
