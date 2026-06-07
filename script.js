@@ -1571,7 +1571,7 @@ window.addEventListener('mousedown', (e) => {
           const video = entry.target;
           const source = video.querySelector('source');
           if (source && source.dataset.src) {
-            source.src = source.dataset.src;
+            video.src = source.dataset.src;
             video.load();
             video.play().catch(err => {
               console.warn("Video autoplay failed on intersection:", err);
@@ -1593,7 +1593,7 @@ window.addEventListener('mousedown', (e) => {
     lazyVideos.forEach(video => {
       const source = video.querySelector('source');
       if (source && source.dataset.src) {
-        source.src = source.dataset.src;
+        video.src = source.dataset.src;
         video.load();
         video.play().catch(() => {});
       }
