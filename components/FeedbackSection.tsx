@@ -86,6 +86,7 @@ export default function FeedbackSection() {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // ── Load on mount ──
   useEffect(() => {
@@ -105,9 +106,13 @@ export default function FeedbackSection() {
         if (Array.isArray(data)) {
           setReviews(data);
           saveReviews(data);
+          setLoadError(null);
         }
       })
-      .catch(err => console.error('Error fetching global reviews:', err));
+      .catch(err => {
+        console.error('Error fetching global reviews:', err);
+        setLoadError(err.message || 'Connection failed');
+      });
   }, []);
 
   // ── Persist on change ──
@@ -218,6 +223,18 @@ export default function FeedbackSection() {
         </div>
 
         {/* ── Sci-Fi Diagnostics HUD Panel ── */}
+        {loadError && (
+          <div className="hud-panel font-mono text-xs" style={{ borderColor: 'rgba(255, 68, 68, 0.3)', background: 'rgba(255, 68, 68, 0.02)', boxShadow: '0 0 15px rgba(255, 68, 68, 0.02)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(255, 68, 68, 0.15)', paddingBottom: '10px' }}>
+              <span className="hud-label" style={{ color: '#ff4444' }}>[ TELEMETRY_OFFLINE ]</span>
+              <span style={{ color: 'rgba(255, 68, 68, 0.65)', marginLeft: 'auto', fontSize: '10px' }}>STATUS: OFFLINE // CONNECT_REFUSED</span>
+            </div>
+            <p style={{ color: 'rgba(255, 255, 255, 0.55)', fontSize: '11px', lineHeight: '1.5', margin: 0 }}>
+              Failed to connect to reviews database. If viewing locally, please launch the site via <strong style={{ color: '#00d2ff' }}>http://localhost:8080</strong> instead of direct file access, and verify the backend dev server is running.
+            </p>
+          </div>
+        )}
+
         {totalReviews > 0 && (
           <div className="hud-panel font-mono text-xs">
             <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(0, 212, 255, 0.08)', paddingBottom: '10px' }}>
