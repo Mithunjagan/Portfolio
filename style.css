@@ -1673,29 +1673,99 @@ footer {
    AUDIO VISUALIZER CAPSULE STYLES
    ============================================================= */
 #audio-capsule {
-  border-top: 1px solid rgba(255, 255, 255, 0.22) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 4px 20px rgba(0, 0, 0, 0.5);
-  background: rgba(10, 10, 10, 0.3) !important;
+  background: rgba(10, 10, 10, 0.75) !important;
+  border: 1px solid rgba(0, 210, 255, 0.25) !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 15px rgba(0, 210, 255, 0.08) !important;
+  backdrop-filter: blur(20px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
+  z-index: 60 !important;
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 #audio-capsule:hover {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 15px rgba(0, 210, 255, 0.35) !important;
-  border-color: rgba(0, 210, 255, 0.45) !important;
+  border-color: rgba(0, 210, 255, 0.7) !important;
+  box-shadow: 
+    0 12px 35px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 0 25px rgba(0, 210, 255, 0.3) !important;
+  transform: translateY(-2px);
+}
+
+.audio-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+  width: 18px;
 }
 
 .audio-bars span {
+  display: block;
+  width: 2px;
+  background: var(--accent-blue-neon);
+  border-radius: 1px;
   transform-origin: bottom;
+  transition: height 0.3s ease, background-color 0.3s ease;
 }
 
-.audio-bars.playing span:nth-child(1) { animation: audio-bar-dance 0.7s ease-in-out infinite alternate; }
-.audio-bars.playing span:nth-child(2) { animation: audio-bar-dance 1.0s ease-in-out infinite alternate-reverse; }
-.audio-bars.playing span:nth-child(3) { animation: audio-bar-dance 0.8s ease-in-out infinite alternate; }
-.audio-bars.playing span:nth-child(4) { animation: audio-bar-dance 1.1s ease-in-out infinite alternate-reverse; }
+/* Set dynamic default heights to simulate a soundwave on standby */
+.audio-bars span:nth-child(1) { height: 4px; }
+.audio-bars span:nth-child(2) { height: 10px; }
+.audio-bars span:nth-child(3) { height: 6px; }
+.audio-bars span:nth-child(4) { height: 8px; }
 
-@keyframes audio-bar-dance {
-  0% { transform: scaleY(0.2); }
-  100% { transform: scaleY(1.3); }
+/* Custom keyframes equalizers */
+.audio-bars.playing span:nth-child(1) { animation: audio-bar-dance-1 0.8s ease-in-out infinite alternate; }
+.audio-bars.playing span:nth-child(2) { animation: audio-bar-dance-2 1.2s ease-in-out infinite alternate-reverse; }
+.audio-bars.playing span:nth-child(3) { animation: audio-bar-dance-3 0.9s ease-in-out infinite alternate; }
+.audio-bars.playing span:nth-child(4) { animation: audio-bar-dance-4 1.4s ease-in-out infinite alternate-reverse; }
+
+@keyframes audio-bar-dance-1 {
+  0% {
+    height: 4px;
+    background-color: var(--accent-blue);
+  }
+  100% {
+    height: 11px;
+    background-color: var(--accent-blue-neon);
+    box-shadow: 0 0 4px var(--accent-blue-neon);
+  }
+}
+@keyframes audio-bar-dance-2 {
+  0% {
+    height: 3px;
+    background-color: var(--accent-cyan);
+  }
+  100% {
+    height: 12px;
+    background-color: var(--accent-blue-neon);
+    box-shadow: 0 0 4px var(--accent-blue-neon);
+  }
+}
+@keyframes audio-bar-dance-3 {
+  0% {
+    height: 3px;
+    background-color: var(--accent-blue);
+  }
+  100% {
+    height: 10px;
+    background-color: var(--accent-blue-neon);
+    box-shadow: 0 0 4px var(--accent-blue-neon);
+  }
+}
+@keyframes audio-bar-dance-4 {
+  0% {
+    height: 4px;
+    background-color: var(--accent-cyan);
+  }
+  100% {
+    height: 11px;
+    background-color: var(--accent-blue-neon);
+    box-shadow: 0 0 4px var(--accent-blue-neon);
+  }
 }
 
 /* Responsive Audio Capsule positioning to avoid navigation overlap on mobile */
@@ -1712,6 +1782,75 @@ footer {
   .tars-audio-status, .tars-audio-label {
     display: none !important;
   }
+}
+
+/* =============================================================
+   TARS SEGMENT & INTERACTIVE ANIMATIONS
+   ============================================================= */
+.tars-seg {
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* 1. HOVER CONFIG (Mechanical Split/Spread) */
+.chat-widget-button:hover .tars-seg-1 {
+  transform: translateY(6px) rotate(-12deg);
+}
+.chat-widget-button:hover .tars-seg-4 {
+  transform: translateY(6px) rotate(12deg);
+}
+.chat-widget-button:hover .tars-seg-2 {
+  transform: translateY(-3px);
+}
+.chat-widget-button:hover .tars-seg-3 {
+  transform: translateY(-3px);
+}
+
+/* 2. THINKING/WALKING CONFIG (Alternating Mech Swing) */
+.chat-widget-button.thinking .tars-seg-1,
+.chat-header.thinking .tars-seg-1 {
+  animation: tars-walk-left 1.0s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite alternate;
+}
+.chat-widget-button.thinking .tars-seg-2,
+.chat-header.thinking .tars-seg-2 {
+  animation: tars-walk-mid-left 1.0s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite alternate;
+}
+.chat-widget-button.thinking .tars-seg-3,
+.chat-header.thinking .tars-seg-3 {
+  animation: tars-walk-mid-right 1.0s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite alternate;
+}
+.chat-widget-button.thinking .tars-seg-4,
+.chat-header.thinking .tars-seg-4 {
+  animation: tars-walk-right 1.0s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite alternate;
+}
+
+@keyframes tars-walk-left {
+  0% { transform: translateY(4px) rotate(-8deg); }
+  100% { transform: translateY(-3px) rotate(4deg); }
+}
+@keyframes tars-walk-mid-left {
+  0% { transform: translateY(-3px) rotate(4deg); }
+  100% { transform: translateY(4px) rotate(-8deg); }
+}
+@keyframes tars-walk-mid-right {
+  0% { transform: translateY(4px) rotate(6deg); }
+  100% { transform: translateY(-3px) rotate(-5deg); }
+}
+@keyframes tars-walk-right {
+  0% { transform: translateY(-3px) rotate(-5deg); }
+  100% { transform: translateY(4px) rotate(6deg); }
+}
+
+/* Thinking sensor light speed-pulse */
+.chat-widget-button.thinking svg rect[fill="#00d2ff"],
+.chat-header.thinking svg rect[fill="#00d2ff"],
+.chat-widget-button.thinking svg rect[opacity="0.95"],
+.chat-header.thinking svg rect[opacity="0.95"] {
+  animation: tars-sensor-glow 0.35s ease-in-out infinite alternate;
+}
+
+@keyframes tars-sensor-glow {
+  0% { opacity: 0.3; filter: drop-shadow(0 0 1px #00d2ff); }
+  100% { opacity: 1; filter: drop-shadow(0 0 6px #00d2ff); }
 }
 
 

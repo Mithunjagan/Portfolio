@@ -83,34 +83,32 @@
                 &gt; RESOLVING CYBERNETIC IMAGE COGNITION DATAPATH...
             </div>
         </div>
+    </div>
     <!-- AUDIO CONTROLLER CAPSULE (TARS IMMERSIVE SOUNDTRACK) -->
-    <div id="audio-capsule" class="fixed top-6 right-6 z-50 flex items-center gap-2.5 px-3 py-2 rounded-full border border-white/5 bg-black/20 backdrop-blur-md transition-all duration-300 select-none cursor-pointer hover:border-[#00d2ff]/40">
-        <div class="audio-bars flex items-end gap-[2px] h-3.5 w-4.5">
-            <span class="w-[2px] h-1.5 bg-[#00d2ff] rounded-full transition-all duration-300"></span>
-            <span class="w-[2px] h-3 bg-[#00d2ff] rounded-full transition-all duration-300"></span>
-            <span class="w-[2px] h-2 bg-[#00d2ff] rounded-full transition-all duration-300"></span>
-            <span class="w-[2px] h-2.5 bg-[#00d2ff] rounded-full transition-all duration-300"></span>
+    <div id="audio-capsule" class="fixed top-6 right-6 z-60 flex items-center gap-2 px-2.5 py-1.5 rounded-full border border-white/5 bg-black/20 backdrop-blur-md transition-all duration-300 select-none cursor-pointer">
+        <div class="audio-bars playing">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
         <div class="flex flex-col md:flex">
-            <span class="text-[8px] font-tech font-bold text-white tracking-wider leading-none uppercase tars-audio-status">SYS.AUD // STANDBY</span>
-            <span class="text-[7px] font-mono text-brand-gray/60 leading-none mt-0.5 uppercase tars-audio-label">INTERSTELLAR</span>
+            <span class="text-[7px] font-tech font-bold text-white tracking-wider leading-none uppercase tars-audio-status">SYS.AUD // PLAYING</span>
+            <span class="text-[6px] font-mono text-brand-gray/60 leading-none mt-0.5 uppercase tars-audio-label">INTERSTELLAR</span>
         </div>
-        <button class="audio-toggle-btn ml-1 p-1 hover:bg-white/5 rounded text-brand-gray hover:text-white transition-colors focus:outline-none" aria-label="Toggle Audio">
-            <svg id="audio-play-icon" class="w-3.5 h-3.5 text-[#00d2ff]" fill="currentColor" viewBox="0 0 24 24">
+        <button class="audio-toggle-btn ml-1 p-0.5 hover:bg-white/5 rounded text-brand-gray hover:text-white transition-colors focus:outline-none" aria-label="Toggle Audio">
+            <svg id="audio-play-icon" class="w-3 h-3 text-[#00d2ff] hidden" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z"/>
             </svg>
-            <svg id="audio-pause-icon" class="w-3.5 h-3.5 text-[#00d2ff] hidden" fill="currentColor" viewBox="0 0 24 24">
+            <svg id="audio-pause-icon" class="w-3 h-3 text-[#00d2ff]" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
             </svg>
         </button>
-        <audio id="bg-music" loop>
-            <source src="Sound/Interstellar%20Main%20Theme%20-%20Extra%20Extended%20-%20Soundtrack%20by%20%20Hans%20Zimmer.mp3" type="audio/mpeg">
-        </audio>
+        <audio id="bg-music" src="Sound/interstellar.mp3" preload="auto" loop></audio>
     </div>
 
-    <!-- 2. NAVIGATION HEADER -->
-    <header class="fixed top-6 left-0 w-full z-50 flex justify-center px-4">
-        <nav class="nav-pill border border-brand-border rounded-full px-6 py-2.5 flex items-center justify-between gap-6 w-full max-w-2xl transition-all">
+    <header class="fixed top-6 left-0 w-full z-50 flex justify-center px-4 pointer-events-none">
+        <nav class="nav-pill border border-brand-border rounded-full px-6 py-2.5 flex items-center justify-between gap-6 w-full max-w-xl transition-all pointer-events-auto">
             <!-- Left: Logo -->
             <div class="header-logo flex items-center gap-3 cursor-pointer group">
                 <svg viewBox="0 0 100 100" class="w-6 h-6 logo-svg">

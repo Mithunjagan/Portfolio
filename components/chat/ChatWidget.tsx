@@ -66,25 +66,33 @@ class PortfolioChatbot {
             </linearGradient>
           </defs>
           <!-- 4 Segments of TARS -->
-          <rect x="15" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
-          <rect x="15" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
-          <line x1="15" y1="36" x2="30" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
-          <line x1="15" y1="64" x2="30" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          <g class="tars-seg tars-seg-1" style="transform-origin: 22.5px 50px;">
+            <rect x="15" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
+            <rect x="15" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
+            <line x1="15" y1="36" x2="30" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+            <line x1="15" y1="64" x2="30" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          </g>
 
-          <rect x="32" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
-          <rect x="32" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
-          <line x1="32" y1="36" x2="47" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
-          <line x1="32" y1="64" x2="47" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          <g class="tars-seg tars-seg-2" style="transform-origin: 39.5px 50px;">
+            <rect x="32" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
+            <rect x="32" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
+            <line x1="32" y1="36" x2="47" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+            <line x1="32" y1="64" x2="47" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          </g>
 
-          <rect x="49" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
-          <rect x="49" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
-          <line x1="49" y1="36" x2="64" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
-          <line x1="49" y1="64" x2="64" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          <g class="tars-seg tars-seg-3" style="transform-origin: 56.5px 50px;">
+            <rect x="49" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
+            <rect x="49" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
+            <line x1="49" y1="36" x2="64" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+            <line x1="49" y1="64" x2="64" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          </g>
 
-          <rect x="66" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
-          <rect x="66" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
-          <line x1="66" y1="36" x2="81" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
-          <line x1="66" y1="64" x2="81" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          <g class="tars-seg tars-seg-4" style="transform-origin: 73.5px 50px;">
+            <rect x="66" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
+            <rect x="66" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
+            <line x1="66" y1="36" x2="81" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+            <line x1="66" y1="64" x2="81" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          </g>
 
           <!-- Sensor Light -->
           <rect x="42" y="24" width="14" height="4" rx="0.5" fill="#00d2ff" opacity="0.95" filter="drop-shadow(0 0 2px #00d2ff)" />
@@ -101,10 +109,18 @@ class PortfolioChatbot {
             <!-- TARS Miniature Header Icon -->
             <div class="relative w-8 h-8 rounded bg-[#00d2ff]/10 border border-[#00d2ff]/30 flex items-center justify-center">
               <svg class="w-5.5 h-5.5 text-[#00d2ff]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="20" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
-                <rect x="34" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
-                <rect x="48" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
-                <rect x="62" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
+                <g class="tars-seg tars-seg-1" style="transform-origin: 26px 50px;">
+                  <rect x="20" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
+                </g>
+                <g class="tars-seg tars-seg-2" style="transform-origin: 40px 50px;">
+                  <rect x="34" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
+                </g>
+                <g class="tars-seg tars-seg-3" style="transform-origin: 54px 50px;">
+                  <rect x="48" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
+                </g>
+                <g class="tars-seg tars-seg-4" style="transform-origin: 68px 50px;">
+                  <rect x="62" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
+                </g>
                 <rect x="42" y="27" width="14" height="3" rx="0.5" fill="#00d2ff" />
               </svg>
               <span class="absolute bottom-0 right-0 w-2 h-2 bg-[#00d2ff] rounded-full border border-[#0a0a0a] animate-pulse"></span>
@@ -313,6 +329,11 @@ class PortfolioChatbot {
   private showTypingIndicator() {
     if (this.typingIndicatorEl || !this.messagesContainerEl) return;
 
+    const button = document.querySelector('.chat-widget-button');
+    const header = document.querySelector('.chat-header');
+    if (button) button.classList.add('thinking');
+    if (header) header.classList.add('thinking');
+
     this.typingIndicatorEl = document.createElement('div');
     this.typingIndicatorEl.className = 'flex w-full justify-start typing-indicator-wrapper';
     this.typingIndicatorEl.innerHTML = `
@@ -335,6 +356,10 @@ class PortfolioChatbot {
       this.messagesContainerEl.removeChild(this.typingIndicatorEl);
       this.typingIndicatorEl = null;
     }
+    const button = document.querySelector('.chat-widget-button');
+    const header = document.querySelector('.chat-header');
+    if (button) button.classList.remove('thinking');
+    if (header) header.classList.remove('thinking');
   }
 
   private async handleUserSubmit() {

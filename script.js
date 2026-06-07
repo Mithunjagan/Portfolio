@@ -1279,7 +1279,42 @@ function initAudioController() {
   // Set volume to a gentle background level
   bgMusic.volume = 0.35;
 
-  let isPlaying = false;
+  let isPlaying = true;
+
+  const playAudio = () => {
+    bgMusic.play().then(() => {
+      if (playIcon) playIcon.classList.add('hidden');
+      if (pauseIcon) pauseIcon.classList.remove('hidden');
+      if (bars) bars.classList.add('playing');
+      if (statusLabel) statusLabel.textContent = "SYS.AUD // PLAYING";
+      isPlaying = true;
+    }).catch(err => {
+      console.warn("Autoplay blocked: awaiting user interaction to trigger audio play.", err);
+      
+      const startOnInteraction = () => {
+        bgMusic.play().then(() => {
+          if (playIcon) playIcon.classList.add('hidden');
+          if (pauseIcon) pauseIcon.classList.remove('hidden');
+          if (bars) bars.classList.add('playing');
+          if (statusLabel) statusLabel.textContent = "SYS.AUD // PLAYING";
+          isPlaying = true;
+          cleanupListeners();
+        }).catch(e => console.error("Playback failed on interaction:", e));
+      };
+
+      const cleanupListeners = () => {
+        document.removeEventListener('click', startOnInteraction);
+        document.removeEventListener('keydown', startOnInteraction);
+        document.removeEventListener('touchstart', startOnInteraction);
+        document.removeEventListener('wheel', startOnInteraction);
+      };
+
+      document.addEventListener('click', startOnInteraction);
+      document.addEventListener('keydown', startOnInteraction);
+      document.addEventListener('touchstart', startOnInteraction);
+      document.addEventListener('wheel', startOnInteraction);
+    });
+  };
 
   const togglePlay = () => {
     if (isPlaying) {
@@ -1297,12 +1332,16 @@ function initAudioController() {
         if (statusLabel) statusLabel.textContent = "SYS.AUD // PLAYING";
         isPlaying = true;
       }).catch(err => {
-        console.warn("Autoplay block: User interaction needed to trigger audio play.", err);
+        console.error("Manual playback trigger failed:", err);
       });
     }
   };
 
-  capsule.addEventListener('click', () => {
+  // Trigger autoplay attempt
+  playAudio();
+
+  capsule.addEventListener('click', (e) => {
+    e.stopPropagation();
     togglePlay();
   });
 
