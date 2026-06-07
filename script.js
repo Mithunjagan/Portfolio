@@ -1562,88 +1562,49 @@ window.addEventListener('mousedown', (e) => {
       ease: 'power2.in'
     });
 
-  // 11. Lazy-load & Optimize Skills Section Background Videos on Hover
-  if ('IntersectionObserver' in window) {
-    const lazyVideos = document.querySelectorAll('.lazy-video');
-    
-    const setupVideoAttributes = (video) => {
-      video.muted = true;
-      video.defaultMuted = true;
-      video.playsInline = true;
-      video.setAttribute('muted', '');
-      video.setAttribute('playsinline', '');
+  // 11. Skills Section Background Videos — load & play ONLY on hover/touch
+  // No preloading: avoids saturating network connections needed for GSAP image frames
+  const lazyVideos = document.querySelectorAll('.lazy-video');
+
+  lazyVideos.forEach(video => {
+    const parentCard = video.closest('.spec-card');
+    if (!parentCard) return;
+
+    let videoLoaded = false;
+
+    const playVideo = () => {
+      // Pause all other videos first
+      lazyVideos.forEach(v => { if (v !== video) v.pause(); });
+
+      // Load the video on first hover
+      if (!videoLoaded) {
+        const source = video.querySelector('source');
+        if (source && source.dataset.src) {
+          video.muted = true;
+          video.defaultMuted = true;
+          video.playsInline = true;
+          video.setAttribute('muted', '');
+          video.setAttribute('playsinline', '');
+          video.src = source.dataset.src;
+          video.load();
+          videoLoaded = true;
+        }
+      }
+
+      video.play().catch(err => {
+        console.warn("Video play failed:", err);
+      });
     };
 
-    const videoObserver = new IntersectionObserver((entries, observer) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const video = entry.target;
-          const source = video.querySelector('source');
-          if (source && source.dataset.src) {
-            setupVideoAttributes(video);
-            if (!video.src || !video.src.includes('.mp4')) {
-              video.src = source.dataset.src;
-              video.load();
-            }
-            observer.unobserve(video);
-          }
-        }
-      });
-    }, {
-      rootMargin: '200px'
-    });
+    const pauseVideo = () => {
+      video.pause();
+    };
 
-    lazyVideos.forEach(video => {
-      videoObserver.observe(video);
-      
-      // Control play/pause on hover/touch of the parent card
-      const parentCard = video.closest('.spec-card');
-      if (parentCard) {
-        const playVideo = () => {
-          // Pause all other videos first to ensure only 1 decoder thread runs
-          lazyVideos.forEach(v => {
-            if (v !== video) v.pause();
-          });
-
-          setupVideoAttributes(video);
-          if (!video.src || !video.src.includes('.mp4')) {
-            const source = video.querySelector('source');
-            if (source && source.dataset.src) {
-              video.src = source.dataset.src;
-              video.load();
-            }
-          }
-          video.play().catch(err => {
-            console.warn("Muted video play failed:", err);
-          });
-        };
-
-        const pauseVideo = () => {
-          video.pause();
-        };
-
-        parentCard.addEventListener('mouseenter', playVideo);
-        parentCard.addEventListener('touchstart', playVideo, { passive: true });
-        parentCard.addEventListener('mouseleave', pauseVideo);
-        parentCard.addEventListener('touchend', pauseVideo, { passive: true });
-      }
-    });
-  } else {
-    // Fallback for older browsers
-    const lazyVideos = document.querySelectorAll('.lazy-video');
-    lazyVideos.forEach(video => {
-      const source = video.querySelector('source');
-      if (source && source.dataset.src) {
-        video.muted = true;
-        video.defaultMuted = true;
-        video.playsInline = true;
-        video.setAttribute('muted', '');
-        video.setAttribute('playsinline', '');
-        video.src = source.dataset.src;
-        video.load();
-      }
-    });
-  }
+    parentCard.addEventListener('mouseenter', playVideo);
+    parentCard.addEventListener('touchstart', playVideo, { passive: true });
+    parentCard.addEventListener('mouseleave', pauseVideo);
+    parentCard.addEventListener('touchend', pauseVideo, { passive: true });
+  });
 });
 
 // Parallax calculations loop
