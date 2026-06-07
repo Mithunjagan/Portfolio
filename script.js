@@ -10,30 +10,6 @@ window.addEventListener('mousemove', (e) => {
   globalMouseY = e.clientY;
 }, { passive: true });
 
-// ============ TEMPORARY DEBUG PANEL (remove after fixing) ============
-const _dbg = document.createElement('div');
-_dbg.id = 'debug-panel';
-_dbg.style.cssText = 'position:fixed;bottom:8px;left:8px;z-index:99999;background:rgba(0,0,0,0.85);color:#0f0;font:11px/1.4 monospace;padding:8px 12px;border-radius:6px;pointer-events:none;max-width:320px;white-space:pre-wrap;';
-document.documentElement.appendChild(_dbg);
-const _dbgState = { init: false, stActive: false, frame: 0, loaded: 0, errors: [] };
-function _dbgUpdate() {
-  const loadedCount = images ? images.filter(Boolean).length : 0;
-  _dbg.textContent = 
-    `GSAP: ${typeof gsap !== 'undefined' ? 'OK' : 'MISSING'}\n` +
-    `ScrollTrigger: ${typeof ScrollTrigger !== 'undefined' ? 'OK' : 'MISSING'}\n` +
-    `Lenis: ${typeof Lenis !== 'undefined' ? 'OK' : 'MISSING'}\n` +
-    `initApp called: ${_dbgState.init}\n` +
-    `ST active: ${_dbgState.stActive}\n` +
-    `Frame: ${Math.floor(imageSequenceObj.frame)}/${totalFrames}\n` +
-    `Loaded: ${loadedCount}/${totalFrames}\n` +
-    (_dbgState.errors.length ? `ERRORS:\n${_dbgState.errors.join('\n')}` : 'No errors');
-}
-setInterval(_dbgUpdate, 200);
-window.addEventListener('error', (e) => {
-  _dbgState.errors.push(e.message.substring(0, 80));
-  _dbgUpdate();
-});
-// ============ END DEBUG PANEL ============
 
 // Core Variables
 const totalFrames = 154;
@@ -553,8 +529,6 @@ function resizeCanvas() {
 
 // Initialize all GSAP, ScrollTrigger, and Lenis logic
 function initializeApplication() {
-  try {
-  _dbgState.init = true;
 
   // 1. Initialize Lenis Smooth Scroll
   const lenis = new Lenis({
@@ -604,7 +578,6 @@ function initializeApplication() {
       end: 'bottom bottom',
       scrub: true,
       onUpdate: (self) => {
-        _dbgState.stActive = true;
         drawFrame(Math.floor(imageSequenceObj.frame));
       }
     }
@@ -1119,11 +1092,6 @@ function initializeApplication() {
 
   // Initialize Gravitational Floating Buttons
   initGravityButtons();
-
-  } catch (err) {
-    _dbgState.errors.push('initApp: ' + err.message);
-    console.error('initializeApplication error:', err);
-  }
 }
 
 // Initialize Gravitational Floating / Magnetic Buttons
