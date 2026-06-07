@@ -2,6 +2,57 @@ import fs from 'fs';
 import path from 'path';
 
 export default async function handler(req, res) {
+  // CORS configuration
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  const isVercel = process.env.VERCEL === '1';
+  const dataDir = isVercel ? '/tmp' : path.join(process.cwd(), 'data');
+  const reviewsFilePath = path.join(dataDir, 'reviews.json');
+
+  // Handle GET requests (return reviews)
+  if (req.method === 'GET') {
+    let reviewsList = [];
+
+    // 1. Read from static bundled data/reviews.json first
+    const staticFilePath = path.join(process.cwd(), 'data', 'reviews.json');
+    if (fs.existsSync(staticFilePath)) {
+      try {
+        const fileData = fs.readFileSync(staticFilePath, 'utf8');
+        reviewsList = JSON.parse(fileData);
+      } catch (parseErr) {
+        console.error("Error parsing static reviews.json:", parseErr);
+      }
+    }
+
+    // 2. On Vercel, merge with ephemeral reviews in /tmp
+    if (isVercel && fs.existsSync(reviewsFilePath)) {
+      try {
+        const fileData = fs.readFileSync(reviewsFilePath, 'utf8');
+        const tmpList = JSON.parse(fileData);
+        const idSet = new Set(reviewsList.map(r => r.id));
+        tmpList.forEach(r => {
+          if (!idSet.has(r.id)) {
+            reviewsList.push(r);
+          }
+        });
+      } catch (parseErr) {
+        console.error("Error parsing tmp reviews.json:", parseErr);
+      }
+    }
+
+    return res.json(reviewsList);
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
@@ -20,11 +71,6 @@ export default async function handler(req, res) {
       comment: (comment && typeof comment === 'string') ? comment.trim().slice(0, 280) : "",
       date: new Date().toISOString()
     };
-
-    // Use /tmp for write access if executing in a serverless read-only environment
-    const isVercel = process.env.VERCEL === '1';
-    const dataDir = isVercel ? '/tmp' : path.join(process.cwd(), 'data');
-    const reviewsFilePath = path.join(dataDir, 'reviews.json');
 
     let reviewsList = [];
 
