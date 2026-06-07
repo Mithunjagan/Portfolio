@@ -1803,10 +1803,31 @@ function initReviewSystem() {
       date: new Date().toISOString()
     };
 
-    // Store review
+    // Store review locally
     const currentReviews = getReviews();
     currentReviews.push(newReview);
     saveReviews(currentReviews);
+
+    // Send to server to save persistently
+    fetch('/api/reviews', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: nameVal,
+        rating: selectedRating,
+        comment: commentVal
+      })
+    })
+    .then(response => {
+      if (!response.ok) {
+        console.warn("Failed to send review to server. Local fallback will persist.");
+      }
+    })
+    .catch(err => {
+      console.error("Network error sending review to server:", err);
+    });
 
     // Show success toast banner
     reviewToast.classList.remove('hidden');

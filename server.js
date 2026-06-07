@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 // Initialize dotenv configuration
 dotenv.config();
@@ -280,6 +281,55 @@ ${relevantContext}`;
   } catch (error) {
     console.error("General error handling chat request:", error);
     res.status(500).json({ error: "An unexpected error occurred. Please try again." });
+  }
+});
+
+// Reviews API Route to store submissions persistently in a JSON file
+app.post('/api/reviews', async (req, res) => {
+  try {
+    const { name, rating, comment } = req.body;
+    
+    if (rating === undefined || typeof rating !== 'number' || rating < 1 || rating > 5) {
+      return res.status(400).json({ error: "Invalid rating value (must be 1-5)" });
+    }
+
+    const newReview = {
+      id: 'rev-' + Date.now(),
+      name: (name && typeof name === 'string') ? name.trim().slice(0, 40) : "Anonymous Reviewer",
+      rating: rating,
+      comment: (comment && typeof comment === 'string') ? comment.trim().slice(0, 280) : "",
+      date: new Date().toISOString()
+    };
+
+    const dataDir = path.join(__dirname, 'data');
+    const reviewsFilePath = path.join(dataDir, 'reviews.json');
+    let reviewsList = [];
+
+    // Ensure data directory exists
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+
+    // Read existing reviews if file exists
+    if (fs.existsSync(reviewsFilePath)) {
+      try {
+        const fileData = fs.readFileSync(reviewsFilePath, 'utf8');
+        reviewsList = JSON.parse(fileData);
+      } catch (parseErr) {
+        console.error("Error parsing reviews.json, starting fresh:", parseErr);
+      }
+    }
+
+    reviewsList.push(newReview);
+
+    // Write updated reviews back to file
+    fs.writeFileSync(reviewsFilePath, JSON.stringify(reviewsList, null, 2), 'utf8');
+    console.log(`New review saved: ${rating} stars by ${newReview.name}`);
+
+    res.json({ success: true, review: newReview });
+  } catch (error) {
+    console.error("Error saving review:", error);
+    res.status(500).json({ error: "Failed to save review on server." });
   }
 });
 
