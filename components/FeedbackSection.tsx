@@ -69,6 +69,14 @@ const FEEDBACK_STYLES = `
 }
 `;
 
+// ─── Base URL Resolver for local file:// access ────────────────────────────────
+const getApiUrl = (path: string): string => {
+  if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
+    return `http://localhost:8080${path}`;
+  }
+  return path;
+};
+
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export default function FeedbackSection() {
@@ -88,7 +96,7 @@ export default function FeedbackSection() {
     }
 
     // Fetch global reviews from server
-    fetch('/api/reviews')
+    fetch(getApiUrl('/api/reviews'))
       .then(res => {
         if (!res.ok) throw new Error(`Server returned status ${res.status}`);
         return res.json();
@@ -124,7 +132,7 @@ export default function FeedbackSection() {
     setReviews(prev => [...prev, newReview]);
 
     // Also send to backend
-    fetch('/api/reviews', {
+    fetch(getApiUrl('/api/reviews'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

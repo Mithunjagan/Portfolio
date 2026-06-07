@@ -694,6 +694,13 @@ class PortfolioChatbot {
     if (header) header.classList.remove('thinking');
   }
 
+  private getApiUrl(path: string): string {
+    if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
+      return `http://localhost:8080${path}`;
+    }
+    return path;
+  }
+
   private async handleUserSubmit() {
     if (!this.inputEl) return;
 
@@ -713,7 +720,7 @@ class PortfolioChatbot {
     this.showTypingIndicator();
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch(this.getApiUrl('/api/chat'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
