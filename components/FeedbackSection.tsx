@@ -67,6 +67,62 @@ const FEEDBACK_STYLES = `
   font-weight: 700;
   text-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
 }
+.review-form-card.animating-out {
+  animation: liquidGasDissolve 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  pointer-events: none !important;
+}
+.laser-scan-line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #00d2ff, transparent);
+  box-shadow: 0 0 10px #00d2ff, 0 0 20px #00d2ff, 0 0 35px #00d2ff;
+  z-index: 100;
+  animation: laserSweep 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes laserSweep {
+  0% {
+    top: -5%;
+  }
+  100% {
+    top: 105%;
+  }
+}
+@keyframes liquidGasDissolve {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0px) brightness(1);
+  }
+  20% {
+    filter: blur(2px) brightness(1.5);
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.4);
+    border-color: rgba(0, 210, 255, 0.5);
+  }
+  60% {
+    filter: blur(6px) brightness(1.8);
+    box-shadow: 0 0 50px rgba(0, 210, 255, 0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.92) translateY(-20px);
+    filter: blur(25px) brightness(0);
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    overflow: hidden;
+  }
+}
+@keyframes telemetryPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 `;
 
 // ─── Base URL Resolver for local file:// access ────────────────────────────────
@@ -87,6 +143,16 @@ export default function FeedbackSection() {
   const [hoverRating, setHoverRating] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+
+  // Enforce one submission per terminal session/device
+  const [hasSubmitted, setHasSubmitted] = useState(() => {
+    try {
+      return localStorage.getItem('portfolio_review_submitted') === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [isAnimatingOut, setIsAnimatingOut] = useState(false);
 
   // ── Load on mount ──
   useEffect(() => {
@@ -137,7 +203,7 @@ export default function FeedbackSection() {
 
   // ── Submit handler ──
   const handleSubmit = useCallback(() => {
-    if (rating === 0) return;
+    if (rating === 0 || hasSubmitted || isAnimatingOut) return;
 
     const newReview: Review = {
       id: generateId(),
@@ -147,9 +213,10 @@ export default function FeedbackSection() {
       date: new Date().toISOString(),
     };
 
-    setReviews(prev => [...prev, newReview]);
+    // Trigger laser liquid gas out animation
+    setIsAnimatingOut(true);
 
-    // Also send to backend
+    // Send to backend
     fetch(getApiUrl('/api/reviews'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -158,16 +225,48 @@ export default function FeedbackSection() {
         rating,
         comment: comment.trim(),
       }),
-    }).catch(err => console.error('Network error sending review:', err));
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('API post failed');
+        return res.json();
+      })
+      .then(() => {
+        // Sync with backend immediately to get updated average
+        return fetch(getApiUrl('/api/reviews'));
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setReviews(data);
+          saveReviews(data);
+        }
+      })
+      .catch(err => {
+        console.error('Network error sending/syncing review:', err);
+        // Fallback: manually update client-side state if network request failed
+        setReviews(prev => {
+          const exists = prev.some(r => r.id === newReview.id || (r.name === newReview.name && r.comment === newReview.comment && r.rating === newReview.rating));
+          if (!exists) {
+            return [...prev, newReview];
+          }
+          return prev;
+        });
+      });
 
-    // Reset form
-    setName('');
-    setComment('');
-    setRating(0);
-    setHoverRating(0);
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3500);
-  }, [rating, name, comment]);
+    // Reset and complete animation
+    setTimeout(() => {
+      setName('');
+      setComment('');
+      setRating(0);
+      setHoverRating(0);
+      setSubmitted(true);
+      setHasSubmitted(true);
+      try {
+        localStorage.setItem('portfolio_review_submitted', 'true');
+      } catch {}
+      setIsAnimatingOut(false);
+    }, 1200); // matches the 1.2s animation duration
+  }, [rating, name, comment, hasSubmitted, isAnimatingOut]);
 
   // ─── Metrics Calculations ──────────────────────────────────────────────────
   const totalReviews = reviews.length;
@@ -309,243 +408,275 @@ export default function FeedbackSection() {
         )}
 
         {/* ── Form Card ── */}
-        <div
-          className="review-form-card spec-card"
-          style={{
-            position: 'relative',
-            zIndex: 10,
-            maxWidth: '500px',
-            margin: '0 auto',
-            padding: '32px',
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '16px',
-          }}
-        >
-          {/* Stars */}
-          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-            <div
-              style={{
-                fontSize: '10px',
-                fontFamily: "'Courier New', monospace",
-                color: 'rgba(255,255,255,0.4)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.15em',
-                marginBottom: '16px',
-              }}
-            >
-              Select Your Rating
-            </div>
-            <div
-              style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}
-            >
-              {[1, 2, 3, 4, 5].map((star) => {
-                const active = star <= activeRating;
-                return (
-                  <button
-                    key={star}
-                    type="button"
-                    aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: 0,
-                      color: active
-                        ? '#00d2ff'
-                        : 'rgba(255,255,255,0.15)',
-                      fill: active
-                        ? 'rgba(0,210,255,0.45)'
-                        : 'transparent',
-                      filter: active
-                        ? 'drop-shadow(0 0 8px rgba(0,210,255,0.5))'
-                        : 'none',
-                      transition: 'color 0.2s, fill 0.2s, filter 0.2s',
-                      width: '40px',
-                      height: '40px',
-                    }}
-                    onMouseEnter={() => setHoverRating(star)}
-                    onMouseLeave={() => setHoverRating(0)}
-                    onClick={() => setRating(star)}
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="100%"
-                      height="100%"
-                      fill={
-                        active ? 'rgba(0,210,255,0.45)' : 'transparent'
-                      }
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    >
-                      <path
-                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                        strokeLinejoin="round"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </button>
-                );
-              })}
-            </div>
-            <div
-              style={{
-                height: '16px',
-                marginTop: '8px',
-                fontSize: '11px',
-                fontFamily: "'Courier New', monospace",
-                color: activeRating
-                  ? 'rgba(255,255,255,0.7)'
-                  : 'transparent',
-              }}
-            >
-              {ratingLabels[activeRating] || ''}
-            </div>
-          </div>
-
-          {/* Name */}
-          <div style={{ marginBottom: '16px' }}>
-            <input
-              type="text"
-              placeholder="Your name (optional)"
-              maxLength={40}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              style={{
-                width: '100%',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '8px',
-                padding: '10px 16px',
-                fontSize: '13px',
-                color: '#ffffff',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
-            />
-          </div>
-
-          {/* Comment */}
-          <div style={{ marginBottom: '20px' }}>
-            <textarea
-              placeholder="Share your thoughts... (optional)"
-              maxLength={280}
-              rows={3}
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              style={{
-                width: '100%',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '8px',
-                padding: '10px 16px',
-                fontSize: '13px',
-                color: '#ffffff',
-                outline: 'none',
-                resize: 'none',
-                boxSizing: 'border-box',
-                fontFamily: 'inherit',
-              }}
-            />
-            <div
-              style={{
-                textAlign: 'right',
-                fontSize: '10px',
-                fontFamily: "'Courier New', monospace",
-                color:
-                  comment.length >= 270
-                    ? '#ff3366'
-                    : 'rgba(255,255,255,0.4)',
-                marginTop: '4px',
-              }}
-            >
-              {comment.length}/280
-            </div>
-          </div>
-
-          {/* Submit */}
-          <button
-            type="button"
-            disabled={rating === 0}
-            onClick={handleSubmit}
+        {(!hasSubmitted || isAnimatingOut) && (
+          <div
+            className={`review-form-card spec-card ${isAnimatingOut ? 'animating-out' : ''}`}
             style={{
-              width: '100%',
-              padding: '12px',
-              borderRadius: '12px',
-              fontFamily: "'Courier New', monospace",
-              fontSize: '11px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.15em',
-              border: '1px solid',
-              cursor: rating === 0 ? 'not-allowed' : 'pointer',
-              background:
-                rating === 0
-                  ? 'rgba(255,255,255,0.02)'
-                  : 'rgba(0,210,255,0.1)',
-              borderColor:
-                rating === 0
-                  ? 'rgba(255,255,255,0.08)'
-                  : 'rgba(0,210,255,0.3)',
-              color:
-                rating === 0
-                  ? 'rgba(255,255,255,0.3)'
-                  : '#00d2ff',
-              transition: 'all 0.3s',
-            }}
-            onMouseEnter={(e) => {
-              if (rating > 0) {
-                e.currentTarget.style.background = 'rgba(0,210,255,0.2)';
-                e.currentTarget.style.boxShadow =
-                  '0 0 25px rgba(0,210,255,0.15)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (rating > 0) {
-                e.currentTarget.style.background = 'rgba(0,210,255,0.1)';
-                e.currentTarget.style.boxShadow = 'none';
-              }
+              position: 'relative',
+              zIndex: 10,
+              maxWidth: '500px',
+              margin: '0 auto',
+              padding: '32px',
+              background: 'rgba(255,255,255,0.02)',
+              border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: '16px',
+              overflow: 'hidden',
             }}
           >
-            Submit Review
-          </button>
+            {isAnimatingOut && <div className="laser-scan-line" />}
+            {/* Stars */}
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <div
+                style={{
+                  fontSize: '10px',
+                  fontFamily: "'Courier New', monospace",
+                  color: 'rgba(255,255,255,0.4)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.15em',
+                  marginBottom: '16px',
+                }}
+              >
+                Select Your Rating
+              </div>
+              <div
+                style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}
+              >
+                {[1, 2, 3, 4, 5].map((star) => {
+                  const active = star <= activeRating;
+                  return (
+                    <button
+                      key={star}
+                      type="button"
+                      aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: 0,
+                        color: active
+                          ? '#00d2ff'
+                          : 'rgba(255,255,255,0.15)',
+                        fill: active
+                          ? 'rgba(0,210,255,0.45)'
+                          : 'transparent',
+                        filter: active
+                          ? 'drop-shadow(0 0 8px rgba(0,210,255,0.5))'
+                          : 'none',
+                        transition: 'color 0.2s, fill 0.2s, filter 0.2s',
+                        width: '40px',
+                        height: '40px',
+                      }}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      onClick={() => setRating(star)}
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="100%"
+                        height="100%"
+                        fill={
+                          active ? 'rgba(0,210,255,0.45)' : 'transparent'
+                        }
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                      >
+                        <path
+                          d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                          strokeLinejoin="round"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </button>
+                  );
+                })}
+              </div>
+              <div
+                style={{
+                  height: '16px',
+                  marginTop: '8px',
+                  fontSize: '11px',
+                  fontFamily: "'Courier New', monospace",
+                  color: activeRating
+                    ? 'rgba(255,255,255,0.7)'
+                    : 'transparent',
+                }}
+              >
+                {ratingLabels[activeRating] || ''}
+              </div>
+            </div>
 
-          {/* Success Toast */}
-          {submitted && (
-            <div
+            {/* Name */}
+            <div style={{ marginBottom: '16px' }}>
+              <input
+                type="text"
+                placeholder="Your name (optional)"
+                maxLength={40}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  width: '100%',
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  padding: '10px 16px',
+                  fontSize: '13px',
+                  color: '#ffffff',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+
+            {/* Comment */}
+            <div style={{ marginBottom: '20px' }}>
+              <textarea
+                placeholder="Share your thoughts... (optional)"
+                maxLength={280}
+                rows={3}
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                style={{
+                  width: '100%',
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  padding: '10px 16px',
+                  fontSize: '13px',
+                  color: '#ffffff',
+                  outline: 'none',
+                  resize: 'none',
+                  boxSizing: 'border-box',
+                  fontFamily: 'inherit',
+                }}
+              />
+              <div
+                style={{
+                  textAlign: 'right',
+                  fontSize: '10px',
+                  fontFamily: "'Courier New', monospace",
+                  color:
+                    comment.length >= 270
+                      ? '#ff3366'
+                      : 'rgba(255,255,255,0.4)',
+                  marginTop: '4px',
+                }}
+              >
+                {comment.length}/280
+              </div>
+            </div>
+
+            {/* Submit */}
+            <button
+              type="button"
+              disabled={rating === 0}
+              onClick={handleSubmit}
               style={{
-                position: 'absolute',
-                bottom: '-60px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                background: 'rgba(10,10,10,0.95)',
-                border: '1px solid rgba(0,210,255,0.3)',
-                padding: '12px 24px',
+                width: '100%',
+                padding: '12px',
                 borderRadius: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                fontSize: '12px',
-                color: '#ffffff',
-                pointerEvents: 'none',
-                backdropFilter: 'blur(12px)',
-                whiteSpace: 'nowrap',
-                zIndex: 50,
+                fontFamily: "'Courier New', monospace",
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.15em',
+                border: '1px solid',
+                cursor: rating === 0 ? 'not-allowed' : 'pointer',
+                background:
+                  rating === 0
+                    ? 'rgba(255,255,255,0.02)'
+                    : 'rgba(0,210,255,0.1)',
+                borderColor:
+                  rating === 0
+                    ? 'rgba(255,255,255,0.08)'
+                    : 'rgba(0,210,255,0.3)',
+                color:
+                  rating === 0
+                    ? 'rgba(255,255,255,0.3)'
+                    : '#00d2ff',
+                transition: 'all 0.3s',
+              }}
+              onMouseEnter={(e) => {
+                if (rating > 0) {
+                  e.currentTarget.style.background = 'rgba(0,210,255,0.2)';
+                  e.currentTarget.style.boxShadow =
+                    '0 0 25px rgba(0,210,255,0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (rating > 0) {
+                  e.currentTarget.style.background = 'rgba(0,210,255,0.1)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }
               }}
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#22c55e"
-                strokeWidth="2.5"
+              Submit Review
+            </button>
+
+            {/* Success Toast */}
+            {submitted && (
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '-60px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  background: 'rgba(10,10,10,0.95)',
+                  border: '1px solid rgba(0,210,255,0.3)',
+                  padding: '12px 24px',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '12px',
+                  color: '#ffffff',
+                  pointerEvents: 'none',
+                  backdropFilter: 'blur(12px)',
+                  whiteSpace: 'nowrap',
+                  zIndex: 50,
+                }}
               >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#22c55e"
+                  strokeWidth="2.5"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                Review submitted! Thank you 🌌
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Success/Committed HUD Panel ── */}
+        {hasSubmitted && !isAnimatingOut && (
+          <div
+            className="reviews-hud-panel font-mono text-xs"
+            style={{
+              borderColor: 'rgba(0, 212, 255, 0.2)',
+              background: 'rgba(0, 212, 255, 0.01)',
+              boxShadow: '0 0 20px rgba(0, 212, 255, 0.05)',
+              textAlign: 'center',
+              padding: '32px',
+              maxWidth: '500px',
+              margin: '0 auto',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 8px #00d2ff)', animation: 'telemetryPulse 2s infinite' }}>
                 <polyline points="20 6 9 17 4 12" />
               </svg>
-              Review submitted! Thank you 🌌
             </div>
-          )}
-        </div>
+            <div style={{ color: '#00d2ff', fontWeight: 'bold', fontSize: '11px', letterSpacing: '0.15em', marginBottom: '8px' }}>
+              [ TRANSMISSION_COMMITTED ]
+            </div>
+            <p style={{ color: 'rgba(255, 255, 255, 0.6)', lineHeight: '1.6', margin: 0 }}>
+              Your feedback has been securely registered. Only one review transmission is permitted per terminal. Thank you for scanning the portfolio!
+            </p>
+          </div>
+        )}
 
         {/* ── Empty State ── */}
         {reviews.length === 0 && (
