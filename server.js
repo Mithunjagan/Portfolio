@@ -284,6 +284,22 @@ ${relevantContext}`;
   }
 });
 
+// GET route to fetch all reviews
+app.get('/api/reviews', (req, res) => {
+  try {
+    const reviewsFilePath = path.join(__dirname, 'data', 'reviews.json');
+    if (fs.existsSync(reviewsFilePath)) {
+      const fileData = fs.readFileSync(reviewsFilePath, 'utf8');
+      const reviewsList = JSON.parse(fileData);
+      return res.json(reviewsList);
+    }
+    res.json([]);
+  } catch (error) {
+    console.error("Error reading reviews file:", error);
+    res.status(500).json({ error: "Failed to read reviews from server." });
+  }
+});
+
 // Reviews API Route to store submissions persistently in a JSON file
 app.post('/api/reviews', async (req, res) => {
   try {

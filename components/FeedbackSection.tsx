@@ -81,7 +81,25 @@ export default function FeedbackSection() {
 
   // ── Load on mount ──
   useEffect(() => {
-    setReviews(loadReviews());
+    // First, load from localStorage for instant render
+    const local = loadReviews();
+    if (local.length > 0) {
+      setReviews(local);
+    }
+
+    // Fetch global reviews from server
+    fetch('/api/reviews')
+      .then(res => {
+        if (!res.ok) throw new Error(`Server returned status ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) {
+          setReviews(data);
+          saveReviews(data);
+        }
+      })
+      .catch(err => console.error('Error fetching global reviews:', err));
   }, []);
 
   // ── Persist on change ──
