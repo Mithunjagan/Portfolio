@@ -1,5 +1,5 @@
 // -------------------------------------------------------------
-// CYBERNETIC CHRONICLES - INTERACTIVE APPLICATION CODE
+// PORTFOLIO - INTERACTIVE APPLICATION CODE
 // -------------------------------------------------------------
 
 // Global Mouse Tracking (runs immediately to capture user pointer before app loading finishes)
@@ -17,7 +17,7 @@ const images = [];
 const imageSequenceObj = { frame: 0 };
 
 // DOM Selectors
-const canvas = document.getElementById('cyborg-canvas');
+const canvas = document.getElementById('scroll-canvas');
 const context = canvas.getContext('2d');
 const loaderBar = document.getElementById('loader-bar');
 const loaderPercentage = document.getElementById('loader-percentage');
@@ -27,14 +27,14 @@ const loaderConsole = document.getElementById('loader-console');
 
 // Telemetry console logs for immersive loading screen
 const consoleMsgs = [
-  "CONNECTING TO AEGIS CORE NETWORK...",
+  "LOADING FRAME SEQUENCE...",
   "RESOLVING FRAME DECOMPRESSION BUFFER...",
-  "INITIALIZING NEURAL RECEPTOR CALIBRATION...",
+  "INITIALIZING SCROLL ANIMATION ENGINE...",
   "CACHING HIGH-FIDELITY IMAGE TELEMETRY...",
-  "VERIFYING INTEGRITY OF QUANTUM CHASSIS MESH...",
+  "VERIFYING ASSET INTEGRITY...",
   "HARDWARE ACCELERATION: COMPATIBLE.",
-  "INTEGRATING BIOPORT BIO-SIGNALS...",
-  "CALIBRATING OCULAR SENSORS..."
+  "PREPARING INTERACTIVE COMPONENTS...",
+  "CALIBRATING DISPLAY PIPELINE..."
 ];
 
 // Log random statuses to the preloader console
@@ -57,21 +57,21 @@ class TextScrambler {
   }
   scramble(duration = 800) {
     if (!this.el) return Promise.resolve();
-    
+
     // Protect original text content from corruption if triggered during a running scramble
     if (!this.isScrambling) {
       this.originalHTML = this.el.innerHTML;
       this.newText = this.el.textContent.trim();
     }
-    
+
     const length = this.newText.length;
     if (length === 0) return Promise.resolve();
     const promise = new Promise((resolve) => this.resolve = resolve);
     this.queue = [];
     this.isScrambling = true;
-    
+
     const maxFrames = Math.floor(duration / 16.7);
-    
+
     for (let i = 0; i < length; i++) {
       const char = this.newText[i];
       if (char === ' ') {
@@ -82,7 +82,7 @@ class TextScrambler {
       const end = start + Math.floor(Math.random() * (maxFrames * 0.6)) + 5;
       this.queue.push({ from: char, to: char, start, end });
     }
-    
+
     cancelAnimationFrame(this.frameRequest);
     this.frame = 0;
     this.update();
@@ -146,208 +146,207 @@ let loadedImagesCount = 0;
 function imageLoaded() {
   loadedImagesCount++;
   const progressPercent = Math.floor((loadedImagesCount / totalFrames) * 100);
-  
+
   // Update UI linear progress bar
   if (loaderBar) {
     loaderBar.style.width = `${progressPercent}%`;
   }
-  
+
   // Update UI percentage text
   if (loaderPercentage) {
     loaderPercentage.textContent = `${progressPercent}%`;
   }
-  
+
   // Update SVG ring stroke-dashoffset
   const ringCircle = document.getElementById('ring-progress-circle');
   if (ringCircle) {
     const circumference = 282.74; // Circumference for r=45
     const offset = circumference - (progressPercent / 100) * circumference;
     ringCircle.style.strokeDashoffset = offset;
-  }
-  
-  if (loadedImagesCount === totalFrames) {
-    clearInterval(consoleInterval);
-    if (loaderStatusText) {
-      loaderStatusText.textContent = "SYNAPSE SYNC SECURE. READY TO DEPLOY.";
-    }
-    
-    // Animate loader out using sci-fi split shutter panels
-    setTimeout(() => {
-      // 1. Fade out preloader content elements
-      gsap.to('.preloader-content', {
-        opacity: 0,
-        scale: 0.95,
-        duration: 0.55,
-        ease: "power2.inOut",
-        onComplete: () => {
-          // 2. Optic sensor wakeup blinking sequence
-          const shutterTL = gsap.timeline({
-            delay: 1.0,
-            onComplete: () => {
-              if (preloader) {
-                preloader.style.display = 'none';
+    if (loadedImagesCount === totalFrames) {
+      clearInterval(consoleInterval);
+      if (loaderStatusText) {
+        loaderStatusText.textContent = "ALL ASSETS LOADED. READY TO DEPLOY.";
+      }
+
+      // Animate loader out using sci-fi split shutter panels
+      setTimeout(() => {
+        // 1. Fade out preloader content elements
+        gsap.to('.preloader-content', {
+          opacity: 0,
+          scale: 0.95,
+          duration: 0.55,
+          ease: "power2.inOut",
+          onComplete: () => {
+            // 2. Optic sensor wakeup blinking sequence
+            const shutterTL = gsap.timeline({
+              delay: 1.0,
+              onComplete: () => {
+                if (preloader) {
+                  preloader.style.display = 'none';
+                }
               }
-            }
-          });
-          
-          // Set initial slumped head state and heavy blur/dim state on #app-container and header
-          gsap.set(['#app-container', 'header'], {
-            '--wake-blur': '25px',
-            '--wake-brightness': 0.1,
-            opacity: 0,
-            y: 45,
-            x: -18,
-            rotation: -2.2,
-            scale: 0.95
-          });
+            });
 
-          // ==========================================
-          // 1. FIRST TRY: Open eyes, vision is blurry
-          // ==========================================
-          shutterTL.to('.preloader-bg-top', { yPercent: -30, duration: 0.3, ease: "power1.out" }, 0)
-                   .to('.preloader-bg-bottom', { yPercent: 30, duration: 0.3, ease: "power1.out" }, 0)
-                   .to(['#app-container', 'header'], { 
-                     '--wake-blur': '24px', 
-                     '--wake-brightness': 0.8, 
-                     opacity: 0.3,
-                     y: 35,
-                     x: -14,
-                     rotation: -1.8,
-                     scale: 0.96,
-                     duration: 0.3, 
-                     ease: "power1.out" 
-                   }, 0)
-                   
-                   // Hold open slightly, vision remains blurry
-                   .to(['#app-container', 'header'], {
-                     y: 30,
-                     x: -11,
-                     rotation: -1.4,
-                     scale: 0.97,
-                     duration: 0.35,
-                     ease: "none"
-                   })
-                   
-                   // Close the eyes
-                   .to('.preloader-bg-top', { yPercent: 0, duration: 0.15, ease: "power1.in" }, ">")
-                   .to('.preloader-bg-bottom', { yPercent: 0, duration: 0.15, ease: "power1.in" }, "<")
-                   .to(['#app-container', 'header'], { 
-                     '--wake-blur': '25px', 
-                     '--wake-brightness': 0.1, 
-                     opacity: 0,
-                     duration: 0.15, 
-                     ease: "power1.in" 
-                   }, "<")
-                   
-          // ==========================================
-          // 2. PAUSE: Eyes closed, head drifts
-          // ==========================================
-                   .to(['#app-container', 'header'], {
-                     y: 25,
-                     x: -8,
-                     rotation: -1.0,
-                     scale: 0.98,
-                     duration: 0.3,
-                     ease: "power1.inOut"
-                   }, ">")
+            // Set initial slumped head state and heavy blur/dim state on #app-container and header
+            gsap.set(['#app-container', 'header'], {
+              '--wake-blur': '25px',
+              '--wake-brightness': 0.1,
+              opacity: 0,
+              y: 45,
+              x: -18,
+              rotation: -2.2,
+              scale: 0.95
+            });
 
-          // ==========================================
-          // 3. OPEN AGAIN AND BLINKS TWO TIMES (FAST FLUTTER)
-          // ==========================================
-                   // Open again (to 60%)
-                   .to('.preloader-bg-top', { yPercent: -60, duration: 0.2, ease: "power1.out" }, ">")
-                   .to('.preloader-bg-bottom', { yPercent: 60, duration: 0.2, ease: "power1.out" }, "<")
-                   .to(['#app-container', 'header'], { 
-                     '--wake-blur': '14px', 
-                     '--wake-brightness': 1.5, 
-                     opacity: 0.6,
-                     y: 18,
-                     x: -5,
-                     rotation: -0.5,
-                     duration: 0.2, 
-                     ease: "power1.out" 
-                   }, "<")
-                   
-                   // Blink 1: Close quickly
-                   .to('.preloader-bg-top', { yPercent: 0, duration: 0.05, ease: "power1.in" }, "+=0.08")
-                   .to('.preloader-bg-bottom', { yPercent: 0, duration: 0.05, ease: "power1.in" }, "<")
-                   .to(['#app-container', 'header'], { '--wake-brightness': 0.15, opacity: 0.1, duration: 0.05, ease: "power1.in" }, "<")
-                   
-                   // Reopen to 75%
-                   .to('.preloader-bg-top', { yPercent: -75, duration: 0.08, ease: "power1.out" })
-                   .to('.preloader-bg-bottom', { yPercent: 75, duration: 0.08, ease: "power1.out" }, "<")
-                   .to(['#app-container', 'header'], { 
-                     '--wake-blur': '8px', 
-                     '--wake-brightness': 1.9, 
-                     opacity: 0.75,
-                     y: 10,
-                     x: -3,
-                     rotation: -0.2,
-                     duration: 0.08, 
-                     ease: "power1.out" 
-                   }, "<")
-                   
-                   // Blink 2: Close quickly
-                   .to('.preloader-bg-top', { yPercent: 0, duration: 0.05, ease: "power1.in" }, "+=0.06")
-                   .to('.preloader-bg-bottom', { yPercent: 0, duration: 0.05, ease: "power1.in" }, "<")
-                   .to(['#app-container', 'header'], { '--wake-brightness': 0.15, opacity: 0.1, duration: 0.05, ease: "power1.in" }, "<")
-                   
-                   // Open fully to 100% (Final wake)
-                   .to('.preloader-bg-top', { yPercent: -100, duration: 0.9, ease: "power2.out" })
-                   .to('.preloader-bg-bottom', { yPercent: 100, duration: 0.9, ease: "power2.out" }, "<")
-                   
-                   // Restore pointer events and initialize application scrolling/interactions immediately as eyelids open
-                   .call(() => {
-                     if (preloader) {
-                       preloader.style.pointerEvents = 'none';
-                     }
-                     gsap.set(['#app-container', 'header'], { pointerEvents: 'auto' });
-                     initializeApplication();
-                   }, null, "<")
-                   
-                   // Head lifts and straightens fully, resolving smoothly
-                   .to(['#app-container', 'header'], { 
-                     y: 0, 
-                     x: 0, 
-                     rotation: 0, 
-                     scale: 1.0, 
-                     opacity: 1.0,
-                     duration: 1.5, 
-                     ease: "power2.out" 
-                   }, "<")
-                   
-                   // Blinding light flash peaks softly
-                   .to(['#app-container', 'header'], { 
-                     '--wake-blur': '6px', 
-                     '--wake-brightness': 2.2, 
-                     duration: 0.5, 
-                     ease: "power1.out" 
-                   }, "<")
-                   
-                   // Focus resolves and brightness stabilizes smoothly ("recovered vision")
-                   .to(['#app-container', 'header'], { 
-                     '--wake-blur': '0px', 
-                     '--wake-brightness': 1.0, 
-                     duration: 2.0, 
-                     ease: "power3.out",
-                     onComplete: () => {
-                       // Add class to disable CSS filter selectors and clear all GSAP inline styles
-                       const container = document.getElementById('app-container');
-                       if (container) {
-                         container.classList.add('woke');
-                       }
-                       const headerEl = document.querySelector('header');
-                       if (headerEl) {
-                         headerEl.classList.add('woke');
-                       }
-                       gsap.set(['#app-container', 'header'], { 
-                         clearProps: "all" 
-                       });
-                     }
-                   }, "-=0.1");
-        }
-      });
-    }, 800);
+            // ==========================================
+            // 1. FIRST TRY: Open eyes, vision is blurry
+            // ==========================================
+            shutterTL.to('.preloader-bg-top', { yPercent: -30, duration: 0.3, ease: "power1.out" }, 0)
+              .to('.preloader-bg-bottom', { yPercent: 30, duration: 0.3, ease: "power1.out" }, 0)
+              .to(['#app-container', 'header'], {
+                '--wake-blur': '24px',
+                '--wake-brightness': 0.8,
+                opacity: 0.3,
+                y: 35,
+                x: -14,
+                rotation: -1.8,
+                scale: 0.96,
+                duration: 0.3,
+                ease: "power1.out"
+              }, 0)
+
+              // Hold open slightly, vision remains blurry
+              .to(['#app-container', 'header'], {
+                y: 30,
+                x: -11,
+                rotation: -1.4,
+                scale: 0.97,
+                duration: 0.35,
+                ease: "none"
+              })
+
+              // Close the eyes
+              .to('.preloader-bg-top', { yPercent: 0, duration: 0.15, ease: "power1.in" }, ">")
+              .to('.preloader-bg-bottom', { yPercent: 0, duration: 0.15, ease: "power1.in" }, "<")
+              .to(['#app-container', 'header'], {
+                '--wake-blur': '25px',
+                '--wake-brightness': 0.1,
+                opacity: 0,
+                duration: 0.15,
+                ease: "power1.in"
+              }, "<")
+
+            // ==========================================
+            // 2. PAUSE: Eyes closed, head drifts
+            // ==========================================
+              .to(['#app-container', 'header'], {
+                y: 25,
+                x: -8,
+                rotation: -1.0,
+                scale: 0.98,
+                duration: 0.3,
+                ease: "power1.inOut"
+              }, ">")
+
+            // ==========================================
+            // 3. OPEN AGAIN AND BLINKS TWO TIMES (FAST FLUTTER)
+            // ==========================================
+              // Open again (to 60%)
+              .to('.preloader-bg-top', { yPercent: -60, duration: 0.2, ease: "power1.out" }, ">")
+              .to('.preloader-bg-bottom', { yPercent: 60, duration: 0.2, ease: "power1.out" }, "<")
+              .to(['#app-container', 'header'], {
+                '--wake-blur': '14px',
+                '--wake-brightness': 1.5,
+                opacity: 0.6,
+                y: 18,
+                x: -5,
+                rotation: -0.5,
+                duration: 0.2,
+                ease: "power1.out"
+              }, "<")
+
+              // Blink 1: Close quickly
+              .to('.preloader-bg-top', { yPercent: 0, duration: 0.05, ease: "power1.in" }, "+=0.08")
+              .to('.preloader-bg-bottom', { yPercent: 0, duration: 0.05, ease: "power1.in" }, "<")
+              .to(['#app-container', 'header'], { '--wake-brightness': 0.15, opacity: 0.1, duration: 0.05, ease: "power1.in" }, "<")
+
+              // Reopen to 75%
+              .to('.preloader-bg-top', { yPercent: -75, duration: 0.08, ease: "power1.out" })
+              .to('.preloader-bg-bottom', { yPercent: 75, duration: 0.08, ease: "power1.out" }, "<")
+              .to(['#app-container', 'header'], {
+                '--wake-blur': '8px',
+                '--wake-brightness': 1.9,
+                opacity: 0.75,
+                y: 10,
+                x: -3,
+                rotation: -0.2,
+                duration: 0.08,
+                ease: "power1.out"
+              }, "<")
+
+              // Blink 2: Close quickly
+              .to('.preloader-bg-top', { yPercent: 0, duration: 0.05, ease: "power1.in" }, "+=0.06")
+              .to('.preloader-bg-bottom', { yPercent: 0, duration: 0.05, ease: "power1.in" }, "<")
+              .to(['#app-container', 'header'], { '--wake-brightness': 0.15, opacity: 0.1, duration: 0.05, ease: "power1.in" }, "<")
+
+              // Open fully to 100% (Final wake)
+              .to('.preloader-bg-top', { yPercent: -100, duration: 0.9, ease: "power2.out" })
+              .to('.preloader-bg-bottom', { yPercent: 100, duration: 0.9, ease: "power2.out" }, "<")
+
+              // Restore pointer events and initialize application scrolling/interactions immediately as eyelids open
+              .call(() => {
+                if (preloader) {
+                  preloader.style.pointerEvents = 'none';
+                }
+                gsap.set(['#app-container', 'header'], { pointerEvents: 'auto' });
+                initializeApplication();
+              }, null, "<")
+
+              // Head lifts and straightens fully, resolving smoothly
+              .to(['#app-container', 'header'], {
+                y: 0,
+                x: 0,
+                rotation: 0,
+                scale: 1.0,
+                opacity: 1.0,
+                duration: 1.5,
+                ease: "power2.out"
+              }, "<")
+
+              // Blinding light flash peaks softly
+              .to(['#app-container', 'header'], {
+                '--wake-blur': '6px',
+                '--wake-brightness': 2.2,
+                duration: 0.5,
+                ease: "power1.out"
+              }, "<")
+
+              // Focus resolves and brightness stabilizes smoothly ("recovered vision")
+              .to(['#app-container', 'header'], {
+                '--wake-blur': '0px',
+                '--wake-brightness': 1.0,
+                duration: 2.0,
+                ease: "power3.out",
+                onComplete: () => {
+                  // Add class to disable CSS filter selectors and clear all GSAP inline styles
+                  const container = document.getElementById('app-container');
+                  if (container) {
+                    container.classList.add('woke');
+                  }
+                  const headerEl = document.querySelector('header');
+                  if (headerEl) {
+                    headerEl.classList.add('woke');
+                  }
+                  gsap.set(['#app-container', 'header'], {
+                    clearProps: "all"
+                  });
+                }
+              }, "-=0.1");
+          }
+        });
+      }, 800);
+    }
   }
 }
 
@@ -369,22 +368,22 @@ function preloadImages() {
 function drawFrame(index) {
   const img = images[index];
   if (!img) return;
-  
+
   const scale = window.devicePixelRatio || 1;
   const cw = canvas.width / scale;
   const ch = canvas.height / scale;
 
   // 1. Clear canvas to transparent
   context.clearRect(0, 0, cw, ch);
-  
+
   const imgWidth = img.naturalWidth || img.width;
   const imgHeight = img.naturalHeight || img.height;
   const imgRatio = imgWidth / imgHeight;
   const canvasRatio = cw / ch;
-  
+
   let drawWidth, drawHeight;
   let offsetX, offsetY;
-  
+
   // Cover logic: scale image to fully cover the screen area
   if (imgRatio > canvasRatio) {
     // Canvas is taller than the image aspect ratio (e.g. phone screen). Match height, crop width.
@@ -399,7 +398,7 @@ function drawFrame(index) {
     offsetX = 0;
     offsetY = (ch - drawHeight) / 2;
   }
-  
+
   // 2. Draw matching vertical background gradient inside the image area
   const grad = context.createLinearGradient(offsetX, offsetY, offsetX, offsetY + drawHeight);
   grad.addColorStop(0.0, 'rgb(157, 149, 146)');
@@ -408,10 +407,10 @@ function drawFrame(index) {
   grad.addColorStop(0.46, 'rgb(209, 204, 200)');
   grad.addColorStop(0.67, 'rgb(215, 212, 207)');
   grad.addColorStop(1.0, 'rgb(215, 212, 207)');
-  
+
   context.fillStyle = grad;
   context.fillRect(offsetX - 1, offsetY - 1, drawWidth + 2, drawHeight + 2);
-  
+
   // 3. Draw the character image
   context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
 
@@ -421,21 +420,21 @@ function drawFrame(index) {
   hMask.addColorStop(0.10, 'rgba(0, 0, 0, 1)');
   hMask.addColorStop(0.90, 'rgba(0, 0, 0, 1)');
   hMask.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
-  
+
   context.globalCompositeOperation = 'destination-in';
   context.fillStyle = hMask;
   context.fillRect(offsetX, 0, drawWidth, ch);
-  
+
   // 5. Apply vertical transparency mask (destination-in)
   const vMask = context.createLinearGradient(0, offsetY, 0, offsetY + drawHeight);
   vMask.addColorStop(0.0, 'rgba(0, 0, 0, 0)');
   vMask.addColorStop(0.05, 'rgba(0, 0, 0, 1)');
   vMask.addColorStop(0.95, 'rgba(0, 0, 0, 1)');
   vMask.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
-  
+
   context.fillStyle = vMask;
   context.fillRect(0, offsetY, cw, drawHeight);
-  
+
   // Restore default composition operation
   context.globalCompositeOperation = 'source-over';
 }
@@ -444,11 +443,11 @@ function drawFrame(index) {
 function resizeCanvas() {
   const scale = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
-  
+
   canvas.width = rect.width * scale;
   canvas.height = rect.height * scale;
   context.scale(scale, scale);
-  
+
   drawFrame(Math.floor(imageSequenceObj.frame));
 }
 
@@ -491,7 +490,7 @@ function initializeApplication() {
   gsap.registerPlugin(ScrollTrigger);
   window.addEventListener('resize', resizeCanvas);
   resizeCanvas();
-  
+
   // Render the initial frame
   drawFrame(0);
 
@@ -521,40 +520,40 @@ function initializeApplication() {
         scrub: 1.2 /* Smooth scroll inertia feel */
       }
     })
-    .fromTo('.phone-frame', {
-      rotationY: -10,
-      rotationX: 6,
-      scale: 0.96
-    }, {
-      rotationY: 10,
-      rotationX: -6,
-      scale: 1,
-      ease: 'power1.inOut'
-    })
-    .fromTo('.screen-glare', {
-      xPercent: -15,
-      yPercent: -15
-    }, {
-      xPercent: 15,
-      yPercent: 15,
-      ease: 'power1.inOut'
-    }, 0)
-    .fromTo('.phone-spotlight', {
-      scale: 0.85,
-      opacity: 0.6
-    }, {
-      scale: 1.15,
-      opacity: 1,
-      ease: 'power1.inOut'
-    }, 0)
-    .fromTo('.bg-watermark', {
-      opacity: 0.4,
-      scale: 0.95
-    }, {
-      opacity: 0.9,
-      scale: 1.05,
-      ease: 'power1.inOut'
-    }, 0);
+      .fromTo('.phone-frame', {
+        rotationY: -10,
+        rotationX: 6,
+        scale: 0.96
+      }, {
+        rotationY: 10,
+        rotationX: -6,
+        scale: 1,
+        ease: 'power1.inOut'
+      })
+      .fromTo('.screen-glare', {
+        xPercent: -15,
+        yPercent: -15
+      }, {
+        xPercent: 15,
+        yPercent: 15,
+        ease: 'power1.inOut'
+      }, 0)
+      .fromTo('.phone-spotlight', {
+        scale: 0.85,
+        opacity: 0.6
+      }, {
+        scale: 1.15,
+        opacity: 1,
+        ease: 'power1.inOut'
+      }, 0)
+      .fromTo('.bg-watermark', {
+        opacity: 0.4,
+        scale: 0.95
+      }, {
+        opacity: 0.9,
+        scale: 1.05,
+        ease: 'power1.inOut'
+      }, 0);
   }
 
   // 5. Setup ScrollTrigger activations for the HUD floating labels
@@ -623,21 +622,21 @@ function initializeApplication() {
     if (!targetLink || !navContainer || !indicator) return;
     const linkRect = targetLink.getBoundingClientRect();
     const containerRect = navContainer.getBoundingClientRect();
-    
+
     const leftOffset = linkRect.left - containerRect.left;
     const width = linkRect.width;
-    
+
     // Determine current position to check if we are actually moving
     const currentLeft = parseFloat(indicator.style.left) || 0;
     const currentWidth = parseFloat(indicator.style.width) || 0;
     const isFirstRun = currentWidth === 0 || window.getComputedStyle(indicator).opacity === '0';
-    
+
     gsap.killTweensOf(indicator);
-    
+
     // Target scale: if hovered, keep zoomed in
     const targetScaleX = isNavbarHovered ? 1.18 : 1.0;
     const targetScaleY = isNavbarHovered ? 1.25 : 1.0;
-    
+
     if (isFirstRun) {
       gsap.set(indicator, {
         left: leftOffset,
@@ -646,7 +645,7 @@ function initializeApplication() {
         scaleX: targetScaleX,
         scaleY: targetScaleY
       });
-      
+
       // Synchronize text scale
       links.forEach(l => {
         gsap.set(l, {
@@ -658,9 +657,9 @@ function initializeApplication() {
     } else {
       const dist = Math.abs(leftOffset - currentLeft);
       const shouldZoom = dist > 8; // Only trigger traveling swell if moving a significant distance
-      
+
       const tl = gsap.timeline();
-      
+
       tl.to(indicator, {
         left: leftOffset,
         width: width,
@@ -668,7 +667,7 @@ function initializeApplication() {
         duration: 0.5,
         ease: "power2.out"
       }, 0);
-      
+
       if (isNavbarHovered) {
         if (shouldZoom) {
           // Extra stretch/swell during travel
@@ -678,12 +677,12 @@ function initializeApplication() {
             duration: 0.25,
             ease: "power1.out"
           }, 0)
-          .to(indicator, {
-            scaleX: 1.18,
-            scaleY: 1.25,
-            duration: 0.25,
-            ease: "power2.inOut"
-          }, 0.25);
+            .to(indicator, {
+              scaleX: 1.18,
+              scaleY: 1.25,
+              duration: 0.25,
+              ease: "power2.inOut"
+            }, 0.25);
         } else {
           // Stay in liquid zoom mode
           tl.to(indicator, {
@@ -702,14 +701,14 @@ function initializeApplication() {
           ease: "power2.out"
         }, 0);
       }
-      
+
       // Magnify / scale the link texts through the glass
       links.forEach(l => {
         const isTarget = (l === targetLink);
         const targetTextScale = (isTarget && isNavbarHovered) ? 1.22 : 1.0;
         const targetColor = isTarget ? "#ffffff" : "rgba(255, 255, 255, 0.5)";
         const targetShadow = (isTarget && isNavbarHovered) ? "0 0 10px rgba(0, 210, 255, 0.6)" : "none";
-        
+
         gsap.to(l, {
           scale: targetTextScale,
           color: targetColor,
@@ -724,7 +723,7 @@ function initializeApplication() {
   // Update position initially after a brief delay for rendering
   setTimeout(() => {
     if (activeLink) {
-        updateIndicator(activeLink);
+      updateIndicator(activeLink);
     }
   }, 300);
 
@@ -794,7 +793,7 @@ function initializeApplication() {
   if (sig) {
     const text = sig.textContent.trim();
     sig.innerHTML = '';
-    
+
     // Split text into letters and wrap in spans
     const letters = [...text].map(char => {
       const span = document.createElement('span');
@@ -809,7 +808,7 @@ function initializeApplication() {
       sig.appendChild(span);
       return span;
     });
-    
+
     // Temporarily lay out naturally to measure widths
     const targetWidths = letters.map(span => {
       span.style.width = 'auto';
@@ -820,7 +819,7 @@ function initializeApplication() {
       span.style.opacity = '0';
       return w;
     });
-    
+
     // Animate letters one by one using a GSAP timeline
     const sigTL = gsap.timeline({ delay: 0.6 });
     letters.forEach((span, i) => {
@@ -833,7 +832,7 @@ function initializeApplication() {
       }, i * 0.12);
     });
   }
-  
+
   // 11. Initialize Twinkling Starfield Background
   initStars();
 
@@ -877,7 +876,7 @@ function initializeApplication() {
     '.endcard-section h2, ' +                 // Endcard title "THE END"
     '.endcard-section .section-tag'           // Endcard status tag
   );
-  
+
   titlesToHoverScramble.forEach(el => {
     el.addEventListener('mouseenter', () => {
       triggerScramble(el, 800);
@@ -922,6 +921,201 @@ function initializeApplication() {
     }
   }
 
+  // 13. Enable Constant Space Roaming/Floating for the Chatbot Button
+  const chatBtn = document.querySelector('.chat-widget-button');
+  if (chatBtn) {
+    let isChatBtnHovered = false;
+    let chatFloatTween = null;
+
+    const startChatFloating = () => {
+      if (chatFloatTween) return;
+      chatFloatTween = gsap.to(chatBtn, {
+        y: "-=3",
+        x: "-=2",
+        rotation: "-=1.5",
+        duration: 2.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+    };
+
+    // Start chat button drifting immediately
+    startChatFloating();
+
+    chatBtn.addEventListener('mouseenter', () => {
+      isChatBtnHovered = true;
+      if (chatFloatTween) {
+        chatFloatTween.kill();
+        chatFloatTween = null;
+      }
+    });
+
+    chatBtn.addEventListener('mousemove', (e) => {
+      if (!isChatBtnHovered) return;
+      const rect = chatBtn.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+
+      const tiltX = (dy / (rect.height / 2)) * -6;
+      const tiltY = (dx / (rect.width / 2)) * 6;
+
+      gsap.to(chatBtn, {
+        rotationX: tiltX,
+        rotationY: tiltY,
+        x: dx * 0.1,
+        y: dy * 0.1,
+        rotation: 0,
+        duration: 0.35,
+        ease: "power2.out",
+        overwrite: "auto"
+      });
+    });
+
+    chatBtn.addEventListener('mouseleave', () => {
+      isChatBtnHovered = false;
+
+      // Return to center, then resume floating
+      gsap.to(chatBtn, {
+        rotationX: 0,
+        rotationY: 0,
+        x: 0,
+        y: 0,
+        rotation: 0,
+        duration: 0.6,
+        ease: "power2.out",
+        overwrite: "auto",
+        onComplete: () => {
+          if (!isChatBtnHovered) {
+            startChatFloating();
+          }
+        }
+      });
+    });
+  }
+
+  // Initialize Gravitational Floating Buttons
+  initGravityButtons();
+}
+
+// Initialize Gravitational Floating / Magnetic Buttons
+function initGravityButtons() {
+  const wrappers = document.querySelectorAll('.gravity-btn-wrapper');
+  if (wrappers.length === 0) return;
+
+  const buttonData = [];
+
+  wrappers.forEach(wrapper => {
+    const button = wrapper.querySelector('a');
+    if (!button) return;
+
+    // Determine max travel limits based on button type
+    const isResume = button.classList.contains('resume-btn');
+    const maxLimit = isResume ? 30 : 22;
+    const attractionRadius = isResume ? 100 : 80;
+    const floatSpeedMultiplier = isResume ? 0.75 : 1.0;
+
+    buttonData.push({
+      wrapper: wrapper,
+      button: button,
+      // Target offsets
+      targetX: 0,
+      targetY: 0,
+      // Current offsets
+      currentX: 0,
+      currentY: 0,
+      // Floating/Orbit offset time variables
+      timeOffset: Math.random() * 100, // random phase offset
+      floatSpeed: (0.006 + Math.random() * 0.005) * floatSpeedMultiplier,
+      floatAmp: isResume ? 3.5 : 3,
+      // Mouse interaction config
+      maxLimit: maxLimit,
+      attractionRadius: attractionRadius,
+      isHovered: false
+    });
+
+    // Bind standard hover flags
+    button.addEventListener('mouseenter', () => {
+      buttonData.forEach(d => {
+        if (d.button === button) d.isHovered = true;
+      });
+    });
+
+    button.addEventListener('mouseleave', () => {
+      buttonData.forEach(d => {
+        if (d.button === button) d.isHovered = false;
+      });
+    });
+  });
+
+  function update() {
+    const time = Date.now();
+
+    buttonData.forEach(data => {
+      // 1. Get original center position of the button relative to the viewport.
+      // To get the untranslated center, we compute its current viewport rect
+      // and subtract the current translation offset.
+      const rect = data.wrapper.getBoundingClientRect();
+      const origCenterX = rect.left + rect.width / 2 - data.currentX;
+      const origCenterY = rect.top + rect.height / 2 - data.currentY;
+
+      // 2. Compute vector from original center to global mouse pointer (which is updated live)
+      const dx = globalMouseX - origCenterX;
+      const dy = globalMouseY - origCenterY;
+      const dist = Math.hypot(dx, dy);
+
+      // Check if cursor is in range of the button
+      if (dist < data.attractionRadius) {
+        // Gravitational attraction: pull towards mouse cursor
+        // Scale attraction strength based on proximity
+        const force = 1 - (dist / data.attractionRadius); // 0 at edge, 1 at center
+        let tx = dx * 0.4 * force;
+        let ty = dy * 0.4 * force;
+
+        // Apply a slow zero-gravity orbital sweep around the cursor
+        // This adds a sci-fi space gravity orbital movement
+        const orbitSpeed = 0.002;
+        const orbitX = Math.cos(time * orbitSpeed + data.timeOffset) * 5;
+        const orbitY = Math.sin(time * orbitSpeed * 0.8 + data.timeOffset) * 5;
+
+        tx += orbitX;
+        ty += orbitY;
+
+        // Bounded clamp so it stays accessible and doesn't fly off page
+        const offsetDist = Math.hypot(tx, ty);
+        if (offsetDist > data.maxLimit) {
+          data.targetX = (tx / offsetDist) * data.maxLimit;
+          data.targetY = (ty / offsetDist) * data.maxLimit;
+        } else {
+          data.targetX = tx;
+          data.targetY = ty;
+        }
+      } else {
+        // Zero-gravity idle float around original center (slow, drift-like, low-frequency)
+        const floatX = Math.cos(time * data.floatSpeed + data.timeOffset) * data.floatAmp;
+        const floatY = Math.sin(time * data.floatSpeed * 0.85 + data.timeOffset) * data.floatAmp;
+
+        data.targetX = floatX;
+        data.targetY = floatY;
+      }
+
+      // 3. Smooth translation using linear interpolation (lerp)
+      // When hovered, react faster; when returning to idle, damp slowly
+      const speed = data.isHovered ? 0.12 : 0.06;
+      data.currentX += (data.targetX - data.currentX) * speed;
+      data.currentY += (data.targetY - data.currentY) * speed;
+
+      // 4. Apply 3D translation
+      data.wrapper.style.transform = `translate3d(${data.currentX.toFixed(2)}px, ${data.currentY.toFixed(2)}px, 0)`;
+    });
+
+    requestAnimationFrame(update);
+  }
+
+  // Start gravity animation loop
+  requestAnimationFrame(update);
 }
 
 // Interactive Starfield Background Creation & Animation
@@ -934,7 +1128,7 @@ function initStars() {
   } else {
     document.body.appendChild(starsCanvas);
   }
-  
+
   // Styling starfield canvas to float fixed in background
   starsCanvas.style.position = 'fixed';
   starsCanvas.style.top = '0';
@@ -943,15 +1137,15 @@ function initStars() {
   starsCanvas.style.height = '100vh';
   starsCanvas.style.zIndex = '1';
   starsCanvas.style.pointerEvents = 'none';
-  
+
   const ctx = starsCanvas.getContext('2d');
   const stars = [];
   const maxStars = 140; // Dense but light star density
-  
+
   function resizeStarsCanvas() {
     starsCanvas.width = window.innerWidth;
     starsCanvas.height = window.innerHeight;
-    
+
     // Repopulate stars on resize to distribute evenly
     stars.length = 0;
     for (let i = 0; i < maxStars; i++) {
@@ -965,10 +1159,10 @@ function initStars() {
       });
     }
   }
-  
+
   window.addEventListener('resize', resizeStarsCanvas);
   resizeStarsCanvas();
-  
+
   // Monitor mouse movements for soft parallax offsets
   let targetMouseX = window.innerWidth / 2;
   let targetMouseY = window.innerHeight / 2;
@@ -976,27 +1170,27 @@ function initStars() {
     targetMouseX = e.clientX;
     targetMouseY = e.clientY;
   });
-  
+
   let currentOffsetX = 0;
   let currentOffsetY = 0;
-  
+
   function drawStars() {
     ctx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
-    
+
     // Slow parallax inertia calculation
     const targetOffsetX = (window.innerWidth / 2 - targetMouseX) * 0.015;
     const targetOffsetY = (window.innerHeight / 2 - targetMouseY) * 0.015;
-    
+
     currentOffsetX += (targetOffsetX - currentOffsetX) * 0.05;
     currentOffsetY += (targetOffsetY - currentOffsetY) * 0.05;
-    
+
     stars.forEach(star => {
       ctx.beginPath();
-      
+
       // Offset positions
       const px = star.x + currentOffsetX;
       const py = star.y + currentOffsetY;
-      
+
       // Calculate twinkling alpha oscillation
       star.alpha += star.twinkleSpeed * star.direction;
       if (star.alpha >= 0.95) {
@@ -1006,16 +1200,16 @@ function initStars() {
         star.alpha = 0.1;
         star.direction = 1;
       }
-      
+
       // Render star glow
       ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
       ctx.arc(px, py, star.radius, 0, Math.PI * 2);
       ctx.fill();
     });
-    
+
     requestAnimationFrame(drawStars);
   }
-  
+
   drawStars();
 }
 
@@ -1025,7 +1219,7 @@ function initStars() {
 preloadImages();
 
 // -------------------------------------------------------------
-// INTERACTIVE CUSTOM CYBERNETIC CURSOR SYSTEM
+// INTERACTIVE CUSTOM CURSOR SYSTEM
 // -------------------------------------------------------------
 const cursorGlow = document.getElementById('cursor-glow');
 const cursorDot = document.querySelector('.custom-cursor-dot');
@@ -1048,10 +1242,10 @@ if (cursorDot && cursorRing) {
 window.addEventListener('mousemove', (e) => {
   liveMouseX = e.clientX;
   liveMouseY = e.clientY;
-  
+
   // Smooth custom cursor glow on movement
   if (cursorGlow) {
-      cursorGlow.style.opacity = '1';
+    cursorGlow.style.opacity = '1';
   }
 
   // Instantly track custom cursor vectors
@@ -1061,7 +1255,7 @@ window.addEventListener('mousemove', (e) => {
 
 window.addEventListener('mouseleave', () => {
   if (cursorGlow) {
-      cursorGlow.style.opacity = '0';
+    cursorGlow.style.opacity = '0';
   }
   liveMouseX = window.innerWidth / 2;
   liveMouseY = window.innerHeight / 2;
@@ -1070,34 +1264,34 @@ window.addEventListener('mouseleave', () => {
 // Attach hover styles for clickable links
 document.querySelectorAll('a, button, .spec-card, .hud-panel').forEach(item => {
   item.addEventListener('mouseenter', () => {
-    gsap.to(cursorDot, { 
-      rotation: -18, 
-      scale: 1.15, 
+    gsap.to(cursorDot, {
+      rotation: -18,
+      scale: 1.15,
       transformOrigin: '0% 0%',
       duration: 0.3,
       ease: 'power1.out'
     });
-    gsap.to(cursorRing, { 
-      scale: 1.4, 
-      borderColor: 'var(--accent-cyan)', 
-      backgroundColor: 'rgba(0, 210, 255, 0.08)', 
-      duration: 0.3 
+    gsap.to(cursorRing, {
+      scale: 1.4,
+      borderColor: 'var(--accent-cyan)',
+      backgroundColor: 'rgba(0, 210, 255, 0.08)',
+      duration: 0.3
     });
   });
-  
+
   item.addEventListener('mouseleave', () => {
-    gsap.to(cursorDot, { 
-      rotation: 0, 
-      scale: 1, 
+    gsap.to(cursorDot, {
+      rotation: 0,
+      scale: 1,
       transformOrigin: '0% 0%',
       duration: 0.3,
       ease: 'power1.inOut'
     });
-    gsap.to(cursorRing, { 
-      scale: 1, 
-      borderColor: 'var(--accent-cyan)', 
-      backgroundColor: 'transparent', 
-      duration: 0.3 
+    gsap.to(cursorRing, {
+      scale: 1,
+      borderColor: 'var(--accent-cyan)',
+      backgroundColor: 'transparent',
+      duration: 0.3
     });
   });
 });
@@ -1129,14 +1323,14 @@ window.addEventListener('mousedown', (e) => {
   const flameElement = cursorSvg.querySelector('.engine-flame');
   const flameTL = gsap.timeline();
   flameTL.to(flameElement, { opacity: 0.95, duration: 0.12 })
-         .to(flameElement, {
-           opacity: 0.45,
-           repeat: 27,
-           yoyo: true,
-           duration: 0.06,
-           ease: 'none'
-         })
-         .to(flameElement, { opacity: 0, duration: 0.2 });
+    .to(flameElement, {
+      opacity: 0.45,
+      repeat: 27,
+      yoyo: true,
+      duration: 0.06,
+      ease: 'none'
+    })
+    .to(flameElement, { opacity: 0, duration: 0.2 });
 
   gsap.timeline({
     onComplete: () => {
@@ -1144,102 +1338,102 @@ window.addEventListener('mousedown', (e) => {
       gsap.set(cursorSvg, { x: 0, y: 0, rotation: 0, scale: 1 });
     }
   })
-  .to(cursorSvg, {
-    scale: 0.75,
-    duration: 0.12,
-    ease: 'power2.in'
-  })
-  .to(flightData, {
-    progress: 1,
-    duration: 2.0,
-    ease: 'power1.inOut',
-    onUpdate: () => {
-      const p = flightData.progress;
-      
-      let w;
-      if (p < 0.25) {
-        const ratio = p / 0.25;
-        w = ratio * ratio * (3 - 2 * ratio);
-      } else if (p < 0.75) {
-        w = 1;
-      } else {
-        const ratio = (1.0 - p) / 0.25;
-        w = ratio * ratio * (3 - 2 * ratio);
-      }
-      
-      let localPathX, localPathY;
-      if (p < 0.25) {
-        const takeoffRatio = p / 0.25;
-        localPathX = Mx - (W * 0.15) * takeoffRatio;
-        localPathY = My - (H * 0.15) * takeoffRatio;
-      } else {
-        localPathX = liveMouseX;
-        localPathY = liveMouseY;
-      }
-      
-      const angle = angleStartOrbit - 2.2 * Math.PI * (p - 0.25);
-      const orbitX = Cx + Rx * Math.cos(angle);
-      const orbitY = Cy + Ry * Math.sin(angle);
-      
-      const targetX = (1 - w) * localPathX + w * orbitX;
-      const targetY = (1 - w) * localPathY + w * orbitY;
-      
-      const localX = targetX - liveMouseX;
-      const localY = targetY - liveMouseY;
-      
-      const dx = targetX - lastTargetX;
-      const dy = targetY - lastTargetY;
-      
-      let scaleVal = 1.25;
-      if (p < 0.2) {
-        scaleVal = 0.75 + (1.25 - 0.75) * (p / 0.2);
-      } else if (p > 0.8) {
-        scaleVal = 1.25 * (1 - (p - 0.8) / 0.2);
-      }
-      
-      gsap.set(cursorSvg, { 
-        x: localX, 
-        y: localY, 
-        scale: scaleVal 
-      });
+    .to(cursorSvg, {
+      scale: 0.75,
+      duration: 0.12,
+      ease: 'power2.in'
+    })
+    .to(flightData, {
+      progress: 1,
+      duration: 2.0,
+      ease: 'power1.inOut',
+      onUpdate: () => {
+        const p = flightData.progress;
 
-      if (p > 0.01 && (dx !== 0 || dy !== 0)) {
-        const rawHeading = Math.atan2(dy, dx) * 180 / Math.PI + 135;
-        let rotationVal = rawHeading;
-        
-        if (p > 0.85) {
-          const blendRatio = (p - 0.85) / 0.15;
-          let normHeading = rawHeading % 360;
-          if (normHeading > 180) normHeading -= 360;
-          if (normHeading < -180) normHeading += 360;
-          rotationVal = normHeading * (1 - blendRatio);
+        let w;
+        if (p < 0.25) {
+          const ratio = p / 0.25;
+          w = ratio * ratio * (3 - 2 * ratio);
+        } else if (p < 0.75) {
+          w = 1;
+        } else {
+          const ratio = (1.0 - p) / 0.25;
+          w = ratio * ratio * (3 - 2 * ratio);
         }
-        
-        gsap.set(cursorSvg, { rotation: rotationVal });
+
+        let localPathX, localPathY;
+        if (p < 0.25) {
+          const takeoffRatio = p / 0.25;
+          localPathX = Mx - (W * 0.15) * takeoffRatio;
+          localPathY = My - (H * 0.15) * takeoffRatio;
+        } else {
+          localPathX = liveMouseX;
+          localPathY = liveMouseY;
+        }
+
+        const angle = angleStartOrbit - 2.2 * Math.PI * (p - 0.25);
+        const orbitX = Cx + Rx * Math.cos(angle);
+        const orbitY = Cy + Ry * Math.sin(angle);
+
+        const targetX = (1 - w) * localPathX + w * orbitX;
+        const targetY = (1 - w) * localPathY + w * orbitY;
+
+        const localX = targetX - liveMouseX;
+        const localY = targetY - liveMouseY;
+
+        const dx = targetX - lastTargetX;
+        const dy = targetY - lastTargetY;
+
+        let scaleVal = 1.25;
+        if (p < 0.2) {
+          scaleVal = 0.75 + (1.25 - 0.75) * (p / 0.2);
+        } else if (p > 0.8) {
+          scaleVal = 1.25 * (1 - (p - 0.8) / 0.2);
+        }
+
+        gsap.set(cursorSvg, {
+          x: localX,
+          y: localY,
+          scale: scaleVal
+        });
+
+        if (p > 0.01 && (dx !== 0 || dy !== 0)) {
+          const rawHeading = Math.atan2(dy, dx) * 180 / Math.PI + 135;
+          let rotationVal = rawHeading;
+
+          if (p > 0.85) {
+            const blendRatio = (p - 0.85) / 0.15;
+            let normHeading = rawHeading % 360;
+            if (normHeading > 180) normHeading -= 360;
+            if (normHeading < -180) normHeading += 360;
+            rotationVal = normHeading * (1 - blendRatio);
+          }
+
+          gsap.set(cursorSvg, { rotation: rotationVal });
+        }
+
+        lastTargetX = targetX;
+        lastTargetY = targetY;
       }
-      
-      lastTargetX = targetX;
-      lastTargetY = targetY;
-    }
-  });
+    });
 
   gsap.timeline()
-  .to(cursorRing, {
-    scale: 3.2,
-    opacity: 0,
-    borderWidth: '3px',
-    borderColor: 'var(--accent-cyan)',
-    duration: 0.5,
-    ease: 'power2.out'
-  })
-  .to(cursorRing, {
-    scale: 1,
-    opacity: 1,
-    borderWidth: '1px',
-    borderColor: 'var(--accent-cyan)',
-    duration: 0.2,
-    ease: 'power2.in'
-  });
+    .to(cursorRing, {
+      scale: 3.2,
+      opacity: 0,
+      borderWidth: '3px',
+      borderColor: 'var(--accent-cyan)',
+      duration: 0.5,
+      ease: 'power2.out'
+    })
+    .to(cursorRing, {
+      scale: 1,
+      opacity: 1,
+      borderWidth: '1px',
+      borderColor: 'var(--accent-cyan)',
+      duration: 0.2,
+      ease: 'power2.in'
+    });
 });
 
 // Parallax calculations loop
@@ -1253,8 +1447,8 @@ function animateParallax() {
   const offsetY = currentY - centerY;
 
   if (cursorGlow) {
-      cursorGlow.style.left = `${currentX}px`;
-      cursorGlow.style.top = `${currentY}px`;
+    cursorGlow.style.left = `${currentX}px`;
+    cursorGlow.style.top = `${currentY}px`;
   }
 
   requestAnimationFrame(animateParallax);
@@ -1264,7 +1458,7 @@ function animateParallax() {
 animateParallax();
 
 // -------------------------------------------------------------
-// TARS IMMERSIVE SOUNDTRACK AUDIO CONTROLLER
+// AMBIENT SOUNDTRACK AUDIO CONTROLLER
 // -------------------------------------------------------------
 function initAudioController() {
   const capsule = document.getElementById('audio-capsule');
@@ -1290,7 +1484,7 @@ function initAudioController() {
       isPlaying = true;
     }).catch(err => {
       console.warn("Autoplay blocked: awaiting user interaction to trigger audio play.", err);
-      
+
       const startOnInteraction = () => {
         bgMusic.play().then(() => {
           if (playIcon) playIcon.classList.add('hidden');
@@ -1351,14 +1545,15 @@ function initAudioController() {
   let particleInterval = null;
 
   const startSpaceFloating = () => {
+    if (floatTween) return;
     floatTween = gsap.to(capsule, {
-      y: "-=4",
+      y: "+=3",
+      x: "+=2",
       rotation: "+=1.2",
-      duration: 2.2,
+      duration: 3.2,
       repeat: -1,
       yoyo: true,
-      ease: "sine.inOut",
-      overwrite: "auto"
+      ease: "sine.inOut"
     });
   };
 
@@ -1367,27 +1562,21 @@ function initAudioController() {
       floatTween.kill();
       floatTween = null;
     }
-    gsap.to(capsule, {
-      x: 0,
-      y: 0,
-      rotation: 0,
-      rotationX: 0,
-      rotationY: 0,
-      duration: 0.6,
-      ease: "power2.out"
-    });
   };
+
+  // Start floating immediately
+  startSpaceFloating();
 
   const spawnParticle = () => {
     if (!isHovered) return;
     const rect = capsule.getBoundingClientRect();
     const p = document.createElement('span');
     p.className = 'audio-particle';
-    
+
     // Position randomly along the capsule edge
     const startX = rect.left + Math.random() * rect.width;
     const startY = rect.top + Math.random() * rect.height;
-    
+
     p.style.left = `${startX}px`;
     p.style.top = `${startY}px`;
     document.body.appendChild(p);
@@ -1425,13 +1614,14 @@ function initAudioController() {
       x: dx * 0.12,
       y: dy * 0.12,
       duration: 0.35,
-      ease: "power2.out"
+      ease: "power2.out",
+      overwrite: "auto"
     });
   });
 
   capsule.addEventListener('mouseenter', () => {
     isHovered = true;
-    startSpaceFloating();
+    stopSpaceFloating();
     particleInterval = setInterval(spawnParticle, 140);
 
     const cursorDot = document.querySelector('.custom-cursor-dot');
@@ -1445,7 +1635,23 @@ function initAudioController() {
   capsule.addEventListener('mouseleave', () => {
     isHovered = false;
     clearInterval(particleInterval);
-    stopSpaceFloating();
+
+    // Return to center and restart background drift
+    gsap.to(capsule, {
+      rotationX: 0,
+      rotationY: 0,
+      x: 0,
+      y: 0,
+      rotation: 0,
+      duration: 0.6,
+      ease: "power2.out",
+      overwrite: "auto",
+      onComplete: () => {
+        if (!isHovered) {
+          startSpaceFloating();
+        }
+      }
+    });
 
     const cursorDot = document.querySelector('.custom-cursor-dot');
     const cursorRing = document.querySelector('.custom-cursor-ring');
@@ -1458,4 +1664,185 @@ function initAudioController() {
 
 // Start audio controller on wake
 initAudioController();
+
+// Initialize the 5-star review system
+initReviewSystem();
+
+// =============================================================
+// ECE PORTFOLIO 5-STAR RATING & REVIEW SYSTEM
+// =============================================================
+function initReviewSystem() {
+  const starRating = document.getElementById('star-rating');
+  if (!starRating) return;
+
+  const starBtns = starRating.querySelectorAll('.star-btn');
+  const starLabel = document.getElementById('star-label');
+  const reviewName = document.getElementById('review-name');
+  const reviewComment = document.getElementById('review-comment');
+  const charCount = document.getElementById('char-count');
+  const reviewSubmit = document.getElementById('review-submit');
+  const reviewToast = document.getElementById('review-toast');
+
+  let selectedRating = 0;
+  const ratingTexts = {
+    1: "Terrible // Needs major revision",
+    2: "Subpar // Potential is there",
+    3: "Good // Decent execution",
+    4: "Great // Highly professional",
+    5: "Excellent // ECE Masterpiece!"
+  };
+
+  // Helper to get reviews from localStorage
+  function getReviews() {
+    const stored = localStorage.getItem('portfolio_reviews');
+    if (!stored) return [];
+    try {
+      return JSON.parse(stored);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // Helper to save reviews
+  function saveReviews(reviews) {
+    localStorage.setItem('portfolio_reviews', JSON.stringify(reviews));
+  }
+
+  // Update stars styling based on selected or hover rating
+  function updateStars(rating, type = 'selected') {
+    starBtns.forEach((btn, index) => {
+      const starValue = index + 1;
+      if (type === 'hover') {
+        if (starValue <= rating) {
+          btn.classList.add('hovered');
+        } else {
+          btn.classList.remove('hovered');
+        }
+      } else {
+        btn.classList.remove('hovered');
+        if (starValue <= rating) {
+          btn.classList.add('selected');
+        } else {
+          btn.classList.remove('selected');
+        }
+      }
+    });
+  }
+
+  // Stars Event Listeners
+  starBtns.forEach(btn => {
+    const val = parseInt(btn.getAttribute('data-value'));
+
+    btn.addEventListener('mouseenter', () => {
+      updateStars(val, 'hover');
+      starLabel.textContent = ratingTexts[val];
+      starLabel.style.color = 'var(--accent-blue-neon)';
+      gsap.to(btn, { scale: 1.2, duration: 0.2, ease: "power1.out" });
+    });
+
+    btn.addEventListener('mouseleave', () => {
+      updateStars(selectedRating, 'selected');
+      if (selectedRating > 0) {
+        starLabel.textContent = ratingTexts[selectedRating];
+        starLabel.style.color = 'rgba(255, 255, 255, 0.7)';
+      } else {
+        starLabel.textContent = "";
+      }
+      gsap.to(btn, { scale: 1.0, duration: 0.2, ease: "power1.out" });
+    });
+
+    btn.addEventListener('click', () => {
+      selectedRating = val;
+      updateStars(selectedRating, 'selected');
+      starLabel.textContent = ratingTexts[selectedRating];
+      starLabel.style.color = '#ffffff';
+      
+      // Enable submit button and style it as active
+      reviewSubmit.disabled = false;
+      reviewSubmit.classList.remove(
+        'bg-white/[0.02]', 'border-brand-border/40', 'text-brand-gray/50', 'cursor-not-allowed'
+      );
+      reviewSubmit.classList.add(
+        'bg-brand-neon/10', 'border-brand-neon/40', 'text-brand-neon', 'cursor-pointer'
+      );
+      
+      // Flash animation on click
+      gsap.fromTo(btn, 
+        { scale: 0.95 }, 
+        { scale: 1.25, duration: 0.3, ease: "elastic.out(1, 0.3)", onComplete: () => {
+          gsap.to(btn, { scale: 1.0, duration: 0.1 });
+        }}
+      );
+    });
+  });
+
+  // Character counter for comment textarea
+  reviewComment.addEventListener('input', () => {
+    const len = reviewComment.value.length;
+    charCount.textContent = len;
+    if (len >= 270) {
+      charCount.style.color = '#ff3366';
+    } else {
+      charCount.style.color = 'rgba(255, 255, 255, 0.4)';
+    }
+  });
+
+  // Handle Form Submission
+  reviewSubmit.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (selectedRating === 0) return;
+
+    const nameVal = reviewName.value.trim();
+    const commentVal = reviewComment.value.trim();
+
+    const newReview = {
+      id: 'rev-' + Date.now(),
+      name: nameVal || "Anonymous Reviewer",
+      rating: selectedRating,
+      comment: commentVal,
+      date: new Date().toISOString()
+    };
+
+    // Store review
+    const currentReviews = getReviews();
+    currentReviews.push(newReview);
+    saveReviews(currentReviews);
+
+    // Show success toast banner
+    reviewToast.classList.remove('hidden');
+    gsap.fromTo(reviewToast, 
+      { opacity: 0, y: 15 },
+      { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
+    );
+
+    setTimeout(() => {
+      gsap.to(reviewToast, {
+        opacity: 0,
+        y: -10,
+        duration: 0.35,
+        ease: "power2.in",
+        onComplete: () => {
+          reviewToast.classList.add('hidden');
+        }
+      });
+    }, 3500);
+
+    // Reset Form Input elements
+    selectedRating = 0;
+    reviewName.value = '';
+    reviewComment.value = '';
+    charCount.textContent = '0';
+    updateStars(0);
+    starLabel.textContent = '';
+    
+    // Deactivate submit button
+    reviewSubmit.disabled = true;
+    reviewSubmit.classList.add(
+      'bg-white/[0.02]', 'border-brand-border/40', 'text-brand-gray/50', 'cursor-not-allowed'
+    );
+    reviewSubmit.classList.remove(
+      'bg-brand-neon/10', 'border-brand-neon/40', 'text-brand-neon', 'cursor-pointer'
+    );
+  });
+}
 

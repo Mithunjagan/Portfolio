@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------
-   CYBERNETIC CHRONICLES - DESIGN SYSTEM & STYLES (BLUE HIGHLIGHTS)
+   MITHUN KUMAR J PORTFOLIO - DESIGN SYSTEM & STYLES (BLUE HIGHLIGHTS)
 ------------------------------------------------------------- */
 
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;700&family=Mr+De+Haviland&family=Sacramento&family=Alex+Brush&display=swap');
@@ -707,7 +707,7 @@ header:not(.woke) {
   filter: drop-shadow(0 0 1px #00e5ff);
 }
 
-#cyborg-canvas {
+#scroll-canvas {
   width: 100%;
   height: 100%;
   display: block;
@@ -1111,7 +1111,7 @@ footer {
   }
 }
 
-/* Custom Cybernetic Mouse Cursor Styles */
+/* Custom Mouse Cursor Styles */
 * {
   cursor: none !important;
 }
@@ -1199,6 +1199,13 @@ footer {
 }
 
 /* Futuristic Social & Resume Buttons (Water Drop 3D Visual Style) */
+.gravity-btn-wrapper {
+    display: inline-block;
+    position: relative;
+    will-change: transform;
+    transition: none !important;
+}
+
 .social-btn {
     position: relative;
     display: flex;
@@ -1461,7 +1468,7 @@ footer {
 }
 
 /* =============================================================
-   A.E.G.I.S. FUTURISTIC CHATBOT WIDGET STYLES
+   CHATBOT WIDGET STYLES
    ============================================================= */
 
 /* Container */
@@ -1800,73 +1807,394 @@ footer {
 }
 
 /* =============================================================
-   TARS SEGMENT & INTERACTIVE ANIMATIONS
+   CHATBOT SEGMENT & INTERACTIVE ANIMATIONS
    ============================================================= */
-.tars-seg {
-  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+/* --- Outer Scanning Ring (orbiting dashed circle) --- */
+.tars-scan-ring {
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(0, 210, 255, 0.25);
+  animation: tars-ring-orbit 18s linear infinite;
+  pointer-events: none;
+  z-index: -1;
 }
 
-/* 1. HOVER CONFIG (Mechanical Split/Spread) */
+.chat-widget-button:hover .tars-scan-ring {
+  border-color: rgba(0, 210, 255, 0.55);
+  animation-duration: 8s;
+  box-shadow: 0 0 12px rgba(0, 210, 255, 0.15);
+}
+
+@keyframes tars-ring-orbit {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* --- TARS Label --- */
+.tars-label {
+  transition: opacity 0.3s ease, letter-spacing 0.3s ease;
+}
+.chat-widget-button:hover .tars-label {
+  opacity: 1 !important;
+  letter-spacing: 0.35em;
+  color: rgba(0, 210, 255, 0.85);
+  text-shadow: 0 0 6px rgba(0, 210, 255, 0.4);
+}
+
+/* --- Segment Base Transition --- */
+.tars-seg {
+  transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* --- Sensor Light Cinematic Breathing --- */
+.tars-sensor-light {
+  animation: tars-sensor-breathe 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px #00d2ff) drop-shadow(0 0 8px rgba(0, 210, 255, 0.4));
+}
+
+@keyframes tars-sensor-breathe {
+  0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 3px #00d2ff) drop-shadow(0 0 6px rgba(0, 210, 255, 0.3)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 6px #00d2ff) drop-shadow(0 0 12px rgba(0, 210, 255, 0.6)); }
+}
+
+/* --- Sensor Sweep (horizontal light wipe) --- */
+.tars-sensor-sweep {
+  animation: tars-sweep 4s ease-in-out infinite;
+}
+
+@keyframes tars-sweep {
+  0% { transform: translateX(-100%); opacity: 0.3; }
+  50% { transform: translateX(100%); opacity: 0.7; }
+  100% { transform: translateX(-100%); opacity: 0.3; }
+}
+
+/* --- Side LED Pulse --- */
+.tars-side-led {
+  animation: tars-led-pulse 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes tars-led-pulse {
+  0% { opacity: 0.15; }
+  100% { opacity: 0.55; }
+}
+
+/* --- Status LED blink --- */
+.tars-status-led {
+  animation: tars-status-blink 2s ease-in-out infinite;
+}
+
+@keyframes tars-status-blink {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; filter: drop-shadow(0 0 3px #00ff88); }
+}
+
+/* --- Header Scanline --- */
+.tars-header-scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 210, 255, 0.03) 50%,
+    transparent 100%
+  );
+  background-size: 100% 4px;
+  animation: tars-scanline-drift 8s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes tars-scanline-drift {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 200px; }
+}
+
+/* --- Header Icon Glow Orb --- */
+.tars-header-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 35%, rgba(0, 210, 255, 0.15) 0%, transparent 70%);
+  animation: tars-hdr-glow 3s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes tars-hdr-glow {
+  0% { opacity: 0.4; }
+  100% { opacity: 0.9; }
+}
+
+/* ---- 1. HOVER CONFIG (Dramatic Mechanical Split) ---- */
 .chat-widget-button:hover .tars-seg-1 {
-  transform: translateY(6px) rotate(-12deg);
+  transform: translateY(5px) translateX(-2px) rotate(-14deg);
 }
 .chat-widget-button:hover .tars-seg-4 {
-  transform: translateY(6px) rotate(12deg);
+  transform: translateY(5px) translateX(2px) rotate(14deg);
 }
 .chat-widget-button:hover .tars-seg-2 {
-  transform: translateY(-3px);
+  transform: translateY(-4px) rotate(-2deg);
 }
 .chat-widget-button:hover .tars-seg-3 {
-  transform: translateY(-3px);
+  transform: translateY(-4px) rotate(2deg);
 }
 
-/* 2. THINKING/WALKING CONFIG (Alternating Mech Swing) */
+/* Sensor glows brighter on hover */
+.chat-widget-button:hover .tars-sensor-light {
+  animation: tars-sensor-hover-glow 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes tars-sensor-hover-glow {
+  0% { opacity: 0.9; filter: drop-shadow(0 0 4px #00d2ff) drop-shadow(0 0 10px rgba(0, 210, 255, 0.5)); }
+  100% { opacity: 1; filter: drop-shadow(0 0 8px #00d2ff) drop-shadow(0 0 18px rgba(0, 210, 255, 0.8)); }
+}
+
+/* ---- 2. THINKING / WALKING CONFIG (Heavy Mechanical Mech-Walk) ---- */
 .chat-widget-button.thinking .tars-seg-1,
 .chat-header.thinking .tars-seg-1 {
-  animation: tars-walk-left 1.0s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite alternate;
+  animation: tars-mech-walk-1 0.9s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
 }
 .chat-widget-button.thinking .tars-seg-2,
 .chat-header.thinking .tars-seg-2 {
-  animation: tars-walk-mid-left 1.0s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite alternate;
+  animation: tars-mech-walk-2 0.9s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
 }
 .chat-widget-button.thinking .tars-seg-3,
 .chat-header.thinking .tars-seg-3 {
-  animation: tars-walk-mid-right 1.0s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite alternate;
+  animation: tars-mech-walk-3 0.9s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
 }
 .chat-widget-button.thinking .tars-seg-4,
 .chat-header.thinking .tars-seg-4 {
-  animation: tars-walk-right 1.0s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite alternate;
+  animation: tars-mech-walk-4 0.9s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
 }
 
-@keyframes tars-walk-left {
-  0% { transform: translateY(4px) rotate(-8deg); }
-  100% { transform: translateY(-3px) rotate(4deg); }
+/* Walk keyframes with realistic weight transfer */
+@keyframes tars-mech-walk-1 {
+  0% { transform: translateY(6px) rotate(-10deg) skewY(2deg); }
+  30% { transform: translateY(2px) rotate(-4deg) skewY(0deg); }
+  100% { transform: translateY(-4px) rotate(6deg) skewY(-1deg); }
 }
-@keyframes tars-walk-mid-left {
-  0% { transform: translateY(-3px) rotate(4deg); }
-  100% { transform: translateY(4px) rotate(-8deg); }
+@keyframes tars-mech-walk-2 {
+  0% { transform: translateY(-4px) rotate(5deg) skewY(-1deg); }
+  40% { transform: translateY(0px) rotate(0deg) skewY(0deg); }
+  100% { transform: translateY(6px) rotate(-9deg) skewY(2deg); }
 }
-@keyframes tars-walk-mid-right {
-  0% { transform: translateY(4px) rotate(6deg); }
-  100% { transform: translateY(-3px) rotate(-5deg); }
+@keyframes tars-mech-walk-3 {
+  0% { transform: translateY(5px) rotate(7deg) skewY(1deg); }
+  35% { transform: translateY(1px) rotate(2deg) skewY(0deg); }
+  100% { transform: translateY(-4px) rotate(-6deg) skewY(-1deg); }
 }
-@keyframes tars-walk-right {
-  0% { transform: translateY(-3px) rotate(-5deg); }
-  100% { transform: translateY(4px) rotate(6deg); }
-}
-
-/* Thinking sensor light speed-pulse */
-.chat-widget-button.thinking svg rect[fill="#00d2ff"],
-.chat-header.thinking svg rect[fill="#00d2ff"],
-.chat-widget-button.thinking svg rect[opacity="0.95"],
-.chat-header.thinking svg rect[opacity="0.95"] {
-  animation: tars-sensor-glow 0.35s ease-in-out infinite alternate;
+@keyframes tars-mech-walk-4 {
+  0% { transform: translateY(-4px) rotate(-6deg) skewY(-1deg); }
+  45% { transform: translateY(1px) rotate(-1deg) skewY(0deg); }
+  100% { transform: translateY(5px) rotate(8deg) skewY(1deg); }
 }
 
-@keyframes tars-sensor-glow {
-  0% { opacity: 0.3; filter: drop-shadow(0 0 1px #00d2ff); }
-  100% { opacity: 1; filter: drop-shadow(0 0 6px #00d2ff); }
+/* Thinking sensor light rapid pulse */
+.chat-widget-button.thinking .tars-sensor-light,
+.chat-header.thinking .tars-sensor-light {
+  animation: tars-sensor-think 0.3s ease-in-out infinite alternate !important;
 }
+
+@keyframes tars-sensor-think {
+  0% { opacity: 0.3; filter: drop-shadow(0 0 2px #00d2ff); }
+  100% { opacity: 1; filter: drop-shadow(0 0 10px #00d2ff) drop-shadow(0 0 20px rgba(0, 210, 255, 0.7)); }
+}
+
+/* Thinking sensor slot backdrop pulse */
+.chat-widget-button.thinking .tars-sensor-group,
+.chat-header.thinking .tars-sensor-group {
+  animation: tars-sensor-backdrop-pulse 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes tars-sensor-backdrop-pulse {
+  0% { filter: none; }
+  100% { filter: drop-shadow(0 0 12px rgba(0, 210, 255, 0.5)); }
+}
+
+/* Thinking scan ring spins faster */
+.chat-widget-button.thinking .tars-scan-ring {
+  animation-duration: 4s !important;
+  border-color: rgba(0, 210, 255, 0.6);
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+}
+
+/* Thinking side LEDs pulse rapidly */
+.chat-widget-button.thinking .tars-side-led,
+.chat-header.thinking .tars-side-led {
+  animation: tars-side-led-think 0.4s ease-in-out infinite alternate !important;
+}
+
+@keyframes tars-side-led-think {
+  0% { opacity: 0.1; }
+  100% { opacity: 0.8; }
+}
+
+/* Thinking status LED */
+.chat-widget-button.thinking .tars-status-led,
+.chat-header.thinking .tars-status-led {
+  animation: tars-status-think 0.5s ease-in-out infinite alternate !important;
+}
+
+@keyframes tars-status-think {
+  0% { opacity: 0.2; fill: #00ff88; }
+  100% { opacity: 1; fill: #00ffcc; filter: drop-shadow(0 0 4px #00ff88); }
+}
+
+/* --- Button base preserve 3D --- */
+.chat-widget-button {
+  transform-style: preserve-3d !important;
+  perspective: 600px !important;
+  will-change: transform, box-shadow, border-color;
+}
+
+/* --- Particle Canvas container absolute positioning fix --- */
+.tars-particle-canvas {
+  filter: blur(0.5px);
+}
+
+/* -------------------------------------------------------------
+   5.5 REVIEW / RATING SECTION STYLES
+------------------------------------------------------------- */
+.review-section {
+  position: relative;
+  z-index: 20;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.star-btn:hover {
+  transform: scale(1.2);
+}
+
+.star-btn:active {
+  transform: scale(0.9);
+}
+
+.star-svg {
+  color: rgba(255, 255, 255, 0.15);
+  fill: transparent;
+  transition: color 0.3s ease, fill 0.3s ease, filter 0.3s ease;
+}
+
+/* Hover / Selected Star Styles */
+.star-btn.hovered .star-svg {
+  color: var(--accent-blue-neon);
+  fill: rgba(0, 210, 255, 0.15);
+  filter: drop-shadow(0 0 8px rgba(0, 210, 255, 0.5));
+}
+
+.star-btn.selected .star-svg {
+  color: var(--accent-blue-neon);
+  fill: rgba(0, 210, 255, 0.45);
+  filter: drop-shadow(0 0 12px rgba(0, 210, 255, 0.7));
+}
+
+/* Review Toast styling */
+.review-toast {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  background: rgba(10, 10, 10, 0.95);
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 210, 255, 0.15);
+  padding: 12px 24px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 30;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: #ffffff;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.review-toast.hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(15px);
+  pointer-events: none;
+}
+
+/* Custom Scrollbar for Reviews Feed if it overflows */
+.reviews-feed {
+  max-height: 480px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 210, 255, 0.2) transparent;
+  padding-right: 6px;
+}
+
+.reviews-feed::-webkit-scrollbar {
+  width: 4px;
+  display: block; /* override standard hidden scrollbar on html/body */
+}
+
+.reviews-feed::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.reviews-feed::-webkit-scrollbar-thumb {
+  background: rgba(0, 210, 255, 0.15);
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+
+.reviews-feed::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 210, 255, 0.4);
+}
+
+/* Individual Review Card */
+.review-card {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.01) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 18px;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+}
+
+.review-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 10% 10%, rgba(0, 210, 255, 0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.review-card:hover {
+  border-color: rgba(0, 210, 255, 0.18);
+  transform: translateY(-2px);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.02) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
 
 
 

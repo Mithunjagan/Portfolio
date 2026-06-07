@@ -46,91 +46,410 @@ class PortfolioChatbot {
 
     this.registerEvents(container);
     this.renderMessages();
+    this.initParticles(container);
   }
+
+  private initParticles(container: HTMLElement) {
+    const canvas = container.querySelector('.tars-particle-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const width = 120;
+    const height = 120;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
+
+    interface Particle {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      size: number;
+      alpha: number;
+      decay: number;
+      color: string;
+    }
+
+    let particles: Particle[] = [];
+    let waves: Array<{ r: number; maxR: number; speed: number; alpha: number }> = [];
+    let animationId: number;
+    let isHovering = false;
+
+    this.toggleBtnEl?.addEventListener('mouseenter', () => { isHovering = true; });
+    this.toggleBtnEl?.addEventListener('mouseleave', () => { isHovering = false; });
+
+    const spawnParticle = () => {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = isHovering ? 0.8 + Math.random() * 1.2 : 0.3 + Math.random() * 0.5;
+      const dist = 20 + Math.random() * 10;
+      particles.push({
+        x: width / 2 + Math.cos(angle) * dist,
+        y: height / 2 + Math.sin(angle) * dist,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - (0.1 + Math.random() * 0.2),
+        size: 1 + Math.random() * 2,
+        alpha: 0.3 + Math.random() * 0.5,
+        decay: 0.005 + Math.random() * 0.01,
+        color: Math.random() > 0.3 ? '0, 210, 255' : '138, 138, 138'
+      });
+    };
+
+    const spawnWave = () => {
+      waves.push({
+        r: 15,
+        maxR: 45 + Math.random() * 15,
+        speed: isHovering ? 1.5 : 0.6,
+        alpha: 0.4
+      });
+    };
+
+    let tick = 0;
+    const animate = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      tick++;
+      if (tick % (isHovering ? 8 : 20) === 0 && particles.length < 40) {
+        spawnParticle();
+      }
+      if (tick % (isHovering ? 40 : 120) === 0 && waves.length < 3) {
+        spawnWave();
+      }
+
+      // 1. Draw waves
+      for (let i = waves.length - 1; i >= 0; i--) {
+        const w = waves[i];
+        w.r += w.speed;
+        w.alpha -= w.speed / w.maxR;
+
+        if (w.alpha <= 0) {
+          waves.splice(i, 1);
+          continue;
+        }
+
+        ctx.strokeStyle = `rgba(0, 210, 255, ${w.alpha * 0.45})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(width / 2, height / 2, w.r, 0, Math.PI * 2);
+        ctx.stroke();
+
+        if (isHovering) {
+          ctx.strokeStyle = `rgba(0, 210, 255, ${w.alpha * 0.25})`;
+          ctx.beginPath();
+          ctx.moveTo(width / 2, height / 2 - w.r - 2);
+          ctx.lineTo(width / 2, height / 2 - w.r + 2);
+          ctx.moveTo(width / 2 + w.r - 2, height / 2);
+          ctx.lineTo(width / 2 + w.r + 2, height / 2);
+          ctx.stroke();
+        }
+      }
+
+      // 2. Draw particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.fillStyle = `rgba(${p.color}, ${p.alpha})`;
+        
+        if (p.size > 2 && p.color === '0, 210, 255') {
+          ctx.fillRect(p.x - p.size/2, p.y - p.size/2, p.size, p.size);
+        } else {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        if (isHovering) {
+          for (let j = i - 1; j >= 0; j--) {
+            const p2 = particles[j];
+            const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+            if (dist < 22) {
+              ctx.strokeStyle = `rgba(0, 210, 255, ${Math.min(p.alpha, p2.alpha) * 0.15})`;
+              ctx.lineWidth = 0.5;
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      // 3. Draw grid HUD background on hover
+      if (isHovering) {
+        ctx.strokeStyle = 'rgba(0, 210, 255, 0.05)';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(width / 2 - 35, height / 2);
+        ctx.lineTo(width / 2 + 35, height / 2);
+        ctx.moveTo(width / 2, height / 2 - 35);
+        ctx.lineTo(width / 2, height / 2 + 35);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(width / 2, height / 2, 30, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animate();
+  }
+
 
   private renderHTML(): string {
     return `
-      <!-- Floating Chat Button (TARS Robot Icon) -->
-      <button class="chat-widget-button w-14 h-14 bg-[#0a0a0a]/90 border border-[#00d2ff]/30 text-[#00d2ff] rounded-full flex items-center justify-center backdrop-blur-md cursor-pointer select-none transition-all duration-300 relative focus:outline-none pulse-neon-btn">
-        <svg class="w-8 h-8 text-[#00d2ff]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- TARS Ambient Particle Canvas (behind button) -->
+      <canvas class="tars-particle-canvas" width="120" height="120" style="position:absolute;bottom:-10px;right:-10px;width:120px;height:120px;pointer-events:none;z-index:-1;opacity:0.7;"></canvas>
+
+      <!-- Floating Chat Button (Hyper-Detailed TARS Robot) -->
+      <button class="chat-widget-button w-16 h-16 bg-[#060608]/95 border border-[#00d2ff]/20 text-[#00d2ff] rounded-full flex items-center justify-center backdrop-blur-md cursor-pointer select-none transition-all duration-300 relative focus:outline-none pulse-neon-btn" aria-label="Open TARS AI Chat">
+        <!-- Outer scanning ring -->
+        <div class="tars-scan-ring"></div>
+        <svg class="tars-main-svg w-9 h-9 text-[#00d2ff]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <linearGradient id="tars-metallic-btn" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#3a3a3a" />
-              <stop offset="30%" stop-color="#181818" />
-              <stop offset="70%" stop-color="#0e0e0e" />
-              <stop offset="100%" stop-color="#222222" />
+            <!-- Brushed Metal Gradient per segment (realistic anisotropic reflections) -->
+            <linearGradient id="tars-metal-1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#4a4e54" />
+              <stop offset="12%" stop-color="#2c2f33" />
+              <stop offset="28%" stop-color="#3d4147" />
+              <stop offset="45%" stop-color="#1a1c1f" />
+              <stop offset="60%" stop-color="#2e3236" />
+              <stop offset="78%" stop-color="#161819" />
+              <stop offset="100%" stop-color="#2a2d31" />
             </linearGradient>
-            <linearGradient id="tars-glint-btn" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="rgba(0, 210, 255, 0.2)" />
-              <stop offset="100%" stop-color="rgba(0, 210, 255, 0)" />
+            <linearGradient id="tars-metal-2" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#3e4248" />
+              <stop offset="20%" stop-color="#1e2024" />
+              <stop offset="50%" stop-color="#35393d" />
+              <stop offset="75%" stop-color="#151718" />
+              <stop offset="100%" stop-color="#282b2f" />
+            </linearGradient>
+            <linearGradient id="tars-metal-3" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#444850" />
+              <stop offset="30%" stop-color="#222528" />
+              <stop offset="55%" stop-color="#3a3e44" />
+              <stop offset="80%" stop-color="#181a1d" />
+              <stop offset="100%" stop-color="#2f3337" />
+            </linearGradient>
+            <linearGradient id="tars-metal-4" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" stop-color="#484c52" />
+              <stop offset="25%" stop-color="#252830" />
+              <stop offset="50%" stop-color="#393d43" />
+              <stop offset="75%" stop-color="#1c1e22" />
+              <stop offset="100%" stop-color="#2d3035" />
+            </linearGradient>
+            <!-- Top edge highlight (simulates overhead light) -->
+            <linearGradient id="tars-edge-light" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.28)" />
+              <stop offset="8%" stop-color="rgba(255,255,255,0.08)" />
+              <stop offset="100%" stop-color="rgba(0,0,0,0)" />
+            </linearGradient>
+            <!-- Sensor glow filter -->
+            <filter id="tars-sensor-bloom" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur1"/>
+              <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur2"/>
+              <feMerge>
+                <feMergeNode in="blur1"/>
+                <feMergeNode in="blur2"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <!-- Deep shadow for segments -->
+            <filter id="tars-shadow" x="-10%" y="-10%" width="120%" height="120%">
+              <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.7)"/>
+            </filter>
+            <!-- Ambient occlusion between segments -->
+            <linearGradient id="tars-gap-shadow" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="rgba(0,0,0,0.9)" />
+              <stop offset="50%" stop-color="rgba(0,0,0,0.5)" />
+              <stop offset="100%" stop-color="rgba(0,0,0,0.9)" />
             </linearGradient>
           </defs>
-          <!-- 4 Segments of TARS -->
-          <g class="tars-seg tars-seg-1" style="transform-origin: 22.5px 50px;">
-            <rect x="15" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
-            <rect x="15" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
-            <line x1="15" y1="36" x2="30" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
-            <line x1="15" y1="64" x2="30" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+
+          <!-- SEGMENT 1 (Leftmost) -->
+          <g class="tars-seg tars-seg-1" style="transform-origin: 22.5px 50px;" filter="url(#tars-shadow)">
+            <rect x="15" y="13" width="15" height="74" rx="2" fill="url(#tars-metal-1)" stroke="#555" stroke-width="0.5"/>
+            <rect x="15" y="13" width="15" height="74" rx="2" fill="url(#tars-edge-light)"/>
+            <!-- Beveled top/bottom edges -->
+            <rect x="15.5" y="13.5" width="14" height="2" rx="0.5" fill="rgba(255,255,255,0.06)"/>
+            <rect x="15.5" y="84.5" width="14" height="1" rx="0.5" fill="rgba(0,0,0,0.3)"/>
+            <!-- Panel groove lines (machined joints) -->
+            <line x1="15" y1="33" x2="30" y2="33" stroke="rgba(0,0,0,0.5)" stroke-width="0.6"/>
+            <line x1="15" y1="33.6" x2="30" y2="33.6" stroke="rgba(255,255,255,0.06)" stroke-width="0.3"/>
+            <line x1="15" y1="50" x2="30" y2="50" stroke="rgba(0,0,0,0.4)" stroke-width="0.5"/>
+            <line x1="15" y1="50.5" x2="30" y2="50.5" stroke="rgba(255,255,255,0.05)" stroke-width="0.3"/>
+            <line x1="15" y1="67" x2="30" y2="67" stroke="rgba(0,0,0,0.5)" stroke-width="0.6"/>
+            <line x1="15" y1="67.6" x2="30" y2="67.6" stroke="rgba(255,255,255,0.06)" stroke-width="0.3"/>
+            <!-- Hex bolt rivets -->
+            <circle cx="19" cy="17" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <circle cx="26" cy="17" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <circle cx="19" cy="83" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <circle cx="26" cy="83" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <!-- Micro data port -->
+            <rect x="20" y="40" width="5" height="2" rx="0.5" fill="#0d0d0d" stroke="#333" stroke-width="0.3"/>
+            <!-- Ambient side LED -->
+            <rect x="15.3" y="46" width="0.8" height="6" rx="0.4" fill="#00d2ff" opacity="0.3" class="tars-side-led"/>
           </g>
 
-          <g class="tars-seg tars-seg-2" style="transform-origin: 39.5px 50px;">
-            <rect x="32" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
-            <rect x="32" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
-            <line x1="32" y1="36" x2="47" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
-            <line x1="32" y1="64" x2="47" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          <!-- Gap shadow 1-2 -->
+          <rect x="30" y="16" width="2" height="68" fill="url(#tars-gap-shadow)" opacity="0.4"/>
+
+          <!-- SEGMENT 2 -->
+          <g class="tars-seg tars-seg-2" style="transform-origin: 39.5px 50px;" filter="url(#tars-shadow)">
+            <rect x="32" y="13" width="15" height="74" rx="2" fill="url(#tars-metal-2)" stroke="#555" stroke-width="0.5"/>
+            <rect x="32" y="13" width="15" height="74" rx="2" fill="url(#tars-edge-light)"/>
+            <rect x="32.5" y="13.5" width="14" height="2" rx="0.5" fill="rgba(255,255,255,0.06)"/>
+            <rect x="32.5" y="84.5" width="14" height="1" rx="0.5" fill="rgba(0,0,0,0.3)"/>
+            <line x1="32" y1="33" x2="47" y2="33" stroke="rgba(0,0,0,0.5)" stroke-width="0.6"/>
+            <line x1="32" y1="33.6" x2="47" y2="33.6" stroke="rgba(255,255,255,0.06)" stroke-width="0.3"/>
+            <line x1="32" y1="50" x2="47" y2="50" stroke="rgba(0,0,0,0.4)" stroke-width="0.5"/>
+            <line x1="32" y1="50.5" x2="47" y2="50.5" stroke="rgba(255,255,255,0.05)" stroke-width="0.3"/>
+            <line x1="32" y1="67" x2="47" y2="67" stroke="rgba(0,0,0,0.5)" stroke-width="0.6"/>
+            <line x1="32" y1="67.6" x2="47" y2="67.6" stroke="rgba(255,255,255,0.06)" stroke-width="0.3"/>
+            <circle cx="36" cy="17" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <circle cx="43" cy="17" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <circle cx="36" cy="83" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <circle cx="43" cy="83" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <!-- Circuit trace detail -->
+            <path d="M35 56 L38 56 L40 58 L44 58" stroke="#00d2ff" stroke-width="0.4" opacity="0.2" fill="none"/>
+            <circle cx="44" cy="58" r="0.8" fill="#00d2ff" opacity="0.15"/>
           </g>
 
-          <g class="tars-seg tars-seg-3" style="transform-origin: 56.5px 50px;">
-            <rect x="49" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
-            <rect x="49" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
-            <line x1="49" y1="36" x2="64" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
-            <line x1="49" y1="64" x2="64" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          <!-- Gap shadow 2-3 -->
+          <rect x="47" y="16" width="2" height="68" fill="url(#tars-gap-shadow)" opacity="0.4"/>
+
+          <!-- SEGMENT 3 -->
+          <g class="tars-seg tars-seg-3" style="transform-origin: 56.5px 50px;" filter="url(#tars-shadow)">
+            <rect x="49" y="13" width="15" height="74" rx="2" fill="url(#tars-metal-3)" stroke="#555" stroke-width="0.5"/>
+            <rect x="49" y="13" width="15" height="74" rx="2" fill="url(#tars-edge-light)"/>
+            <rect x="49.5" y="13.5" width="14" height="2" rx="0.5" fill="rgba(255,255,255,0.06)"/>
+            <rect x="49.5" y="84.5" width="14" height="1" rx="0.5" fill="rgba(0,0,0,0.3)"/>
+            <line x1="49" y1="33" x2="64" y2="33" stroke="rgba(0,0,0,0.5)" stroke-width="0.6"/>
+            <line x1="49" y1="33.6" x2="64" y2="33.6" stroke="rgba(255,255,255,0.06)" stroke-width="0.3"/>
+            <line x1="49" y1="50" x2="64" y2="50" stroke="rgba(0,0,0,0.4)" stroke-width="0.5"/>
+            <line x1="49" y1="50.5" x2="64" y2="50.5" stroke="rgba(255,255,255,0.05)" stroke-width="0.3"/>
+            <line x1="49" y1="67" x2="64" y2="67" stroke="rgba(0,0,0,0.5)" stroke-width="0.6"/>
+            <line x1="49" y1="67.6" x2="64" y2="67.6" stroke="rgba(255,255,255,0.06)" stroke-width="0.3"/>
+            <circle cx="53" cy="17" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <circle cx="60" cy="17" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <circle cx="53" cy="83" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <circle cx="60" cy="83" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <!-- Circuit trace detail -->
+            <path d="M52 62 L55 62 L57 60 L61 60" stroke="#00d2ff" stroke-width="0.4" opacity="0.2" fill="none"/>
+            <circle cx="52" cy="62" r="0.8" fill="#00d2ff" opacity="0.15"/>
           </g>
 
-          <g class="tars-seg tars-seg-4" style="transform-origin: 73.5px 50px;">
-            <rect x="66" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
-            <rect x="66" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
-            <line x1="66" y1="36" x2="81" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
-            <line x1="66" y1="64" x2="81" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          <!-- Gap shadow 3-4 -->
+          <rect x="64" y="16" width="2" height="68" fill="url(#tars-gap-shadow)" opacity="0.4"/>
+
+          <!-- SEGMENT 4 (Rightmost) -->
+          <g class="tars-seg tars-seg-4" style="transform-origin: 73.5px 50px;" filter="url(#tars-shadow)">
+            <rect x="66" y="13" width="15" height="74" rx="2" fill="url(#tars-metal-4)" stroke="#555" stroke-width="0.5"/>
+            <rect x="66" y="13" width="15" height="74" rx="2" fill="url(#tars-edge-light)"/>
+            <rect x="66.5" y="13.5" width="14" height="2" rx="0.5" fill="rgba(255,255,255,0.06)"/>
+            <rect x="66.5" y="84.5" width="14" height="1" rx="0.5" fill="rgba(0,0,0,0.3)"/>
+            <line x1="66" y1="33" x2="81" y2="33" stroke="rgba(0,0,0,0.5)" stroke-width="0.6"/>
+            <line x1="66" y1="33.6" x2="81" y2="33.6" stroke="rgba(255,255,255,0.06)" stroke-width="0.3"/>
+            <line x1="66" y1="50" x2="81" y2="50" stroke="rgba(0,0,0,0.4)" stroke-width="0.5"/>
+            <line x1="66" y1="50.5" x2="81" y2="50.5" stroke="rgba(255,255,255,0.05)" stroke-width="0.3"/>
+            <line x1="66" y1="67" x2="81" y2="67" stroke="rgba(0,0,0,0.5)" stroke-width="0.6"/>
+            <line x1="66" y1="67.6" x2="81" y2="67.6" stroke="rgba(255,255,255,0.06)" stroke-width="0.3"/>
+            <circle cx="70" cy="17" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <circle cx="77" cy="17" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <circle cx="70" cy="83" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <circle cx="77" cy="83" r="1.3" fill="#1a1a1a" stroke="#444" stroke-width="0.4"/>
+            <!-- Micro data port -->
+            <rect x="71" y="40" width="5" height="2" rx="0.5" fill="#0d0d0d" stroke="#333" stroke-width="0.3"/>
+            <!-- Ambient side LED -->
+            <rect x="80.2" y="46" width="0.8" height="6" rx="0.4" fill="#00d2ff" opacity="0.3" class="tars-side-led"/>
           </g>
 
-          <!-- Sensor Light -->
-          <rect x="42" y="24" width="14" height="4" rx="0.5" fill="#00d2ff" opacity="0.95" filter="drop-shadow(0 0 2px #00d2ff)" />
+          <!-- ===== PRIMARY SENSOR LIGHT (cinematic glow) ===== -->
+          <g class="tars-sensor-group">
+            <!-- Wide bloom behind sensor -->
+            <rect x="36" y="21" width="26" height="8" rx="2" fill="#00d2ff" opacity="0.08" filter="url(#tars-sensor-bloom)"/>
+            <!-- Sensor housing (recessed dark slot) -->
+            <rect x="39" y="23" width="20" height="5" rx="1" fill="#050505" stroke="#333" stroke-width="0.4"/>
+            <!-- Inner sensor strip (the bright light) -->
+            <rect x="40" y="24" width="18" height="3" rx="0.8" fill="#00d2ff" opacity="0.95" class="tars-sensor-light"/>
+            <!-- Sensor specular glint -->
+            <rect x="41" y="24.2" width="8" height="1" rx="0.5" fill="rgba(255,255,255,0.5)"/>
+            <!-- Sensor sweep animation overlay -->
+            <rect x="40" y="24" width="18" height="3" rx="0.8" fill="url(#tars-edge-light)" class="tars-sensor-sweep" opacity="0.6"/>
+          </g>
+
+          <!-- Secondary status indicator -->
+          <circle cx="22.5" cy="75" r="1.2" fill="#00ff88" opacity="0.6" class="tars-status-led"/>
+          <circle cx="73.5" cy="75" r="1.2" fill="#ff4444" opacity="0.3"/>
         </svg>
-        <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#00d2ff] rounded-full border-2 border-[#0a0a0a] animate-ping"></span>
-        <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#00d2ff] rounded-full border-2 border-[#0a0a0a]"></span>
+        <!-- Notification ping -->
+        <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#00d2ff] rounded-full border-2 border-[#060608] animate-ping"></span>
+        <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#00d2ff] rounded-full border-2 border-[#060608]"></span>
+        <!-- TARS label -->
+        <span class="tars-label absolute -bottom-5 left-1/2 -translate-x-1/2 font-tech text-[7px] text-[#00d2ff]/60 tracking-[0.2em] uppercase whitespace-nowrap pointer-events-none select-none">TARS</span>
       </button>
 
       <!-- Chat Window -->
       <div class="chat-window fixed bottom-24 right-6 w-[380px] h-[520px] max-w-[calc(100vw-32px)] max-h-[calc(100vh-120px)] bg-[#050505]/95 border border-[#2a2a2a] rounded-2xl flex flex-col overflow-hidden backdrop-blur-xl shadow-[0_10px_35px_rgba(0,210,255,0.15)] transition-all duration-300">
         <!-- Header -->
-        <div class="chat-header px-4 py-3 bg-[#2a2a2a]/20 border-b border-[#2a2a2a]/40 flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <!-- TARS Miniature Header Icon -->
-            <div class="relative w-8 h-8 rounded bg-[#00d2ff]/10 border border-[#00d2ff]/30 flex items-center justify-center">
-              <svg class="w-5.5 h-5.5 text-[#00d2ff]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div class="chat-header px-4 py-3 bg-[#0a0a0a]/60 border-b border-[#2a2a2a]/40 flex items-center justify-between relative overflow-hidden">
+          <!-- Subtle animated scanline in header -->
+          <div class="tars-header-scanline"></div>
+          <div class="flex items-center gap-2.5 relative z-10">
+            <!-- TARS Miniature Header Icon (upgraded) -->
+            <div class="relative w-9 h-9 rounded-lg bg-[#00d2ff]/5 border border-[#00d2ff]/25 flex items-center justify-center overflow-hidden">
+              <div class="tars-header-glow"></div>
+              <svg class="w-6 h-6 text-[#00d2ff] relative z-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g class="tars-seg tars-seg-1" style="transform-origin: 26px 50px;">
-                  <rect x="20" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
+                  <rect x="18" y="18" width="14" height="64" rx="1.5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.2" />
+                  <line x1="18" y1="35" x2="32" y2="35" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+                  <line x1="18" y1="65" x2="32" y2="65" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+                  <circle cx="22" cy="22" r="1" fill="currentColor" opacity="0.3"/>
+                  <circle cx="28" cy="22" r="1" fill="currentColor" opacity="0.3"/>
                 </g>
                 <g class="tars-seg tars-seg-2" style="transform-origin: 40px 50px;">
-                  <rect x="34" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
+                  <rect x="34" y="18" width="12" height="64" rx="1.5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.2" />
+                  <line x1="34" y1="35" x2="46" y2="35" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+                  <line x1="34" y1="65" x2="46" y2="65" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
                 </g>
                 <g class="tars-seg tars-seg-3" style="transform-origin: 54px 50px;">
-                  <rect x="48" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
+                  <rect x="48" y="18" width="12" height="64" rx="1.5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.2" />
+                  <line x1="48" y1="35" x2="60" y2="35" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+                  <line x1="48" y1="65" x2="60" y2="65" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
                 </g>
                 <g class="tars-seg tars-seg-4" style="transform-origin: 68px 50px;">
-                  <rect x="62" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
+                  <rect x="62" y="18" width="14" height="64" rx="1.5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.2" />
+                  <line x1="62" y1="35" x2="76" y2="35" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+                  <line x1="62" y1="65" x2="76" y2="65" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+                  <circle cx="66" cy="78" r="1" fill="currentColor" opacity="0.3"/>
+                  <circle cx="72" cy="78" r="1" fill="currentColor" opacity="0.3"/>
                 </g>
-                <rect x="42" y="27" width="14" height="3" rx="0.5" fill="#00d2ff" />
+                <!-- Sensor light -->
+                <rect x="38" y="25" width="20" height="4" rx="1" fill="#00d2ff" opacity="0.9" filter="drop-shadow(0 0 3px #00d2ff)"/>
+                <rect x="39" y="25.5" width="9" height="1.2" rx="0.5" fill="rgba(255,255,255,0.4)"/>
               </svg>
-              <span class="absolute bottom-0 right-0 w-2 h-2 bg-[#00d2ff] rounded-full border border-[#0a0a0a] animate-pulse"></span>
+              <span class="absolute bottom-0.5 right-0.5 w-2 h-2 bg-[#00d2ff] rounded-full border border-[#0a0a0a] shadow-[0_0_4px_#00d2ff]"></span>
             </div>
             <div>
               <h3 class="font-tech text-[10px] font-bold text-white tracking-widest uppercase">TARS // TACTICAL_AI</h3>
-              <p class="text-[8px] font-mono text-[#00d2ff]/80 uppercase">MITHUN.ASSIST.v1.0 // ACTIVE</p>
+              <p class="text-[8px] font-mono text-[#00d2ff]/70 uppercase flex items-center gap-1.5">
+                <span class="inline-block w-1.5 h-1.5 bg-[#00ff88] rounded-full shadow-[0_0_4px_#00ff88] animate-pulse"></span>
+                MITHUN.ASSIST.v2.0 // ONLINE
+              </p>
             </div>
           </div>
-          <div class="flex items-center gap-3.5">
+          <div class="flex items-center gap-3.5 relative z-10">
             <!-- Telemetry Pulse Waveform -->
             <div class="telemetry-pulse">
               <span></span>
