@@ -1378,6 +1378,37 @@ const cursorSvg = cursorDot ? cursorDot.querySelector('svg') : null;
 
 window.addEventListener('mousedown', (e) => {
   if (!cursorSvg || isClickAnimating) return;
+
+  // Bypass click rocket animation on interactive elements, links, inputs, and chatbot widgets
+  let target = e.target;
+  if (target && target.nodeType === 3) {
+    target = target.parentElement;
+  }
+  while (target && target !== document.body) {
+    if (target.nodeType === 1) {
+      const tagName = target.tagName.toLowerCase();
+      if (tagName === 'button' || tagName === 'a' || tagName === 'input' || tagName === 'textarea' || tagName === 'select' || tagName === 'option') {
+        return;
+      }
+      const role = target.getAttribute('role');
+      if (role === 'button' || role === 'link' || role === 'checkbox' || role === 'radio') {
+        return;
+      }
+      if (target.classList.contains('nav-link') || 
+          target.classList.contains('resume-btn') || 
+          target.classList.contains('social-btn') || 
+          target.classList.contains('audio-toggle-btn') ||
+          target.id === 'audio-capsule' ||
+          target.closest('#chat-widget-container') ||
+          target.closest('.chat-window') ||
+          target.closest('.chat-widget-button') ||
+          window.getComputedStyle(target).cursor === 'pointer') {
+        return;
+      }
+    }
+    target = target.parentElement;
+  }
+
   isClickAnimating = true;
 
   const W = window.innerWidth;
