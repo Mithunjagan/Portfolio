@@ -196,8 +196,12 @@ export default function FeedbackSection() {
 
   // ── Persist on change ──
   useEffect(() => {
-    if (reviews.length > 0) {
-      saveReviews(reviews);
+    saveReviews(reviews);
+    if (reviews.length === 0) {
+      try {
+        localStorage.removeItem('portfolio_review_submitted');
+      } catch {}
+      setHasSubmitted(false);
     }
   }, [reviews]);
 
