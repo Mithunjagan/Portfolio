@@ -143,9 +143,13 @@ function getFramePath(index) {
 
 // Track image load progress
 let loadedImagesCount = 0;
+const initialFramesToPreload = 12;
+let isInitialPreloadComplete = false;
+
 function imageLoaded() {
+  if (isInitialPreloadComplete) return;
   loadedImagesCount++;
-  const progressPercent = Math.floor((loadedImagesCount / totalFrames) * 100);
+  const progressPercent = Math.min(100, Math.floor((loadedImagesCount / initialFramesToPreload) * 100));
 
   // Update UI linear progress bar
   if (loaderBar) {
@@ -163,21 +167,27 @@ function imageLoaded() {
     const circumference = 282.74; // Circumference for r=45
     const offset = circumference - (progressPercent / 100) * circumference;
     ringCircle.style.strokeDashoffset = offset;
-    if (loadedImagesCount === totalFrames) {
-      clearInterval(consoleInterval);
-      if (loaderStatusText) {
-        loaderStatusText.textContent = "ALL ASSETS LOADED. READY TO DEPLOY.";
-      }
+  }
 
-      // Animate loader out using sci-fi split shutter panels
-      setTimeout(() => {
-        // 1. Fade out preloader content elements
-        gsap.to('.preloader-content', {
-          opacity: 0,
-          scale: 0.95,
-          duration: 0.55,
-          ease: "power2.inOut",
-          onComplete: () => {
+  if (loadedImagesCount === initialFramesToPreload) {
+    isInitialPreloadComplete = true;
+    clearInterval(consoleInterval);
+    if (loaderStatusText) {
+      loaderStatusText.textContent = "ALL ASSETS LOADED. READY TO DEPLOY.";
+    }
+
+    // Start background loading of remaining frames
+    loadRemainingImages();
+
+    // Animate loader out using sci-fi split shutter panels
+    setTimeout(() => {
+      // 1. Fade out preloader content elements
+      gsap.to('.preloader-content', {
+        opacity: 0,
+        scale: 0.95,
+        duration: 0.55,
+        ease: "power2.inOut",
+        onComplete: () => {
             // 2. Optic sensor wakeup blinking sequence
             const shutterTL = gsap.timeline({
               delay: 1.0,
@@ -348,25 +358,97 @@ function imageLoaded() {
       }, 800);
     }
   }
-}
 
-// Preload all 154 image frames into the images array
+// Preload only the initial frames to speed up initial page load
 function preloadImages() {
+  // Initialize the images array with null placeholders
   for (let i = 0; i < totalFrames; i++) {
+    images.push(null);
+  }
+
+  for (let i = 0; i < initialFramesToPreload; i++) {
     const img = new Image();
     img.src = getFramePath(i);
-    img.onload = imageLoaded;
-    img.onerror = () => {
-      console.warn(`Failed to cache frame at ${img.src}. Continuing loading sequence.`);
-      imageLoaded(); // Ensure we don't hang the preloader
+    img.onload = () => {
+      images[i] = img;
+      imageLoaded();
     };
-    images.push(img);
+    img.onerror = () => {
+      console.warn(`Failed to cache initial frame at ${img.src}. Continuing.`);
+      imageLoaded();
+    };
   }
+}
+
+// Load remaining frames asynchronously in the background using requestIdleCallback/setTimeout
+function loadRemainingImages() {
+  // Delay background loading by 2.5 seconds to let page entrance animations complete smoothly
+  setTimeout(() => {
+    let currentIndex = initialFramesToPreload;
+
+    function loadNext() {
+      if (currentIndex >= totalFrames) {
+        console.log("All background frames loaded.");
+        return;
+      }
+
+      const img = new Image();
+      img.src = getFramePath(currentIndex);
+      
+      const handleLoad = () => {
+        if (img.decode) {
+          img.decode().then(() => {
+            images[currentIndex] = img;
+            currentIndex++;
+            scheduleNext();
+          }).catch(() => {
+            images[currentIndex] = img;
+            currentIndex++;
+            scheduleNext();
+          });
+        } else {
+          images[currentIndex] = img;
+          currentIndex++;
+          scheduleNext();
+        }
+      };
+
+      img.onload = handleLoad;
+      img.onerror = () => {
+        console.warn(`Failed to cache background frame ${currentIndex}.`);
+        currentIndex++;
+        scheduleNext();
+      };
+    }
+
+    function scheduleNext() {
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(loadNext);
+      } else {
+        setTimeout(loadNext, 40);
+      }
+    }
+
+    scheduleNext();
+  }, 2500);
 }
 
 // Draw a frame centered on the canvas using 'cover' aspect ratio logic to fill the frame
 function drawFrame(index) {
-  const img = images[index];
+  let img = images[index];
+  if (!img) {
+    // Search outwards from target index to find the nearest loaded frame
+    for (let offset = 1; offset < totalFrames; offset++) {
+      if (index - offset >= 0 && images[index - offset]) {
+        img = images[index - offset];
+        break;
+      }
+      if (index + offset < totalFrames && images[index + offset]) {
+        img = images[index + offset];
+        break;
+      }
+    }
+  }
   if (!img) return;
 
   const scale = window.devicePixelRatio || 1;
@@ -1229,12 +1311,10 @@ let liveMouseX = globalMouseX;
 let liveMouseY = globalMouseY;
 let currentX = globalMouseX;
 let currentY = globalMouseY;
+let ringX = globalMouseX;
+let ringY = globalMouseY;
 
 if (cursorDot && cursorRing) {
-  // Align cursor offsets and position them immediately at the last tracked mouse location
-  gsap.set(cursorDot, { xPercent: 0, yPercent: 0, x: liveMouseX, y: liveMouseY });
-  gsap.set(cursorRing, { xPercent: -50, yPercent: -50, x: liveMouseX, y: liveMouseY });
-
   // Smoothly fade in the custom cursor immediately so it's visible on the preloader screen
   gsap.to([cursorDot, cursorRing], { opacity: 1, duration: 0.5, ease: "power1.out" });
 }
@@ -1247,11 +1327,7 @@ window.addEventListener('mousemove', (e) => {
   if (cursorGlow) {
     cursorGlow.style.opacity = '1';
   }
-
-  // Instantly track custom cursor vectors
-  gsap.to(cursorDot, { x: e.clientX, y: e.clientY, duration: 0, overwrite: 'auto' });
-  gsap.to(cursorRing, { x: e.clientX, y: e.clientY, duration: 0.35, ease: 'power2.out', overwrite: 'auto' });
-});
+}, { passive: true });
 
 window.addEventListener('mouseleave', () => {
   if (cursorGlow) {
@@ -1434,12 +1510,53 @@ window.addEventListener('mousedown', (e) => {
       duration: 0.2,
       ease: 'power2.in'
     });
+
+  // 11. Lazy-load Skills Section Background Videos on Viewport Intersection
+  if ('IntersectionObserver' in window) {
+    const lazyVideos = document.querySelectorAll('.lazy-video');
+    const videoObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const video = entry.target;
+          const source = video.querySelector('source');
+          if (source && source.dataset.src) {
+            source.src = source.dataset.src;
+            video.load();
+            video.play().catch(err => {
+              console.warn("Video autoplay failed on intersection:", err);
+            });
+            observer.unobserve(video);
+          }
+        }
+      });
+    }, {
+      rootMargin: '200px'
+    });
+
+    lazyVideos.forEach(video => {
+      videoObserver.observe(video);
+    });
+  } else {
+    // Fallback for older browsers: load immediately
+    const lazyVideos = document.querySelectorAll('.lazy-video');
+    lazyVideos.forEach(video => {
+      const source = video.querySelector('source');
+      if (source && source.dataset.src) {
+        source.src = source.dataset.src;
+        video.load();
+        video.play().catch(() => {});
+      }
+    });
+  }
 });
 
 // Parallax calculations loop
 function animateParallax() {
   currentX += (liveMouseX - currentX) * 0.1;
   currentY += (liveMouseY - currentY) * 0.1;
+
+  ringX += (liveMouseX - ringX) * 0.22;
+  ringY += (liveMouseY - ringY) * 0.22;
 
   const centerX = window.innerWidth / 2;
   const centerY = window.innerHeight / 2;
@@ -1449,6 +1566,14 @@ function animateParallax() {
   if (cursorGlow) {
     cursorGlow.style.left = `${currentX}px`;
     cursorGlow.style.top = `${currentY}px`;
+  }
+
+  if (cursorDot) {
+    cursorDot.style.transform = `translate3d(${liveMouseX}px, ${liveMouseY}px, 0)`;
+  }
+
+  if (cursorRing) {
+    cursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate3d(-50%, -50%, 0)`;
   }
 
   requestAnimationFrame(animateParallax);
