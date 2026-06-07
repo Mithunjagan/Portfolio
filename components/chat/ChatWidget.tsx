@@ -19,7 +19,7 @@ class PortfolioChatbot {
     this.chatHistory = [
       {
         role: 'assistant',
-        content: "Hello! I'm Mithun's AI portfolio assistant. Ask me anything about his projects (like Ship Spy Live), skills, engineering experience, or how to contact him!"
+        content: "Hello! I am **TARS**, Mithun's tactical AI assistant. **Honesty parameter set to 90%. Humor parameter set to 65%.** Ask me anything about Mithun's projects, technical skills, experience, or how to contact him!"
       }
     ];
   }
@@ -50,14 +50,44 @@ class PortfolioChatbot {
 
   private renderHTML(): string {
     return `
-      <!-- Floating Chat Button (Holographic AI Core) -->
+      <!-- Floating Chat Button (TARS Robot Icon) -->
       <button class="chat-widget-button w-14 h-14 bg-[#0a0a0a]/90 border border-[#00d2ff]/30 text-[#00d2ff] rounded-full flex items-center justify-center backdrop-blur-md cursor-pointer select-none transition-all duration-300 relative focus:outline-none pulse-neon-btn">
-        <svg class="w-7 h-7" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="38" stroke="currentColor" stroke-width="2.5" stroke-dasharray="12 6" />
-          <circle cx="50" cy="50" r="26" stroke="currentColor" stroke-width="1.5" />
-          <circle cx="50" cy="50" r="14" fill="currentColor" fill-opacity="0.85" />
-          <circle cx="50" cy="50" r="5" fill="#fff" />
-          <path d="M50 8 L50 20 M50 80 L50 92 M8 50 L20 50 M80 50 L92 50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+        <svg class="w-8 h-8 text-[#00d2ff]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="tars-metallic-btn" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3a3a3a" />
+              <stop offset="30%" stop-color="#181818" />
+              <stop offset="70%" stop-color="#0e0e0e" />
+              <stop offset="100%" stop-color="#222222" />
+            </linearGradient>
+            <linearGradient id="tars-glint-btn" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="rgba(0, 210, 255, 0.2)" />
+              <stop offset="100%" stop-color="rgba(0, 210, 255, 0)" />
+            </linearGradient>
+          </defs>
+          <!-- 4 Segments of TARS -->
+          <rect x="15" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
+          <rect x="15" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
+          <line x1="15" y1="36" x2="30" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          <line x1="15" y1="64" x2="30" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+
+          <rect x="32" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
+          <rect x="32" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
+          <line x1="32" y1="36" x2="47" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          <line x1="32" y1="64" x2="47" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+
+          <rect x="49" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
+          <rect x="49" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
+          <line x1="49" y1="36" x2="64" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          <line x1="49" y1="64" x2="64" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+
+          <rect x="66" y="15" width="15" height="70" rx="1.5" fill="url(#tars-metallic-btn)" stroke="currentColor" stroke-width="1" />
+          <rect x="66" y="15" width="15" height="70" rx="1.5" fill="url(#tars-glint-btn)" />
+          <line x1="66" y1="36" x2="81" y2="36" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+          <line x1="66" y1="64" x2="81" y2="64" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.8" />
+
+          <!-- Sensor Light -->
+          <rect x="42" y="24" width="14" height="4" rx="0.5" fill="#00d2ff" opacity="0.95" filter="drop-shadow(0 0 2px #00d2ff)" />
         </svg>
         <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#00d2ff] rounded-full border-2 border-[#0a0a0a] animate-ping"></span>
         <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#00d2ff] rounded-full border-2 border-[#0a0a0a]"></span>
@@ -68,16 +98,20 @@ class PortfolioChatbot {
         <!-- Header -->
         <div class="chat-header px-4 py-3 bg-[#2a2a2a]/20 border-b border-[#2a2a2a]/40 flex items-center justify-between">
           <div class="flex items-center gap-2.5">
-            <div class="relative w-8 h-8 rounded-full bg-[#00d2ff]/10 border border-[#00d2ff]/30 flex items-center justify-center">
-              <svg class="w-4.5 h-4.5 text-[#00d2ff]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="30" stroke="currentColor" stroke-width="8" />
-                <circle cx="50" cy="50" r="10" fill="currentColor" />
+            <!-- TARS Miniature Header Icon -->
+            <div class="relative w-8 h-8 rounded bg-[#00d2ff]/10 border border-[#00d2ff]/30 flex items-center justify-center">
+              <svg class="w-5.5 h-5.5 text-[#00d2ff]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
+                <rect x="34" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
+                <rect x="48" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
+                <rect x="62" y="20" width="12" height="60" rx="1" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="1.5" />
+                <rect x="42" y="27" width="14" height="3" rx="0.5" fill="#00d2ff" />
               </svg>
-              <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#00d2ff] rounded-full border border-[#0a0a0a] animate-pulse"></span>
+              <span class="absolute bottom-0 right-0 w-2 h-2 bg-[#00d2ff] rounded-full border border-[#0a0a0a] animate-pulse"></span>
             </div>
             <div>
-              <h3 class="font-tech text-[10px] font-bold text-white tracking-widest uppercase">SYS.CORE // AI_CONN.09</h3>
-              <p class="text-[8px] font-mono text-[#00d2ff]/80 uppercase">LOC: SEC_0xFB82 // ONLINE</p>
+              <h3 class="font-tech text-[10px] font-bold text-white tracking-widest uppercase">TARS // TACTICAL_AI</h3>
+              <p class="text-[8px] font-mono text-[#00d2ff]/80 uppercase">MITHUN.ASSIST.v1.0 // ACTIVE</p>
             </div>
           </div>
           <div class="flex items-center gap-3.5">
