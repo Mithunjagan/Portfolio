@@ -1345,8 +1345,95 @@ function initAudioController() {
     togglePlay();
   });
 
-  // Custom cursor hover feedback
+  // Space floating, 3D tilt, and particle emitter logic on hover
+  let isHovered = false;
+  let floatTween = null;
+  let particleInterval = null;
+
+  const startSpaceFloating = () => {
+    floatTween = gsap.to(capsule, {
+      y: "-=4",
+      rotation: "+=1.2",
+      duration: 2.2,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+      overwrite: "auto"
+    });
+  };
+
+  const stopSpaceFloating = () => {
+    if (floatTween) {
+      floatTween.kill();
+      floatTween = null;
+    }
+    gsap.to(capsule, {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      rotationX: 0,
+      rotationY: 0,
+      duration: 0.6,
+      ease: "power2.out"
+    });
+  };
+
+  const spawnParticle = () => {
+    if (!isHovered) return;
+    const rect = capsule.getBoundingClientRect();
+    const p = document.createElement('span');
+    p.className = 'audio-particle';
+    
+    // Position randomly along the capsule edge
+    const startX = rect.left + Math.random() * rect.width;
+    const startY = rect.top + Math.random() * rect.height;
+    
+    p.style.left = `${startX}px`;
+    p.style.top = `${startY}px`;
+    document.body.appendChild(p);
+
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 35 + Math.random() * 50;
+    const destX = Math.cos(angle) * distance;
+    const destY = Math.sin(angle) * distance;
+
+    gsap.to(p, {
+      x: destX,
+      y: destY,
+      scale: 0.1,
+      opacity: 0,
+      duration: 1.0 + Math.random() * 0.6,
+      ease: "power1.out",
+      onComplete: () => p.remove()
+    });
+  };
+
+  capsule.addEventListener('mousemove', (e) => {
+    if (!isHovered) return;
+    const rect = capsule.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = e.clientX - cx;
+    const dy = e.clientY - cy;
+
+    const tiltX = (dy / (rect.height / 2)) * -8;
+    const tiltY = (dx / (rect.width / 2)) * 8;
+
+    gsap.to(capsule, {
+      rotationX: tiltX,
+      rotationY: tiltY,
+      x: dx * 0.12,
+      y: dy * 0.12,
+      duration: 0.35,
+      ease: "power2.out"
+    });
+  });
+
   capsule.addEventListener('mouseenter', () => {
+    isHovered = true;
+    startSpaceFloating();
+    particleInterval = setInterval(spawnParticle, 140);
+
     const cursorDot = document.querySelector('.custom-cursor-dot');
     const cursorRing = document.querySelector('.custom-cursor-ring');
     if (cursorDot && cursorRing) {
@@ -1356,6 +1443,10 @@ function initAudioController() {
   });
 
   capsule.addEventListener('mouseleave', () => {
+    isHovered = false;
+    clearInterval(particleInterval);
+    stopSpaceFloating();
+
     const cursorDot = document.querySelector('.custom-cursor-dot');
     const cursorRing = document.querySelector('.custom-cursor-ring');
     if (cursorDot && cursorRing) {

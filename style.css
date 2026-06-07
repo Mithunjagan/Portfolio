@@ -1682,7 +1682,10 @@ footer {
   backdrop-filter: blur(20px) saturate(140%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
   z-index: 60 !important;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-style: preserve-3d;
+  perspective: 600px;
+  will-change: transform, box-shadow, border-color;
 }
 
 #audio-capsule:hover {
@@ -1691,7 +1694,19 @@ footer {
     0 12px 35px rgba(0, 0, 0, 0.7),
     inset 0 1px 0 rgba(255, 255, 255, 0.2),
     0 0 25px rgba(0, 210, 255, 0.3) !important;
-  transform: translateY(-2px);
+}
+
+/* Glowing space particles */
+.audio-particle {
+  position: fixed;
+  width: 3px;
+  height: 3px;
+  background: var(--accent-cyan);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 59;
+  box-shadow: 0 0 6px var(--accent-cyan), 0 0 10px var(--accent-blue-neon);
+  will-change: transform, opacity;
 }
 
 .audio-bars {
