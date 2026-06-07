@@ -43,7 +43,7 @@ const ratingLabels: Record<number, string> = {
 
 // ─── Injected Styles ─────────────────────────────────────────────────────────
 const FEEDBACK_STYLES = `
-.hud-panel {
+.reviews-hud-panel {
   background: rgba(0, 210, 255, 0.02);
   border: 1px solid rgba(0, 212, 255, 0.12);
   border-radius: 16px;
@@ -237,7 +237,7 @@ export default function FeedbackSection() {
 
         {/* ── Sci-Fi Diagnostics HUD Panel ── */}
         {loadError && (
-          <div className="hud-panel font-mono text-xs" style={{ borderColor: 'rgba(255, 68, 68, 0.3)', background: 'rgba(255, 68, 68, 0.02)', boxShadow: '0 0 15px rgba(255, 68, 68, 0.02)' }}>
+          <div className="reviews-hud-panel font-mono text-xs" style={{ borderColor: 'rgba(255, 68, 68, 0.3)', background: 'rgba(255, 68, 68, 0.02)', boxShadow: '0 0 15px rgba(255, 68, 68, 0.02)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(255, 68, 68, 0.15)', paddingBottom: '10px' }}>
               <span className="hud-label" style={{ color: '#ff4444' }}>[ TELEMETRY_OFFLINE ]</span>
               <span style={{ color: 'rgba(255, 68, 68, 0.65)', marginLeft: 'auto', fontSize: '10px' }}>STATUS: OFFLINE // CONNECT_REFUSED</span>
@@ -249,7 +249,7 @@ export default function FeedbackSection() {
         )}
 
         {totalReviews > 0 && (
-          <div className="hud-panel font-mono text-xs">
+          <div className="reviews-hud-panel font-mono text-xs">
             <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(0, 212, 255, 0.08)', paddingBottom: '10px' }}>
               <span className="hud-label">[ RATING_TELEMETRY ]</span>
               <span style={{ color: 'rgba(255,255,255,0.35)', marginLeft: 'auto', fontSize: '10px' }}>STATUS: ACTIVE // RESPONSES_COMMITTED</span>
