@@ -406,6 +406,10 @@ function loadRemainingImages() {
 
         img.onload = () => {
           images[idx] = img;
+          // Redraw current frame to update if this image is now the closest loaded frame
+          if (typeof imageSequenceObj !== 'undefined' && typeof drawFrame === 'function') {
+            drawFrame(Math.floor(imageSequenceObj.frame));
+          }
           pending--;
           if (pending === 0) {
             currentIndex = batchEnd;
@@ -572,14 +576,14 @@ function initializeApplication() {
     frame: totalFrames - 1,
     snap: 'frame',
     ease: 'none',
+    onUpdate: () => {
+      drawFrame(Math.floor(imageSequenceObj.frame));
+    },
     scrollTrigger: {
       trigger: '.scrolly-container',
       start: 'top top',
       end: 'bottom bottom',
-      scrub: true,
-      onUpdate: (self) => {
-        drawFrame(Math.floor(imageSequenceObj.frame));
-      }
+      scrub: 1.2
     }
   });
 

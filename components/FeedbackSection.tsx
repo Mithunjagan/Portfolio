@@ -205,6 +205,15 @@ export default function FeedbackSection() {
     }
   }, [reviews]);
 
+  // ── Refresh ScrollTrigger on layout changes ──
+  useEffect(() => {
+    if (typeof window !== 'undefined' && (window as any).ScrollTrigger) {
+      setTimeout(() => {
+        (window as any).ScrollTrigger.refresh();
+      }, 100);
+    }
+  }, [reviews, hasSubmitted, submitted, isAnimatingOut]);
+
   // ── Submit handler ──
   const handleSubmit = useCallback(() => {
     if (rating === 0 || hasSubmitted || isAnimatingOut) return;
