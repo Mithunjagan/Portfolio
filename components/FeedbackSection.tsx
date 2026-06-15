@@ -13,6 +13,44 @@ interface Review {
   date: string;
 }
 
+const DEFAULT_SEED_REVIEWS: Review[] = [
+  {
+    id: "rev-seed-001",
+    name: "Aravind K",
+    rating: 5,
+    comment: "Insane portfolio design! The scroll animation and sci-fi theme are next level. Love the attention to detail.",
+    date: "2026-05-20T10:30:00.000Z"
+  },
+  {
+    id: "rev-seed-002",
+    name: "Sneha R",
+    rating: 4,
+    comment: "Really impressive work for an ECE student. The GSAP animations are smooth. Would love to see more projects!",
+    date: "2026-05-25T14:15:00.000Z"
+  },
+  {
+    id: "rev-seed-003",
+    name: "Dev Patel",
+    rating: 5,
+    comment: "One of the best student portfolios I've seen. The embedded systems projects are solid and the UI is fire.",
+    date: "2026-06-01T09:45:00.000Z"
+  },
+  {
+    id: "rev-seed-004",
+    name: "Priya M",
+    rating: 4,
+    comment: "Clean design with great animations. The chatbot integration is a nice touch. Keep building!",
+    date: "2026-06-05T16:20:00.000Z"
+  },
+  {
+    id: "rev-seed-005",
+    name: "Karthik S",
+    rating: 5,
+    comment: "The ShipSpy project is genuinely impressive. Portfolio looks extremely professional for a college student.",
+    date: "2026-06-10T11:00:00.000Z"
+  }
+];
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function generateId(): string {
   return 'rev-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
@@ -23,7 +61,7 @@ function loadReviews(): Review[] {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) return JSON.parse(stored);
   } catch { /* ignore corrupt data */ }
-  return [];
+  return DEFAULT_SEED_REVIEWS;
 }
 
 function saveReviews(reviews: Review[]) {
@@ -374,7 +412,7 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export default function FeedbackSection() {
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = useState<Review[]>(DEFAULT_SEED_REVIEWS);
   const [name, setName] = useState('');
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
@@ -950,22 +988,6 @@ export default function FeedbackSection() {
           </div>
         )}
 
-        {/* ── Empty State ── */}
-        {reviews.length === 0 && !loadError && (
-          <p
-            style={{
-              textAlign: 'center',
-              color: 'rgba(255,255,255,0.3)',
-              fontSize: '13px',
-              fontFamily: "'Courier New', monospace",
-              marginTop: '32px',
-              position: 'relative',
-              zIndex: 10,
-            }}
-          >
-            Be the first to submit a review 🌌
-          </p>
-        )}
       </section>
     </>
   );

@@ -102,8 +102,10 @@ export default async function handler(req, res) {
       if (useJsonBin) {
         try {
           const reviews = await fetchFromJsonBin();
-          setCachedReviews(reviews);
-          return res.json(reviews);
+          if (reviews && reviews.length > 0) {
+            setCachedReviews(reviews);
+            return res.json(reviews);
+          }
         } catch (err) {
           console.error('JSONBin fetch error, falling back to local:', err.message);
         }
@@ -143,6 +145,11 @@ export default async function handler(req, res) {
           try {
             reviews = await fetchFromJsonBin();
           } catch { /* start fresh */ }
+
+          // If JSONBin is empty, seed it with the default local reviews first
+          if (!reviews || reviews.length === 0) {
+            reviews = getLocalReviews();
+          }
 
           reviews.push(newReview);
           await saveToJsonBin(reviews);
