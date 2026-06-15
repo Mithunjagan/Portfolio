@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -30,6 +30,25 @@ function saveReviews(reviews: Review[]) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
   } catch { /* ignore quota errors */ }
+}
+
+function relativeTime(dateStr: string): string {
+  const now = Date.now();
+  const then = new Date(dateStr).getTime();
+  const diffMs = now - then;
+  const seconds = Math.floor(diffMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30);
+
+  if (seconds < 60) return 'just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days < 7) return `${days}d ago`;
+  if (weeks < 5) return `${weeks}w ago`;
+  return `${months}mo ago`;
 }
 
 // ─── Rating labels ───────────────────────────────────────────────────────────
@@ -82,12 +101,8 @@ const FEEDBACK_STYLES = `
   animation: laserSweep 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 @keyframes laserSweep {
-  0% {
-    top: -5%;
-  }
-  100% {
-    top: 105%;
-  }
+  0% { top: -5%; }
+  100% { top: 105%; }
 }
 @keyframes liquidGasDissolve {
   0% {
@@ -116,12 +131,31 @@ const FEEDBACK_STYLES = `
   }
 }
 @keyframes telemetryPulse {
-  0%, 100% {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+@keyframes distBarGrow {
+  from { width: 0%; }
+}
+@keyframes reviewCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+    filter: blur(4px);
+  }
+  to {
     opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
   }
-  50% {
-    opacity: 0.5;
-  }
+}
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(0, 210, 255, 0.15); }
+  50% { box-shadow: 0 0 20px rgba(0, 210, 255, 0.3); }
 }
 `;
 
@@ -132,6 +166,210 @@ const getApiUrl = (path: string): string => {
   }
   return path;
 };
+
+// ─── Rating Distribution Component ──────────────────────────────────────────
+function RatingDistribution({ reviews }: { reviews: Review[] }) {
+  const distribution = useMemo(() => {
+    const counts = [0, 0, 0, 0, 0]; // index 0 = 1 star, index 4 = 5 stars
+    reviews.forEach(r => {
+      if (r.rating >= 1 && r.rating <= 5) counts[r.rating - 1]++;
+    });
+    const max = Math.max(...counts, 1);
+    return counts.map((count, i) => ({
+      stars: i + 1,
+      count,
+      percent: (count / max) * 100,
+      totalPercent: reviews.length > 0 ? (count / reviews.length) * 100 : 0,
+    }));
+  }, [reviews]);
+
+  if (reviews.length === 0) return null;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+      <div style={{ fontSize: '8px', fontFamily: "'Courier New', monospace", color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '4px' }}>
+        Rating Distribution
+      </div>
+      {[...distribution].reverse().map(({ stars, count, percent, totalPercent }) => (
+        <div key={stars} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '10px', fontFamily: "'Courier New', monospace", color: 'rgba(255,255,255,0.5)', width: '22px', textAlign: 'right' }}>
+            {stars}★
+          </span>
+          <div style={{
+            flex: 1,
+            height: '8px',
+            background: 'rgba(255,255,255,0.03)',
+            borderRadius: '4px',
+            overflow: 'hidden',
+            border: '1px solid rgba(0, 212, 255, 0.08)',
+          }}>
+            <div style={{
+              height: '100%',
+              width: `${percent}%`,
+              background: stars >= 4
+                ? 'linear-gradient(90deg, #0055ff, #00d2ff)'
+                : stars === 3
+                  ? 'linear-gradient(90deg, #ff9900, #ffcc00)'
+                  : 'linear-gradient(90deg, #ff3366, #ff6644)',
+              boxShadow: stars >= 4
+                ? '0 0 6px rgba(0, 210, 255, 0.4)'
+                : stars === 3
+                  ? '0 0 6px rgba(255, 204, 0, 0.3)'
+                  : '0 0 6px rgba(255, 51, 102, 0.3)',
+              borderRadius: '4px',
+              transition: 'width 0.8s cubic-bezier(0.1, 0.8, 0.2, 1)',
+              animation: 'distBarGrow 1s cubic-bezier(0.1, 0.8, 0.2, 1)',
+            }} />
+          </div>
+          <span style={{
+            fontSize: '10px',
+            fontFamily: "'Courier New', monospace",
+            color: 'rgba(255,255,255,0.4)',
+            width: '40px',
+            textAlign: 'right',
+          }}>
+            {count} <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.25)' }}>({totalPercent.toFixed(0)}%)</span>
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Sentiment Indicator Component ──────────────────────────────────────────
+function SentimentIndicator({ averageRating }: { averageRating: number }) {
+  const getSentiment = (avg: number) => {
+    if (avg >= 4.5) return { label: 'EXCEPTIONAL', color: '#00d2ff', glow: 'rgba(0, 210, 255, 0.4)', icon: '◆' };
+    if (avg >= 3.5) return { label: 'POSITIVE', color: '#00cc88', glow: 'rgba(0, 204, 136, 0.4)', icon: '▲' };
+    if (avg >= 2.5) return { label: 'NEUTRAL', color: '#ffcc00', glow: 'rgba(255, 204, 0, 0.4)', icon: '●' };
+    if (avg >= 1.5) return { label: 'MIXED', color: '#ff9900', glow: 'rgba(255, 153, 0, 0.4)', icon: '▼' };
+    return { label: 'CRITICAL', color: '#ff3366', glow: 'rgba(255, 51, 102, 0.4)', icon: '✕' };
+  };
+
+  const sentiment = getSentiment(averageRating);
+
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      padding: '8px 12px',
+      background: 'rgba(0, 0, 0, 0.3)',
+      borderRadius: '8px',
+      border: `1px solid ${sentiment.color}33`,
+    }}>
+      <span style={{
+        color: sentiment.color,
+        fontSize: '14px',
+        textShadow: `0 0 8px ${sentiment.glow}`,
+        lineHeight: 1,
+      }}>
+        {sentiment.icon}
+      </span>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+        <span style={{ fontSize: '8px', fontFamily: "'Courier New', monospace", color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          Sentiment
+        </span>
+        <span style={{
+          fontSize: '11px',
+          fontFamily: "'Orbitron', 'Courier New', monospace",
+          color: sentiment.color,
+          fontWeight: 700,
+          letterSpacing: '0.1em',
+          textShadow: `0 0 6px ${sentiment.glow}`,
+        }}>
+          {sentiment.label}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Review Card Component ──────────────────────────────────────────────────
+function ReviewCard({ review, index }: { review: Review; index: number }) {
+  const starColor = (r: number) => {
+    if (r >= 4) return '#00d2ff';
+    if (r === 3) return '#ffcc00';
+    return '#ff6644';
+  };
+
+  return (
+    <div
+      className="review-card"
+      style={{
+        animation: `reviewCardIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${index * 0.08}s both`,
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Avatar circle */}
+          <div style={{
+            width: '28px',
+            height: '28px',
+            borderRadius: '50%',
+            background: `linear-gradient(135deg, ${starColor(review.rating)}33, ${starColor(review.rating)}11)`,
+            border: `1px solid ${starColor(review.rating)}44`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '11px',
+            fontWeight: 700,
+            color: starColor(review.rating),
+            fontFamily: "'Orbitron', monospace",
+            textShadow: `0 0 6px ${starColor(review.rating)}66`,
+            flexShrink: 0,
+          }}>
+            {review.name.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 600,
+              color: '#ffffff',
+              lineHeight: 1.2,
+            }}>
+              {review.name}
+            </div>
+            <div style={{
+              fontSize: '9px',
+              fontFamily: "'Courier New', monospace",
+              color: 'rgba(255,255,255,0.3)',
+              marginTop: '2px',
+            }}>
+              {relativeTime(review.date)}
+            </div>
+          </div>
+        </div>
+        {/* Star rating */}
+        <div style={{ display: 'flex', gap: '2px', flexShrink: 0 }}>
+          {[1, 2, 3, 4, 5].map(s => (
+            <svg key={s} width="12" height="12" viewBox="0 0 24 24"
+              fill={s <= review.rating ? starColor(review.rating) : 'transparent'}
+              stroke={s <= review.rating ? starColor(review.rating) : 'rgba(255,255,255,0.15)'}
+              strokeWidth="1.5"
+              style={{
+                filter: s <= review.rating ? `drop-shadow(0 0 3px ${starColor(review.rating)}66)` : 'none',
+              }}
+            >
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" strokeLinejoin="round" strokeLinecap="round" />
+            </svg>
+          ))}
+        </div>
+      </div>
+      {review.comment && (
+        <p style={{
+          fontSize: '12px',
+          color: 'rgba(255,255,255,0.65)',
+          lineHeight: 1.6,
+          margin: 0,
+          fontStyle: 'italic',
+        }}>
+          "{review.comment}"
+        </p>
+      )}
+    </div>
+  );
+}
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 
@@ -158,7 +396,7 @@ export default function FeedbackSection() {
   useEffect(() => {
     // 1. Check if reviews are statically loaded in window context (from reviewsData.js)
     const globalReviews = (window as any).portfolioReviews;
-    if (Array.isArray(globalReviews)) {
+    if (Array.isArray(globalReviews) && globalReviews.length > 0) {
       setReviews(globalReviews);
       saveReviews(globalReviews);
     } else {
@@ -176,7 +414,7 @@ export default function FeedbackSection() {
         return res.json();
       })
       .then(data => {
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
           setReviews(data);
           saveReviews(data);
           setLoadError(null);
@@ -244,7 +482,7 @@ export default function FeedbackSection() {
         return res.json();
       })
       .then(() => {
-        // Sync with backend immediately to get updated average
+        // Sync with backend immediately to get updated list
         return fetch(getApiUrl('/api/reviews'));
       })
       .then(res => res.json())
@@ -289,6 +527,11 @@ export default function FeedbackSection() {
   const approvalPercent = (averageRating / 5) * 100;
 
   const activeRating = hoverRating || rating;
+
+  // Sort reviews: newest first
+  const sortedReviews = useMemo(() => {
+    return [...reviews].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [reviews]);
 
   return (
     <>
@@ -347,7 +590,7 @@ export default function FeedbackSection() {
           </p>
         </div>
 
-        {/* ── Sci-Fi Diagnostics HUD Panel ── */}
+        {/* ── Error Panel ── */}
         {loadError && (
           <div className="reviews-hud-panel font-mono text-xs" style={{ borderColor: 'rgba(255, 68, 68, 0.3)', background: 'rgba(255, 68, 68, 0.02)', boxShadow: '0 0 15px rgba(255, 68, 68, 0.02)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(255, 68, 68, 0.15)', paddingBottom: '10px' }}>
@@ -360,63 +603,69 @@ export default function FeedbackSection() {
           </div>
         )}
 
+        {/* ── Analytics Dashboard ── */}
         {totalReviews > 0 && (
-          <div className="reviews-hud-panel font-mono text-xs">
-            <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(0, 212, 255, 0.08)', paddingBottom: '10px' }}>
+          <div className="reviews-hud-panel font-mono text-xs" style={{ maxWidth: '540px', animation: 'glowPulse 4s ease-in-out infinite' }}>
+            {/* Dashboard Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', borderBottom: '1px solid rgba(0, 212, 255, 0.08)', paddingBottom: '10px' }}>
               <span className="hud-label">[ RATING_TELEMETRY ]</span>
-              <span style={{ color: 'rgba(255,255,255,0.35)', marginLeft: 'auto', fontSize: '10px' }}>STATUS: ACTIVE // RESPONSES_COMMITTED</span>
+              <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px' }}>STATUS: ACTIVE // {totalReviews} RESPONSES</span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '16px' }}>
+            {/* Top Row: Score + Sentiment + Count */}
+            <div style={{ display: 'flex', alignItems: 'stretch', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
               {/* Large Digital Rating */}
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span className="hud-label" style={{ fontSize: '8px', color: 'rgba(255,255,255,0.4)', marginBottom: '2px' }}>AVG_SCORE</span>
-                <span className="hud-value" style={{ fontSize: '38px', lineHeight: '1' }}>
+                <span style={{ fontSize: '8px', fontFamily: "'Courier New', monospace", color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '2px' }}>AVG_SCORE</span>
+                <span className="hud-value" style={{ fontSize: '38px', lineHeight: '1', animation: 'countUp 0.6s ease-out' }}>
                   {averageRating.toFixed(2)}
                   <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.3)', fontWeight: 400 }}> / 5.00</span>
                 </span>
               </div>
 
-              {/* Stats Splitter */}
-              <div style={{ width: '1px', height: '40px', background: 'rgba(0, 212, 255, 0.15)' }} />
+              {/* Divider */}
+              <div style={{ width: '1px', background: 'rgba(0, 212, 255, 0.12)' }} />
 
-              {/* Review Count & Approval */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flexGrow: 1 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'rgba(255,255,255,0.5)' }}>APPROVAL INDEX:</span>
-                  <span className="hud-value" style={{ color: '#00d2ff' }}>{approvalPercent.toFixed(1)}%</span>
+              {/* Sentiment + Count */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', justifyContent: 'center', flex: 1, minWidth: '140px' }}>
+                <SentimentIndicator averageRating={averageRating} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px' }}>
+                  <span style={{ color: 'rgba(255,255,255,0.4)' }}>TOTAL REVIEWS:</span>
+                  <span className="hud-value" style={{ color: '#00d2ff', fontSize: '12px' }}>{totalReviews}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px' }}>
+                  <span style={{ color: 'rgba(255,255,255,0.4)' }}>APPROVAL INDEX:</span>
+                  <span className="hud-value" style={{ color: '#00d2ff', fontSize: '12px' }}>{approvalPercent.toFixed(1)}%</span>
                 </div>
               </div>
             </div>
 
-            {/* Glowing Progress bar indicator */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: 'rgba(255,255,255,0.3)' }}>
+            {/* Approval Progress Bar */}
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: 'rgba(255,255,255,0.3)', marginBottom: '4px' }}>
                 <span>0.00</span>
                 <span>METRIC METER</span>
                 <span>5.00</span>
               </div>
-              <div
-                style={{
-                  height: '6px',
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  borderRadius: '3px',
-                  overflow: 'hidden',
-                  border: '1px solid rgba(0, 212, 255, 0.15)',
-                  position: 'relative'
-                }}
-              >
-                <div
-                  style={{
-                    height: '100%',
-                    background: 'linear-gradient(90deg, #0055ff, #00d2ff)',
-                    boxShadow: '0 0 8px #00d2ff',
-                    width: `${approvalPercent}%`,
-                    transition: 'width 0.6s cubic-bezier(0.1, 0.8, 0.2, 1)',
-                  }}
-                />
+              <div style={{
+                height: '6px',
+                background: 'rgba(255, 255, 255, 0.04)',
+                borderRadius: '3px',
+                overflow: 'hidden',
+                border: '1px solid rgba(0, 212, 255, 0.15)',
+              }}>
+                <div style={{
+                  height: '100%',
+                  background: 'linear-gradient(90deg, #0055ff, #00d2ff)',
+                  boxShadow: '0 0 8px #00d2ff',
+                  width: `${approvalPercent}%`,
+                  transition: 'width 0.6s cubic-bezier(0.1, 0.8, 0.2, 1)',
+                }} />
               </div>
             </div>
+
+            {/* Rating Distribution Chart */}
+            <RatingDistribution reviews={reviews} />
           </div>
         )}
 
@@ -624,42 +873,17 @@ export default function FeedbackSection() {
               Submit Review
             </button>
 
-            {/* Success Toast */}
-            {submitted && (
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: '-60px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  background: 'rgba(10,10,10,0.95)',
-                  border: '1px solid rgba(0,210,255,0.3)',
-                  padding: '12px 24px',
-                  borderRadius: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '12px',
-                  color: '#ffffff',
-                  pointerEvents: 'none',
-                  backdropFilter: 'blur(12px)',
-                  whiteSpace: 'nowrap',
-                  zIndex: 50,
-                }}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#22c55e"
-                  strokeWidth="2.5"
-                >
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                Review submitted! Thank you 🌌
-              </div>
-            )}
+            {/* One-per-user notice */}
+            <div style={{
+              textAlign: 'center',
+              marginTop: '12px',
+              fontSize: '9px',
+              fontFamily: "'Courier New', monospace",
+              color: 'rgba(255,255,255,0.25)',
+              letterSpacing: '0.1em',
+            }}>
+              ⚡ ONE SUBMISSION PER TERMINAL
+            </div>
           </div>
         )}
 
@@ -691,8 +915,43 @@ export default function FeedbackSection() {
           </div>
         )}
 
+        {/* ── Reviews Feed ── */}
+        {sortedReviews.length > 0 && (
+          <div style={{ marginTop: '36px' }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '16px',
+            }}>
+              <div style={{
+                fontSize: '10px',
+                fontFamily: "'Courier New', monospace",
+                color: 'rgba(255,255,255,0.4)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.15em',
+              }}>
+                ◈ Transmission Log ({totalReviews})
+              </div>
+              <div style={{
+                fontSize: '9px',
+                fontFamily: "'Courier New', monospace",
+                color: 'rgba(0, 210, 255, 0.4)',
+                letterSpacing: '0.1em',
+              }}>
+                NEWEST FIRST
+              </div>
+            </div>
+            <div className="reviews-feed" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {sortedReviews.map((review, index) => (
+                <ReviewCard key={review.id} review={review} index={index} />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* ── Empty State ── */}
-        {reviews.length === 0 && (
+        {reviews.length === 0 && !loadError && (
           <p
             style={{
               textAlign: 'center',

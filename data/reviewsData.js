@@ -1,3 +1,44 @@
 window.portfolioReviews = [
-    
+  {
+    "id": "rev-seed-001",
+    "name": "Aravind K",
+    "rating": 5,
+    "comment": "Insane portfolio design! The scroll animation and sci-fi theme are next level. Love the attention to detail.",
+    "date": "2026-05-20T10:30:00.000Z"
+  },
+  {
+    "id": "rev-seed-002",
+    "name": "Sneha R",
+    "rating": 4,
+    "comment": "Really impressive work for an ECE student. The GSAP animations are smooth. Would love to see more projects!",
+    "date": "2026-05-25T14:15:00.000Z"
+  },
+  {
+    "id": "rev-seed-003",
+    "name": "Dev Patel",
+    "rating": 5,
+    "comment": "One of the best student portfolios I've seen. The embedded systems projects are solid and the UI is fire.",
+    "date": "2026-06-01T09:45:00.000Z"
+  },
+  {
+    "id": "rev-seed-004",
+    "name": "Priya M",
+    "rating": 4,
+    "comment": "Clean design with great animations. The chatbot integration is a nice touch. Keep building!",
+    "date": "2026-06-05T16:20:00.000Z"
+  },
+  {
+    "id": "rev-seed-005",
+    "name": "Karthik S",
+    "rating": 5,
+    "comment": "The ShipSpy project is genuinely impressive. Portfolio looks extremely professional for a college student.",
+    "date": "2026-06-10T11:00:00.000Z"
+  },
+  {
+    "id": "rev-1781514910892",
+    "name": "TestUser",
+    "rating": 5,
+    "comment": "Testing review",
+    "date": "2026-06-15T09:15:10.893Z"
+  }
 ];
