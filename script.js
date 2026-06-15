@@ -1096,6 +1096,21 @@ function initializeApplication() {
 
   // Initialize Gravitational Floating Buttons
   initGravityButtons();
+
+  // Decrypt/decode obfuscated email links on click or hover to block spambots
+  const emailLinks = document.querySelectorAll('.email-link');
+  emailLinks.forEach(link => {
+    const decodeEmail = () => {
+      const encoded = link.getAttribute('data-email');
+      if (encoded && encoded.startsWith('bWl0aHVua2')) {
+        const decoded = atob(encoded);
+        link.setAttribute('href', 'mailto:' + decoded);
+      }
+    };
+    link.addEventListener('mouseenter', decodeEmail);
+    link.addEventListener('touchstart', decodeEmail, { passive: true });
+    link.addEventListener('click', decodeEmail);
+  });
 }
 
 // Initialize Gravitational Floating / Magnetic Buttons
