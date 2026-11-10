@@ -1,1060 +1,857 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#101411" />
-    <meta
-      name="description"
-      content="Mithun Kumar J — electronics and communication engineering at VIT Chennai. Embedded systems, connected hardware, and applied intelligence."
-    />
-    <title>Mithun Kumar J — Hardware meets intelligence.</title>
-    <link
-      rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23101411'/%3E%3Ctext x='8' y='46' font-family='sans-serif' font-size='46' font-weight='bold' fill='%23cee7ad'%3Em.%3C/text%3E%3C/svg%3E"
-    />
-    <link rel="stylesheet" href="/style.css" />
-    <script src="/script.js" defer></script>
-  </head>
-  <body>
-    <a class="skip" href="#main">Skip to content</a>
-    <header class="header wrap">
-      <a class="wordmark" href="#" aria-label="Mithun home">m<span>.</span></a>
-      <nav aria-label="Main navigation">
-        <a href="#work">Work</a><a href="#about">About</a
-        ><a href="#experience">Experience</a>
-      </nav>
-      <a class="nav-contact" href="#contact"
-        >Let’s talk
-        <span
-          ><svg
-            class="icon"
-            viewBox="0 0 20 20"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.4"
-            aria-hidden="true"
-          >
-            <path d="M4 16 16 4M4 4h12v12" /></svg></span
-      ></a>
-    </header>
-    <main id="main">
-      <section class="hero wrap" aria-labelledby="hero-title">
-        <div class="hero-copy">
-          <div class="eyebrow">
-            <span class="status-dot"></span> MITHUN KUMAR J
-            <span class="divider">/</span> CHENNAI, INDIA
-          </div>
-          <h1 id="hero-title">
-            Hardware.<br />Software.<br /><span class="serif"
-              >A little magic.</span
-            >
-          </h1>
-          <p class="hero-description">
-            I turn circuits, code, and curiosity into things that work in the
-            real world. Founder of SYNDRIX. Third-year ECE at VIT Chennai.
-            Building embedded systems, digital hardware, and intelligence at the
-            edge.
-          </p>
-          <div class="hero-actions">
-            <a class="button primary" href="#work"
-              >Explore my work
-              <span
-                ><svg
-                  class="icon"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.4"
-                  aria-hidden="true"
-                >
-                  <path d="M4 4 16 16M4 16h12V4" /></svg></span></a
-            ><a class="text-link" href="/data/Resume.pdf" download
-              >Download résumé <span>↓</span></a
-            >
-          </div>
-          <div class="hero-note">
-            <span class="tiny-cross"
-              ><svg
-                class="sparkle"
-                viewBox="0 0 100 100"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="5"
-                aria-hidden="true"
-              >
-                <path d="M50 5v90M5 50h90M18 18l64 64M18 82l64-64" /></svg
-            ></span>
-            FROM THE FIRST SCHEMATIC TO THE FINAL SIGNAL.
-          </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Mithun Kumar J — Electronics & Communication Engineering portfolio. Embedded systems, VLSI, AI, and full-stack projects.">
+    <title>Mithun Kumar J // ECE Portfolio</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                        tech: ['"Orbitron"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0a0a0a',
+                            neon: '#00d2ff',
+                            gray: '#8a8a8a',
+                            border: '#2a2a2a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Linked Custom CSS -->
+    <link rel="stylesheet" href="/style.css?v=1.2">
+</head>
+<body class="antialiased min-h-screen flex flex-col font-sans">
+
+    <!-- 1. PRELOADER -->
+    <div id="preloader">
+        <div class="preloader-bg-half preloader-bg-top"></div>
+        <div class="preloader-bg-half preloader-bg-bottom"></div>
+        <div class="preloader-content">
+            <!-- HUD Corners -->
+            <div class="preloader-hud-corner preloader-hud-tl">SYS.COG_SYS.v1.0</div>
+            <div class="preloader-hud-corner preloader-hud-tr">LOC.SEC_0xFF9C</div>
+            <div class="preloader-hud-corner preloader-hud-bl">CALIB.02</div>
+            <div class="preloader-hud-corner preloader-hud-br">SYS.CORE.ACTIVE</div>
+
+            <!-- Telemetry Circular progress display -->
+            <div class="loader-circle-container">
+                <svg viewBox="0 0 100 100" class="loader-ring-svg">
+                    <defs>
+                        <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#0066ff" />
+                            <stop offset="100%" stop-color="#00e5ff" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="50" cy="50" r="45" class="ring-bg"></circle>
+                    <circle cx="50" cy="50" r="40" class="ring-bg-dashed"></circle>
+                    <circle cx="50" cy="50" r="45" class="ring-progress" id="ring-progress-circle" stroke="url(#ring-gradient)"></circle>
+                </svg>
+                <div class="loader-percentage-num" id="loader-percentage">0%</div>
+            </div>
+
+            <div class="loader-title font-tech" id="loader-title">Initializing Portfolio</div>
+            
+            <div class="loader-bar-container">
+                <div class="loader-bar" id="loader-bar"></div>
+            </div>
+            
+            <div class="loader-status">
+                <span id="loader-status-text">LOADING ASSETS...</span>
+            </div>
+            
+            <div class="loader-console" id="loader-console">
+                &gt; LOADING PROJECT ASSETS...<br>
+                &gt; RESOLVING IMAGE SEQUENCE DATA...
+            </div>
         </div>
-        <div
-          class="hero-art"
-          aria-label="Illustrated circuit board connecting hardware, firmware and intelligence"
-          role="img"
-        >
-          <div class="art-top mono">
-            <span>FIG. 01 — THE INTERSECTION</span><span>MK / 01</span>
-          </div>
-          <svg
-            class="circuit"
-            viewBox="0 0 560 510"
-            fill="none"
-            aria-hidden="true"
-          >
-            <defs>
-              <linearGradient
-                id="board"
-                x1="120"
-                y1="80"
-                x2="450"
-                y2="450"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop stop-color="#34443a" />
-                <stop offset="1" stop-color="#151e18" />
-              </linearGradient>
-              <linearGradient
-                id="chip"
-                x1="200"
-                y1="170"
-                x2="360"
-                y2="330"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop stop-color="#3c5041" />
-                <stop offset="1" stop-color="#17221a" />
-              </linearGradient>
-            </defs>
-            <g class="board-float">
-              <path
-                d="M280 45 505 175V365L280 495 55 365V175Z"
-                fill="url(#board)"
-                stroke="#526249"
-              />
-              <path
-                d="M280 65 487 185V354L280 474 73 354V185Z"
-                stroke="#70825e"
-                stroke-opacity=".35"
-              />
-              <g stroke="#839b70" stroke-opacity=".5" stroke-width="1.5">
-                <path
-                  d="m280 80 0 85M280 345v106M90 195l118 68M352 263l118-68M90 345l115-66M355 279l115 66M170 140v58l48 28M390 140v58l-48 28M120 240l60 35-60 35M440 240l-60 35 60 35M170 410v-58l48-28M390 410v-58l-48-28"
-                />
-                <path
-                  d="m228 110 0 62-34 20M332 110v62l34 20M107 370l86-50M453 370l-86-50M228 433v-63M332 433v-63"
-                />
-              </g>
-              <g fill="#c2d8a6">
-                <circle cx="280" cy="92" r="4" />
-                <circle cx="110" cy="206" r="4" />
-                <circle cx="450" cy="206" r="4" />
-                <circle cx="170" cy="398" r="4" />
-                <circle cx="390" cy="398" r="4" />
-                <circle cx="280" cy="443" r="4" />
-              </g>
-              <path
-                d="m280 167 95 55v108l-95 55-95-55V222Z"
-                fill="#0c120e"
-                stroke="#c0d3a1"
-                stroke-opacity=".6"
-              />
-              <path
-                d="m280 183 80 46v92l-80 46-80-46v-92Z"
-                fill="url(#chip)"
-                stroke="#617052"
-              />
-              <path
-                d="m280 203 61 35v71l-61 35-61-35v-71Z"
-                stroke="#9bb87c"
-                stroke-opacity=".3"
-              />
-              <text
-                x="280"
-                y="271"
-                fill="#d5e8bc"
-                text-anchor="middle"
-                font-size="32"
-                font-family="monospace"
-                font-weight="bold"
-              >
-                MK.
-              </text>
-              <text
-                x="280"
-                y="298"
-                fill="#91a67f"
-                text-anchor="middle"
-                font-size="8"
-                letter-spacing="3"
-                font-family="monospace"
-              >
-                BUILT TO CONNECT
-              </text>
-              <g fill="#0d1710" stroke="#667c55">
-                <path d="m132 185 22-13 30 18-22 13Z" />
-                <path d="m376 348 22-13 30 18-22 13Z" />
-                <path d="m132 340 22-13 30 18-22 13Z" />
-              </g>
-              <g fill="#e0a877">
-                <circle cx="280" cy="92" r="2" />
-                <circle cx="450" cy="206" r="2" />
-                <circle cx="170" cy="398" r="2" />
-              </g>
-            </g>
-          </svg>
-          <div class="art-label label-one"><i></i> HARDWARE</div>
-          <div class="art-label label-two"><i></i> INTELLIGENCE</div>
-          <div class="art-label label-three">FIRMWARE <i></i></div>
-          <div class="art-bottom mono">
-            <span><b class="status-dot"></b> SYSTEMS THINKING, ALWAYS.</span
-            ><span>CHENNAI / INDIA</span>
-          </div>
+    </div>
+
+
+    <!-- AUDIO CONTROLLER CAPSULE (AMBIENT SOUNDTRACK) -->
+    <div id="audio-capsule" class="fixed top-6 right-6 z-60 flex items-center gap-2 px-2.5 py-1.5 rounded-full border border-white/5 bg-black/20 backdrop-blur-md transition-all duration-300 select-none cursor-pointer">
+        <div class="audio-bars playing">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
-        <div class="hero-bottom mono">
-          <span>ENGINEER BY TRAINING. BUILDER BY INSTINCT.</span
-          ><a href="#work">SCROLL TO EXPLORE ↓</a>
+        <div class="flex flex-col md:flex">
+            <span class="text-[7px] font-tech font-bold text-white tracking-wider leading-none uppercase tars-audio-status">SYS.AUD // PLAYING</span>
+            <span class="text-[6px] font-mono text-brand-gray/60 leading-none mt-0.5 uppercase tars-audio-label">INTERSTELLAR</span>
         </div>
-      </section>
-      <div class="specialties" aria-label="Focus areas">
-        <div class="wrap">
-          <span>EMBEDDED SYSTEMS</span
-          ><b
-            ><svg
-              class="sparkle"
-              viewBox="0 0 100 100"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="5"
-              aria-hidden="true"
-            >
-              <path d="M50 5v90M5 50h90M18 18l64 64M18 82l64-64" /></svg></b
-          ><span>PCB DESIGN</span
-          ><b
-            ><svg
-              class="sparkle"
-              viewBox="0 0 100 100"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="5"
-              aria-hidden="true"
-            >
-              <path d="M50 5v90M5 50h90M18 18l64 64M18 82l64-64" /></svg></b
-          ><span>ROBOTICS</span
-          ><b
-            ><svg
-              class="sparkle"
-              viewBox="0 0 100 100"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="5"
-              aria-hidden="true"
-            >
-              <path d="M50 5v90M5 50h90M18 18l64 64M18 82l64-64" /></svg></b
-          ><span>APPLIED AI</span
-          ><b
-            ><svg
-              class="sparkle"
-              viewBox="0 0 100 100"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="5"
-              aria-hidden="true"
-            >
-              <path d="M50 5v90M5 50h90M18 18l64 64M18 82l64-64" /></svg></b
-          ><span>CONNECTED HARDWARE</span>
-        </div>
-      </div>
-      <section id="work" class="section wrap">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">01 / SELECTED WORK</p>
-            <h2>Ideas, made <span class="serif">tangible.</span></h2>
-          </div>
-          <p>
-            A few explorations across the physical<br />and digital. Built to
-            learn. Built to matter.
-          </p>
-        </div>
-        <div class="filters" role="group" aria-label="Filter projects">
-          <button class="filter active" data-filter="all" aria-pressed="true">
-            All work <small>04</small></button
-          ><button class="filter" data-filter="embedded" aria-pressed="false">
-            Embedded & IoT</button
-          ><button class="filter" data-filter="digital" aria-pressed="false">
-            FPGA</button
-          ><button class="filter" data-filter="rf" aria-pressed="false">
-            RF engineering
-          </button>
-        </div>
-        <div class="projects">
-          <article class="project" data-category="rf">
-            <div class="project-visual mesh">
-              <div class="visual-top mono">
-                <span>SMART GLASSES / RF ENGINEERING</span><span>01</span>
-              </div>
-              <svg
-                class="diagram"
-                viewBox="0 0 500 200"
-                role="img"
-                aria-label="Planar dipole antenna on smart glasses, with feed point"
-              >
-                <path
-                  class="wire"
-                  stroke-width="3"
-                  d="M50 70h145l25 15h60l25-15h145M80 70l-20 75M420 70l20 75"
-                />
-                <rect
-                  class="box"
-                  x="83"
-                  y="70"
-                  width="115"
-                  height="65"
-                  rx="22"
-                />
-                <rect
-                  class="box"
-                  x="302"
-                  y="70"
-                  width="115"
-                  height="65"
-                  rx="22"
-                />
-                <path d="M198 88q52-30 104 0" class="wire" />
-                <path
-                  d="M130 46h90v18m60 0V46h90"
-                  stroke="#cee7ad"
-                  fill="none"
-                  stroke-width="4"
-                />
-                <circle cx="250" cy="50" r="5" fill="#cee7ad" />
-                <path d="M250 50v-25" class="wire" />
-                <text x="215" y="18">RF FEED</text>
-                <text x="174" y="177">2.45 GHz / ON-HEAD</text>
-              </svg>
-              <div class="visual-bottom mono">
-                <span>SIMULATED & EVALUATED</span
-                ><span>01 / ENGINEERING STUDY</span>
-              </div>
+        <button class="audio-toggle-btn ml-1 p-0.5 hover:bg-white/5 rounded text-brand-gray hover:text-white transition-colors focus:outline-none" aria-label="Toggle Audio">
+            <svg id="audio-play-icon" class="w-3 h-3 text-[#00d2ff] hidden" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+            </svg>
+            <svg id="audio-pause-icon" class="w-3 h-3 text-[#00d2ff]" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+        </button>
+        <audio id="bg-music" src="/Sound/interstellar.mp3" preload="metadata" loop></audio>
+    </div>
+
+    <header class="fixed top-6 left-0 w-full z-50 flex justify-center px-4 pointer-events-none">
+        <nav class="nav-pill border border-brand-border rounded-full px-6 py-2.5 flex items-center justify-between gap-6 w-full max-w-xl transition-all pointer-events-auto">
+            <!-- Left: Logo -->
+            <div class="header-logo flex items-center gap-3 cursor-pointer group">
+                <svg viewBox="0 0 100 100" class="w-6 h-6 logo-svg">
+                    <path class="logo-path" d="M20,50 L40,30 L60,70 L80,50" stroke="#00d2ff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                    <circle cx="20" cy="50" r="8" fill="#00d2ff" />
+                    <circle cx="80" cy="50" r="8" fill="#00d2ff" />
+                </svg>
+                <span class="logo-text font-tech font-bold text-xs uppercase tracking-widest text-white group-hover:text-brand-neon transition-colors duration-300">
+                    Mithun
+                </span>
             </div>
-            <div class="project-meta">
-              <h3>Antenna, reimagined for wearables.</h3>
-              <span>01</span>
+
+            <!-- Middle: Capsule Nav Links -->
+            <div class="relative hidden md:flex items-center bg-black/40 rounded-full p-1" id="nav-container">
+                <!-- Liquid sliding indicator -->
+                <div class="nav-indicator-liquid" id="nav-indicator"></div>
+                <ul class="flex items-center list-none m-0 p-0">
+                    <li><a href="#hero-section" class="nav-link active">Overview</a></li>
+                    <li><a href="#skills-section" class="nav-link">Skills</a></li>
+                    <li><a href="#scrolly-section" class="nav-link">Projects</a></li>
+                    <li><a href="#specs-section" class="nav-link">Experience</a></li>
+                </ul>
             </div>
-            <p>
-              A compact 2.45 GHz planar dipole antenna designed and simulated
-              for smart glasses. Evaluated impedance matching, radiation
-              performance, and human-head interaction.
-            </p>
-            <p class="project-evidence">
-              −18.8 dB S11 · 45.5% radiation efficiency in on-head simulation
-            </p>
-            <div class="tags">
-              <span>RF engineering</span><span>Antenna simulation</span
-              ><span>2.45 GHz</span>
-            </div>
-            <div class="project-links">
-              <a
-                class="text-link"
-                href="https://github.com/Mithunjagan/Antenna-for-Smart-Glasses-2.45-GHz-"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Source on GitHub
-                <svg
-                  class="icon"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.4"
-                  aria-hidden="true"
-                >
-                  <path d="M4 16 16 4M4 4h12v12" /></svg
-              ></a>
-            </div>
-          </article>
-          <article class="project" data-category="digital">
-            <div class="project-visual scout">
-              <div class="visual-top mono">
-                <span>LDACS / FPGA RECEIVER</span><span>02</span>
-              </div>
-              <svg
-                class="diagram"
-                viewBox="0 0 500 200"
-                role="img"
-                aria-label="LDACS decoding architecture: FFT, channel estimation, equalization, Viterbi, PS/PL"
-              >
-                <g class="wire">
-                  <path d="M35 100h430M125 80v40M250 80v40M375 80v40" />
-                </g>
-                <rect class="box" x="15" y="72" width="90" height="56" rx="3" />
-                <rect
-                  class="box"
-                  x="140"
-                  y="72"
-                  width="90"
-                  height="56"
-                  rx="3"
-                />
-                <rect
-                  class="box"
-                  x="265"
-                  y="72"
-                  width="90"
-                  height="56"
-                  rx="3"
-                />
-                <rect
-                  class="box"
-                  x="390"
-                  y="72"
-                  width="95"
-                  height="56"
-                  rx="3"
-                />
-                <text x="48" y="104">FFT</text>
-                <text x="154" y="97">CHANNEL</text>
-                <text x="161" y="113">EST.</text>
-                <text x="277" y="104">EQUALIZE</text>
-                <text x="411" y="104">VITERBI</text>
-                <text x="157" y="168">ZYNQ-7000 / PS ↔ PL</text>
-              </svg>
-              <div class="visual-bottom mono">
-                <span>IMPLEMENTED & VERIFIED</span
-                ><span>02 / ENGINEERING STUDY</span>
-              </div>
-            </div>
-            <div class="project-meta">
-              <h3>From signal to decoded data.</h3>
-              <span>02</span>
-            </div>
-            <p>
-              Implemented and verified an LDACS receiver decoding architecture
-              on Xilinx Vivado and Zynq-7000, including channel estimation,
-              equalization, and PS/PL integration.
-            </p>
-            <p class="project-evidence">
-              9 verification cases completed · Timing met
-            </p>
-            <div class="tags">
-              <span>FPGA</span><span>Vivado</span><span>Zynq-7000</span>
-            </div>
-            <div class="project-links">
-              <a
-                class="text-link"
-                href="https://github.com/Mithunjagan/Dynamic-Partial-Reconfiguration_LDACS"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Source on GitHub
-                <svg
-                  class="icon"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.4"
-                  aria-hidden="true"
-                >
-                  <path d="M4 16 16 4M4 4h12v12" /></svg
-              ></a>
-            </div>
-          </article>
-          <article class="project" data-category="embedded">
-            <div class="project-visual awg">
-              <div class="visual-top mono">
-                <span>AKVO / ATMOSPHERIC WATER SYSTEMS</span><span>03</span>
-              </div>
-              <svg
-                class="diagram"
-                viewBox="0 0 500 200"
-                role="img"
-                aria-label="AWG architecture: sensors to Raspberry Pi state machine, actuators and FastAPI Supabase cloud"
-              >
-                <rect
-                  class="box"
-                  x="15"
-                  y="65"
-                  width="100"
-                  height="65"
-                  rx="3"
-                />
-                <rect
-                  class="box"
-                  x="165"
-                  y="65"
-                  width="160"
-                  height="65"
-                  rx="3"
-                />
-                <rect
-                  class="box"
-                  x="380"
-                  y="25"
-                  width="110"
-                  height="55"
-                  rx="3"
-                />
-                <rect
-                  class="box"
-                  x="380"
-                  y="125"
-                  width="110"
-                  height="55"
-                  rx="3"
-                />
-                <path class="wire" d="M115 97h50m160 0h27V52h28m-28 45v55h28" />
-                <text x="30" y="101">SENSORS</text>
-                <text x="185" y="91">RASPBERRY PI</text>
-                <text x="186" y="112">STATE MACHINE</text>
-                <text x="395" y="57">ACTUATORS</text>
-                <text x="397" y="146">FASTAPI</text>
-                <text x="392" y="166">SUPABASE</text>
-              </svg>
-              <div class="visual-bottom mono">
-                <span>DEVELOPED</span><span>03 / ENGINEERING STUDY</span>
-              </div>
-            </div>
-            <div class="project-meta">
-              <h3>Air. Water. Intelligent control.</h3>
-              <span>03</span>
-            </div>
-            <p>
-              Raspberry Pi/Linux control software integrating temperature,
-              humidity, water-flow, and tank-level sensors. Finite-state-machine
-              automation, fault handling, and cloud telemetry.
-            </p>
-            <p class="project-evidence">
-              Sensors → State machine → Actuators → Cloud
-            </p>
-            <div class="tags">
-              <span>Python</span><span>FastAPI</span><span>Supabase</span
-              ><span>Raspberry Pi</span>
-            </div>
-            <div class="project-links">
-              <a
-                class="text-link"
-                href="https://github.com/Mithunjagan/AKVO-intern"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Source on GitHub
-                <svg
-                  class="icon"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.4"
-                  aria-hidden="true"
-                >
-                  <path d="M4 16 16 4M4 4h12v12" /></svg
-              ></a>
-            </div>
-          </article>
-          <article class="project" data-category="embedded">
-            <div class="project-visual attendance">
-              <div class="visual-top mono">
-                <span>WEARABLE / FOUR-LAYER HARDWARE</span><span>04</span>
-              </div>
-              <svg
-                class="diagram"
-                viewBox="0 0 500 200"
-                role="img"
-                aria-label="Four-layer STM32 board architecture with power and GPS blocks"
-              >
-                <g class="wire">
-                  <path d="m250 15 160 45-160 45L90 60Z" />
-                  <path
-                    d="m90 80 160 45 160-45M90 100l160 45 160-45M90 120l160 45 160-45"
-                  />
-                </g>
-                <path class="box" d="m250 24 130 36-130 36-130-36Z" />
-                <path class="wire" d="m190 60 60-17 60 17-60 17Z" />
-                <text x="225" y="65">STM32</text>
-                <text x="16" y="100">GPS</text>
-                <text x="403" y="120">POWER</text>
-                <path class="wire" d="M60 95h45M390 115h40" />
-                <text x="162" y="193">4 LAYERS / RF-AWARE ROUTING</text>
-              </svg>
-              <div class="visual-bottom mono">
-                <span>DESIGNED</span><span>04 / ENGINEERING STUDY</span>
-              </div>
-            </div>
-            <div class="project-meta">
-              <h3>Small footprint. Layered thinking.</h3>
-              <span>04</span>
-            </div>
-            <p>
-              A four-layer STM32 wearable PCB in KiCad, bringing GPS, power
-              distribution, and RF-aware routing into a compact hardware design.
-            </p>
-            <p class="project-evidence">
-              4-layer PCB · STM32 · GPS · RF-aware routing
-            </p>
-            <div class="tags">
-              <span>KiCad</span><span>STM32</span><span>PCB design</span>
-            </div>
-          </article>
-        </div>
-        <div class="ongoing">
-          <div>
-            <span class="eyebrow">IN DEVELOPMENT / LEARNING IN PUBLIC</span>
-            <h3>RTL verification & AI acceleration.</h3>
-          </div>
-          <p>
-            Building foundations in Verilog RTL, sequential logic, simulation,
-            and testbench development. Working toward an INT8 MAC accelerator
-            and, eventually, an ASIC-oriented design flow. This is ongoing
-            learning and development.
-          </p>
-        </div>
-        <div class="additional">
-          <article>
-            <h3>ESP32 Antenna in CST</h3>
-            <p>ESP32 antenna design and simulation in CST Studio Suite.</p>
-            <a
-              class="text-link"
-              href="https://github.com/Mithunjagan/ESP-antenna"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Source on GitHub
-              <svg
-                class="icon"
-                viewBox="0 0 20 20"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.4"
-                aria-hidden="true"
-              >
-                <path d="M4 16 16 4M4 4h12v12" /></svg
-            ></a>
-          </article>
-          <article>
-            <h3>Robo Soccer Striker</h3>
-            <p>
-              ESP32, ESP-NOW, motor drivers, and custom drive controls for a
-              wireless robotic vehicle.
-            </p>
-          </article>
-          <article>
-            <h3>DECAD</h3>
-            <p>Schematic OCR and circuit reconstruction.</p>
-          </article>
-          <article>
-            <h3>FineHands</h3>
-            <p>
-              Financial document analysis using OCR, machine learning, and
-              Supabase.
-            </p>
-          </article>
-          <article>
-            <h3>RFID Attendance</h3>
-            <p>ESP32, RC522, Python, and Google Sheets.</p>
-            <a
-              class="text-link"
-              href="https://github.com/Mithunjagan/Smart-Attendance-System"
-              target="_blank"
-              rel="noopener noreferrer"
-              >GitHub
-              <svg
-                class="icon"
-                viewBox="0 0 20 20"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.4"
-                aria-hidden="true"
-              >
-                <path d="M4 16 16 4M4 4h12v12" /></svg
-            ></a>
-          </article>
-          <article>
-            <h3>Ship Spy Live</h3>
-            <p>YOLO-based vessel detection and monitoring.</p>
-            <a
-              class="text-link"
-              href="https://github.com/Mithunjagan/Ship-Spy-Live"
-              target="_blank"
-              rel="noopener noreferrer"
-              >GitHub
-              <svg
-                class="icon"
-                viewBox="0 0 20 20"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.4"
-                aria-hidden="true"
-              >
-                <path d="M4 16 16 4M4 4h12v12" /></svg
-            ></a>
-          </article>
-          <article>
-            <h3>Delta Modulation FPGA</h3>
-            <p>Encoder and decoder implementation on ZedBoard.</p>
-          </article>
-        </div>
-        <a
-          class="text-link github-link"
-          href="https://github.com/Mithunjagan"
-          target="_blank"
-          rel="noopener noreferrer"
-          >More experiments on GitHub
-          <span
-            ><svg
-              class="icon"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              aria-hidden="true"
-            >
-              <path d="M4 16 16 4M4 4h12v12" /></svg></span
-        ></a>
-      </section>
-      <section id="about" class="about section">
-        <div class="wrap about-grid">
-          <div>
-            <p class="eyebrow">02 / THE PERSON BEHIND THE PCB</p>
-            <h2>
-              Curiosity is<br />my <span class="serif">operating system.</span>
-            </h2>
-            <div class="about-mark" aria-hidden="true">
-              <svg
-                class="sparkle"
-                viewBox="0 0 100 100"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="5"
-                aria-hidden="true"
-              >
-                <path d="M50 5v90M5 50h90M18 18l64 64M18 82l64-64" />
-              </svg>
-            </div>
-            <span class="mono muted">ALWAYS A WORK IN PROGRESS.</span>
-          </div>
-          <div class="about-copy">
-            <p class="large-copy">
-              I like understanding how things work.<br />I like making them work
-              even more.
-            </p>
-            <p>
-              I’m Mithun, a third-year Electronics and Communication Engineering
-              undergraduate at VIT Chennai (class of 2028) and founder of
-              SYNDRIX, an electronics and embedded-systems venture focused on
-              PCB design, firmware, IoT, and prototyping.
-            </p>
-            <p>
-              My projects usually begin with a real problem and end somewhere
-              between a schematic and a software stack. I’m drawn to the
-              details: a stubborn I²C bus, a reliable telemetry pipeline, or a
-              sensor reading that finally makes sense.
-            </p>
-            <div class="education mono">
-              <span>VIT CHENNAI</span><span>B.TECH · ECE · 2024–2028</span>
-            </div>
-            <div class="toolbox">
-              <div>
-                <span class="mono">01 / HARDWARE</span>
-                <p>
-                  ESP32 · ARM Cortex-M · Raspberry Pi<br />STM32 · KiCad · UART
-                  · SPI · I²C
-                </p>
-              </div>
-              <div>
-                <span class="mono">02 / CODE & INTELLIGENCE</span>
-                <p>
-                  C / C++ · Python · Verilog<br />Vivado · Zynq-7000 · FPGA ·
-                  Edge AI
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section id="experience" class="section wrap">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">03 / LEARNING IN THE REAL WORLD</p>
-            <h2>Beyond the <span class="serif">breadboard.</span></h2>
-          </div>
-          <a
-            class="text-link"
-            href="https://www.linkedin.com/in/mithun-kumar-j/"
-            target="_blank"
-            rel="noopener noreferrer"
-            >LinkedIn profile
-            <svg
-              class="icon"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              aria-hidden="true"
-            >
-              <path d="M4 16 16 4M4 4h12v12" /></svg
-          ></a>
-        </div>
-        <div class="experience-list">
-          <article class="experience">
-            <span class="mono exp-number">01</span>
-            <div>
-              <span class="eyebrow">SYNDRIX</span>
-              <h3>Founder</h3>
-              <p>
-                Electronics and embedded-systems venture focused on PCB design,
-                firmware, IoT solutions, prototyping, and software integration.
-              </p>
-            </div>
-            <span class="exp-type mono">APR 2026–PRESENT</span>
-          </article>
-          <article class="experience">
-            <span class="mono exp-number">02</span>
-            <div>
-              <span class="eyebrow">AKVO ATMOSPHERIC WATER SYSTEMS</span>
-              <h3>Embedded Systems & IoT Intern</h3>
-              <p>
-                Raspberry Pi-based AWG control, sensor integration,
-                finite-state-machine automation, FastAPI, Supabase cloud
-                telemetry, and fault handling.
-              </p>
-            </div>
-            <span class="exp-type mono">2026</span>
-          </article>
-          <article class="experience">
-            <span class="mono exp-number">03</span>
-            <div>
-              <span class="eyebrow">SHAURYA RACING · VIT CHENNAI</span>
-              <h3>Electronics Team Member</h3>
-              <p>
-                Formula EV electronics, ESP32-based CAN telemetry, sensor
-                interfaces, and hardware integration.
-              </p>
-            </div>
-            <span class="exp-type mono">FORMULA EV</span>
-          </article>
-          <article class="experience">
-            <span class="mono exp-number">04</span>
-            <div>
-              <span class="eyebrow">IEEE ROBOTICS & AUTOMATION SOCIETY</span>
-              <h3>Member</h3>
-              <p>
-                Part of the robotics and automation community at VIT Chennai.
-              </p>
-            </div>
-            <span class="exp-type mono">VIT CHENNAI</span>
-          </article>
-        </div>
-      </section>
-      <section class="recognition wrap">
-        <span class="eyebrow">MILESTONES / BUILT WITH A TEAM</span>
-        <div class="recognition-list">
-          <div>
-            <p>
-              Top 50<br /><span class="serif">SIH 2026 internal round.</span>
-            </p>
-            <small
-              >Selected among approximately 1,700 participating teams at VIT
-              Chennai.</small
-            >
-          </div>
-          <div>
-            <p>
-              Opening-round winner<br /><span class="serif"
-                >& Robo Soccer finalist.</span
-              >
-            </p>
-            <small>IIT Madras Shaastra · Team GOAL GORITHM</small>
-          </div>
-          <div>
-            <p>
-              6+ hackathons.<br /><span class="serif"
-                >Countless iterations.</span
-              >
-            </p>
-            <small>Hardware, robotics, AI, and full-stack solutions.</small>
-          </div>
-        </div>
-      </section>
-      <section id="contact" class="contact section wrap">
-        <p class="eyebrow">
-          <span class="status-dot"></span> GOOD THINGS START WITH A CONVERSATION
-        </p>
-        <h2>
-          Have something<br />in <span class="serif">mind?</span
-          ><span class="contact-star" aria-hidden="true"
-            ><svg
-              class="sparkle"
-              viewBox="0 0 100 100"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="5"
-              aria-hidden="true"
-            >
-              <path d="M50 5v90M5 50h90M18 18l64 64M18 82l64-64" /></svg
-          ></span>
-        </h2>
-        <div class="contact-bottom">
-          <a class="contact-email" href="mailto:mithunkumarjagan@gmail.com"
-            >Let’s build it together.
-            <svg
-              class="icon"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              aria-hidden="true"
-            >
-              <path d="M4 16 16 4M4 4h12v12" /></svg
-          ></a>
-          <p>
-            Projects, collaborations, or a good engineering<br />conversation.
-            My inbox is open.
-          </p>
-        </div>
-        <div class="socials">
-          <a href="mailto:mithunkumarjagan@gmail.com"
-            >Email
-            <svg
-              class="icon"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              aria-hidden="true"
-            >
-              <path d="M4 16 16 4M4 4h12v12" /></svg></a
-          ><a
-            href="https://www.linkedin.com/in/mithun-kumar-j/"
-            target="_blank"
-            rel="noopener noreferrer"
-            >LinkedIn
-            <svg
-              class="icon"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              aria-hidden="true"
-            >
-              <path d="M4 16 16 4M4 4h12v12" /></svg></a
-          ><a
-            href="https://github.com/Mithunjagan"
-            target="_blank"
-            rel="noopener noreferrer"
-            >GitHub
-            <svg
-              class="icon"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              aria-hidden="true"
-            >
-              <path d="M4 16 16 4M4 4h12v12" /></svg></a
-          ><a href="/data/Resume.pdf" download>Résumé ↓</a>
-        </div>
-      </section>
-      <section class="feedback wrap">
-        <details id="feedback-details">
-          <summary>
-            Been exploring? Leave a little feedback <span>+</span>
-          </summary>
-          <form id="feedback-form">
-            <label
-              >Your name<input
-                name="name"
-                maxlength="40"
-                autocomplete="name"
-                placeholder="Optional" /></label
-            ><label
-              >Rating<select name="rating">
-                <option value="5">5 — Excellent</option>
-                <option value="4">4 — Great</option>
-                <option value="3">3 — Good</option>
-                <option value="2">2 — Needs work</option>
-                <option value="1">1 — Not there yet</option>
-              </select></label
-            ><label class="full"
-              >Your thoughts<textarea
-                name="comment"
-                maxlength="280"
-                required
-                rows="3"
-                placeholder="What stood out? What could be better?"
-              ></textarea></label
-            ><button class="button primary" type="submit">
-              Send feedback
-              <svg
-                class="icon"
-                viewBox="0 0 20 20"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.4"
-                aria-hidden="true"
-              >
-                <path d="M4 16 16 4M4 4h12v12" />
-              </svg>
+
+            <!-- Mobile Menu Toggle Button -->
+            <button class="md:hidden flex items-center justify-center p-2 rounded-full border border-white/5 bg-white/5 text-[#00d2ff] hover:bg-white/10 transition-colors focus:outline-none cursor-pointer" id="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
             </button>
-            <p id="feedback-status" role="status"></p>
-          </form>
-          <div id="reviews"></div>
-        </details>
-      </section>
-    </main>
-    <footer class="wrap footer">
-      <a class="wordmark" href="#">m<span>.</span></a
-      ><span class="mono">© <span id="year">2026</span> MITHUN KUMAR J</span
-      ><a href="#" class="mono">BACK TO TOP ↑</a>
-    </footer>
-    <button
-      id="chat-toggle"
-      class="chat-toggle"
-      aria-controls="chat-panel"
-      aria-expanded="false"
-    >
-      <span
-        ><svg
-          class="sparkle"
-          viewBox="0 0 100 100"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="5"
-          aria-hidden="true"
-        >
-          <path d="M50 5v90M5 50h90M18 18l64 64M18 82l64-64" /></svg
-      ></span>
-      Ask about my work
-    </button>
-    <section
-      id="chat-panel"
-      class="chat-panel"
-      aria-labelledby="chat-title"
-      hidden
-    >
-      <div class="chat-heading">
-        <div>
-          <span class="eyebrow">THE PORTFOLIO ASSISTANT</span>
-          <h2 id="chat-title">Meet the work.</h2>
+
+            <!-- Right Spacer (mirrors logo structure to keep middle links centered) -->
+            <div class="flex items-center gap-3 opacity-0 pointer-events-none select-none invisible md:flex">
+                <div class="w-6 h-6"></div>
+                <span class="font-tech font-bold text-xs uppercase tracking-widest">Mithun</span>
+            </div>
+        </nav>
+
+        <!-- Mobile Dropdown Menu -->
+        <div class="absolute top-16 left-4 right-4 md:hidden hidden transition-all duration-300 pointer-events-auto" id="mobile-nav-dropdown">
+            <div class="bg-black/95 border border-brand-border/60 rounded-2xl p-4 backdrop-blur-xl flex flex-col gap-3 shadow-[0_15px_30px_rgba(0,0,0,0.8),0_0_20px_rgba(0,210,255,0.05)]">
+                <a href="#hero-section" class="mobile-nav-link text-white/70 hover:text-white font-mono text-xs uppercase tracking-widest py-2 px-3 rounded-lg hover:bg-white/5 block border-b border-white/5 transition-colors">Overview</a>
+                <a href="#skills-section" class="mobile-nav-link text-white/70 hover:text-white font-mono text-xs uppercase tracking-widest py-2 px-3 rounded-lg hover:bg-white/5 block border-b border-white/5 transition-colors">Skills</a>
+                <a href="#scrolly-section" class="mobile-nav-link text-white/70 hover:text-white font-mono text-xs uppercase tracking-widest py-2 px-3 rounded-lg hover:bg-white/5 block border-b border-white/5 transition-colors">Projects</a>
+                <a href="#specs-section" class="mobile-nav-link text-white/70 hover:text-white font-mono text-xs uppercase tracking-widest py-2 px-3 rounded-lg hover:bg-white/5 block transition-colors">Experience</a>
+            </div>
         </div>
-        <button id="chat-close" aria-label="Close assistant">×</button>
-      </div>
-      <div class="chat-log" id="chat-log" role="log" aria-live="polite">
-        <p class="assistant-message">
-          Hi! Ask me about Mithun’s projects, engineering experience, or skills.
-        </p>
-      </div>
-      <div class="chat-suggestions">
-        <button>What has Mithun built?</button
-        ><button>Tell me about AKVO</button>
-      </div>
-      <form id="chat-form">
-        <label class="sr-only" for="chat-input">Your question</label
-        ><input
-          id="chat-input"
-          placeholder="Ask a question…"
-          maxlength="2000"
-          required
-          autocomplete="off"
-        /><button aria-label="Send question">↑</button>
-      </form>
-      <p class="chat-disclaimer">
-        AI can make mistakes. Get in touch to confirm details.
-      </p>
-    </section>
-  </body>
+    </header>
+
+    <!-- Wrap content in app-container for eye-blink focal depth and bloom effects -->
+    <div id="app-container" class="flex flex-col min-h-screen w-full relative">
+
+        <!-- 3. MAIN HERO SECTION -->
+        <main class="flex-grow flex items-center relative pt-32 pb-12 px-6 lg:px-16 max-w-screen-2xl mx-auto w-full z-20 min-h-screen" id="hero-section">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center w-full">
+                
+                <!-- Center Content: Typography & ECE Stats -->
+                <div class="lg:col-span-12 flex flex-col justify-center items-center text-center z-20">
+                    
+                    <div class="fade-up" style="transition-delay: 0.1s;">
+                        <p class="text-brand-gray text-[10px] md:text-xs font-semibold tracking-[0.2em] uppercase mb-6 flex items-center justify-center gap-3 font-tech">
+                            <span class="w-6 h-[1px] bg-brand-gray/50 block"></span>
+                            <span class="hero-tag-text">[01] UNDERGRADUATE ECE RESEARCHER</span>
+                            <span class="w-6 h-[1px] bg-brand-gray/50 block"></span>
+                        </p>
+                    </div>
+
+                    <h1 class="text-4xl md:text-6xl lg:text-[4.8rem] font-black leading-[1.1] tracking-widest mb-5 uppercase font-tech">
+                        <div class="fade-up" style="transition-delay: 0.2s;">
+                            <span class="text-gradient-metallic">PORTFOLIO</span>
+                        </div>
+                    </h1>
+
+                    <p class="fade-up text-brand-gray text-base md:text-lg max-w-lg mb-6 leading-relaxed font-light mx-auto" style="transition-delay: 0.3s;">
+                        <span class="hero-desc-text">Engineering embedded telematics, custom high-speed PCBs, and edge computing architectures for safety-critical hardware deployments.</span>
+                    </p>
+
+                    <!-- Social Links & Resume Download -->
+                    <div class="fade-up flex items-center justify-center gap-4 pt-6 border-t border-brand-border/40 w-full max-w-md mx-auto" style="transition-delay: 0.4s;">
+                        
+                        <div class="gravity-btn-wrapper">
+                            <a href="https://github.com/Mithunjagan" target="_blank" rel="noopener noreferrer" class="social-btn group" aria-label="GitHub">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+                                <span class="social-tooltip">GitHub</span>
+                            </a>
+                        </div>
+
+                        <div class="gravity-btn-wrapper">
+                            <a href="https://www.linkedin.com/in/mithun-kumar-j/" target="_blank" rel="noopener noreferrer" class="social-btn group" aria-label="LinkedIn">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                                <span class="social-tooltip">LinkedIn</span>
+                            </a>
+                        </div>
+
+                        <div class="gravity-btn-wrapper">
+                            <a href="#" data-email="bWl0aHVua3VtYXJqYWdhbkBnbWFpbC5jb20=" class="social-btn group email-link" aria-label="Mail">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                                <span class="social-tooltip">Mail</span>
+                            </a>
+                        </div>
+
+                        <div class="gravity-btn-wrapper">
+                            <a href="data/Resume.pdf" download="MithunKumar_J_Resume.pdf" class="resume-btn group" aria-label="Download Resume">
+                                <span class="btn-text">Resume</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- Glow Signature -->
+                    <div class="fade-up mt-6" style="transition-delay: 0.5s;">
+                        <div class="signature-text">MithunKumar J.</div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+
+        <!-- 3.5 SKILLS SECTION -->
+        <section class="skills-section py-20 px-6 lg:px-16 max-w-6xl mx-auto w-full z-20 relative border-t border-brand-border/30" id="skills-section">
+            <div class="section-header text-center mb-16">
+                <div class="section-tag font-tech text-brand-neon tracking-[0.2em] text-xs uppercase mb-3">[ CAPABILITY_MATRIX ]</div>
+                <h2 class="font-tech text-3xl md:text-4xl font-extrabold text-white uppercase tracking-wider">Technical <span class="text-brand-neon">Skillset</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Category 1: Embedded Systems & Hardware -->
+                <div class="spec-card flex flex-col justify-between relative overflow-hidden group/skills">
+                    <!-- Background Loop Video -->
+                    <video muted loop playsinline preload="none" class="absolute top-0 left-0 w-full h-full object-cover opacity-20 pointer-events-none z-0 transition-opacity duration-500 group-hover/skills:opacity-40 lazy-video">
+                        <source data-src="/Videos/Embedded_hardware_macro_shots_202606062118.mp4" type="video/mp4">
+                    </video>
+                    
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="text-brand-neon text-2xl">⚡</div>
+                            <h3 class="font-tech text-white text-base tracking-wide uppercase">Embedded Systems & Hardware</h3>
+                        </div>
+                        <ul class="list-none space-y-2 text-xs text-white pl-0 mb-4 font-semibold">
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>ARM Cortex-M Architecture</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>Embedded C</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>ESP32 & Arduino</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>Peripheral Interfacing (UART, SPI, I2C, CAN)</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>PCB Design & Electronic Circuit Design</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>Sensor Integration</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Category 2: VLSI & Semiconductor -->
+                <div class="spec-card flex flex-col justify-between relative overflow-hidden group/skills">
+                    <!-- Background Loop Video -->
+                    <video muted loop playsinline preload="none" class="absolute top-0 left-0 w-full h-full object-cover opacity-20 pointer-events-none z-0 transition-opacity duration-500 group-hover/skills:opacity-40 lazy-video">
+                        <source data-src="/Videos/Silicon_wafer_semiconductor_arch_202606062123.mp4" type="video/mp4">
+                    </video>
+                    
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="text-brand-neon text-2xl">🔬</div>
+                            <h3 class="font-tech text-white text-base tracking-wide uppercase">VLSI & Semiconductor</h3>
+                        </div>
+                        <ul class="list-none space-y-2 text-xs text-white pl-0 mb-4 font-semibold">
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>CMOS Fundamentals</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>Digital IC Design</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>LTspice Simulation</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>Semiconductor Physics</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>Analog Electronics</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Category 3: Programming Languages -->
+                <div class="spec-card flex flex-col justify-between relative overflow-hidden group/skills">
+                    <!-- Background Loop Video -->
+                    <video muted loop playsinline preload="none" class="absolute top-0 left-0 w-full h-full object-cover opacity-20 pointer-events-none z-0 transition-opacity duration-500 group-hover/skills:opacity-40 lazy-video">
+                        <source data-src="/Videos/Code_scrolling_on_keyboard_monitor_202606062125.mp4" type="video/mp4">
+                    </video>
+                    
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="text-brand-neon text-2xl">💻</div>
+                            <h3 class="font-tech text-white text-base tracking-wide uppercase">Programming Languages</h3>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="px-2.5 py-1 bg-brand-neon/20 border border-brand-neon/40 rounded text-xs text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">C</span>
+                            <span class="px-2.5 py-1 bg-brand-neon/20 border border-brand-neon/40 rounded text-xs text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">C++</span>
+                            <span class="px-2.5 py-1 bg-brand-neon/20 border border-brand-neon/40 rounded text-xs text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">Python</span>
+                            <span class="px-2.5 py-1 bg-brand-neon/20 border border-brand-neon/40 rounded text-xs text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">HTML</span>
+                            <span class="px-2.5 py-1 bg-brand-neon/20 border border-brand-neon/40 rounded text-xs text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">CSS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 4: AI & Software -->
+                <div class="spec-card flex flex-col justify-between relative overflow-hidden group/skills">
+                    <!-- Background Loop Video -->
+                    <video muted loop playsinline preload="none" class="absolute top-0 left-0 w-full h-full object-cover opacity-20 pointer-events-none z-0 transition-opacity duration-500 group-hover/skills:opacity-40 lazy-video">
+                        <source data-src="/Videos/AI_deep_learning_neural_network_202606062127.mp4" type="video/mp4">
+                    </video>
+                    
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="text-brand-neon text-2xl">🧠</div>
+                            <h3 class="font-tech text-white text-base tracking-wide uppercase">AI & Software</h3>
+                        </div>
+                        <ul class="list-none space-y-2 text-xs text-white pl-0 mb-4 font-semibold">
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>Machine Learning</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>Computer Vision & OpenCV</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>Deep Learning Fundamentals</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>Generative AI</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-brand-neon text-[8px]">■</span>
+                                <span>Data Analysis</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Category 5: Full Stack & Tools -->
+                <div class="spec-card flex flex-col justify-between relative overflow-hidden group/skills">
+                    <!-- Background Loop Video -->
+                    <video muted loop playsinline preload="none" class="absolute top-0 left-0 w-full h-full object-cover opacity-20 pointer-events-none z-0 transition-opacity duration-500 group-hover/skills:opacity-40 lazy-video">
+                        <source data-src="/Videos/Full-stack_development_vibe_coding_202606062128.mp4" type="video/mp4">
+                    </video>
+                    
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="text-brand-neon text-2xl">🌐</div>
+                            <h3 class="font-tech text-white text-base tracking-wide uppercase">Full Stack & Tools</h3>
+                        </div>
+                        <div class="text-[10px] text-brand-neon font-mono uppercase tracking-widest mb-3 shadow-[0_0_8px_rgba(0,210,255,0.2)]">Vibe coding</div>
+                        <div class="flex flex-wrap gap-1.5">
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">React.js</span>
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">Node.js</span>
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">Express.js</span>
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">MongoDB</span>
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">Git</span>
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">Linux</span>
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">VS Code</span>
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">Postman</span>
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">Figma</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 6: Engineering Domains -->
+                <div class="spec-card flex flex-col justify-between relative overflow-hidden group/skills">
+                    <!-- Background Loop Video -->
+                    <video muted loop playsinline preload="none" class="absolute top-0 left-0 w-full h-full object-cover opacity-20 pointer-events-none z-0 transition-opacity duration-500 group-hover/skills:opacity-40 lazy-video">
+                        <source data-src="/Videos/Silicon_wafer_neural_network_202606062131.mp4" type="video/mp4">
+                    </video>
+                    
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="text-brand-neon text-2xl">📐</div>
+                            <h3 class="font-tech text-white text-base tracking-wide uppercase">Engineering Domains</h3>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 mt-2">
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">Embedded Systems</span>
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">IoT</span>
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">Artificial Intelligence</span>
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">Computer Vision</span>
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">VLSI Design</span>
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">Automation</span>
+                            <span class="px-2 py-0.5 bg-brand-neon/20 border border-brand-neon/40 rounded text-[10px] text-white font-mono shadow-[0_0_8px_rgba(0,210,255,0.1)]">Edge AI</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 4. SCROLL ANIMATED CANVAS SECTION (GSAP Image Sequence) -->
+        <section id="scrolly-section" class="border-t border-brand-border/30 pt-16">
+            <!-- PROJECTS SECTION HEADER -->
+            <div class="section-header text-center mb-10">
+                <div class="section-tag font-tech text-brand-neon tracking-[0.2em] text-xs uppercase mb-3">[ INTERACTIVE_SHOWCASE ]</div>
+                <h2 class="font-tech text-3xl md:text-4xl font-extrabold text-white uppercase tracking-wider">Featured <span class="text-brand-neon">Projects</span></h2>
+            </div>
+
+            <div class="scrolly-container">
+                <div class="sticky-wrapper">
+                <div class="canvas-container">
+                    <!-- Giant Background Watermark Outline -->
+                    <div class="bg-watermark">MKJ</div>
+
+                    <!-- Animated Neon Spotlight Backglow -->
+                    <div class="phone-spotlight"></div>
+
+                    <!-- iOS Mobile Phone Frame Mockup -->
+                    <div class="phone-frame">
+                        <!-- Buttons -->
+                        <div class="phone-button volume-up"></div>
+                        <div class="phone-button volume-down"></div>
+                        <div class="phone-button power"></div>
+                        
+                        <!-- Screen -->
+                        <div class="phone-screen">
+                            <!-- Dynamic Island -->
+                            <div class="dynamic-island"></div>
+                            
+                            <!-- Canvas -->
+                            <canvas id="scroll-canvas"></canvas>
+                            
+                            <!-- Screen Glare Reflection -->
+                            <div class="screen-glare"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- HUD Floating Panels -->
+                    <div class="hud-container">
+                        
+                        <!-- HUD Panel 1: AKVO Project -->
+                        <div class="hud-panel hud-panel-left-top" id="hud-panel-1">
+                            <!-- PCB Copper Trace SVG -->
+                            <svg class="pcb-trace" viewBox="0 0 130 80" style="position: absolute; right: -130px; top: 12%; width: 130px; height: 80px; overflow: visible; pointer-events: none;">
+                                <defs>
+                                    <filter id="copper-glow" x="-30%" y="-30%" width="160%" height="160%">
+                                        <feGaussianBlur stdDeviation="2.5" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <!-- PCB Angled Copper Line -->
+                                <path d="M 0,20 L 60,20 L 90,50 L 130,50" stroke="#ff9f33" stroke-width="1.8" fill="none" filter="url(#copper-glow)" stroke-dasharray="300" stroke-dashoffset="300" class="trace-path" />
+                                <!-- Copper solder pad terminals -->
+                                <circle cx="0" cy="20" r="3.5" fill="#ffea00" stroke="#ff9f33" stroke-width="1" />
+                                <circle cx="130" cy="50" r="5" fill="#ffea00" stroke="#ff9f33" stroke-width="1.8" />
+                                <circle cx="130" cy="50" r="1.5" fill="#050505" />
+                            </svg>
+                            <div class="hud-header">
+                                <span class="hud-id">PROJ.DEV_01</span>
+                                <span class="hud-status">IoT Ecosystem</span>
+                            </div>
+                            <h3 class="hud-title font-tech text-white">AKVO</h3>
+                            <div class="text-[10px] text-brand-neon font-mono uppercase tracking-widest mb-2">Harvesting Water, Powered by Intelligence</div>
+                            <p class="hud-desc mb-3">A full-stack IoT ecosystem that transforms Atmospheric Water Generators into connected smart machines. From edge sensing and relay automation to cloud analytics and anomaly detection, every drop is monitored, validated, and optimized.</p>
+                            <a href="https://github.com/Mithunjagan/AKVO-intern" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 text-xs font-semibold text-brand-gray hover:text-brand-neon transition-colors duration-300 w-fit pointer-events-auto mt-2" aria-label="AKVO GitHub Repository">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+                                <span>AKVO-intern</span>
+                            </a>
+                        </div>
+
+                        <!-- HUD Panel 2: Smart Classroom IoT Ecosystem -->
+                        <div class="hud-panel hud-panel-right-middle" id="hud-panel-2">
+                            <!-- PCB Copper Trace SVG -->
+                            <svg class="pcb-trace" viewBox="0 0 130 80" style="position: absolute; left: -130px; top: 12%; width: 130px; height: 80px; overflow: visible; pointer-events: none;">
+                                <defs>
+                                    <filter id="copper-glow-2" x="-30%" y="-30%" width="160%" height="160%">
+                                        <feGaussianBlur stdDeviation="2.5" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <!-- PCB Angled Copper Line from right to left -->
+                                <path d="M 130,20 L 70,20 L 40,50 L 0,50" stroke="#ff9f33" stroke-width="1.8" fill="none" filter="url(#copper-glow-2)" stroke-dasharray="300" stroke-dashoffset="300" class="trace-path" />
+                                <!-- Copper solder pad terminals -->
+                                <circle cx="130" cy="20" r="3.5" fill="#ffea00" stroke="#ff9f33" stroke-width="1" />
+                                <circle cx="0" cy="50" r="5" fill="#ffea00" stroke="#ff9f33" stroke-width="1.8" />
+                                <circle cx="0" cy="50" r="1.5" fill="#050505" />
+                            </svg>
+                            <div class="hud-header">
+                                <span class="hud-id">SYS.OPT_SEN.02</span>
+                                <span class="hud-status">Calibrated</span>
+                            </div>
+                            <h3 class="hud-title font-tech text-white">Smart Classroom IoT Ecosystem</h3>
+                            <div class="text-[10px] text-brand-neon font-mono uppercase tracking-widest mb-2">Reimagining classrooms with real-time intelligence</div>
+                            <p class="hud-desc mb-3">A full-stack IoT platform combining wearable biometric devices, edge computing, cloud analytics, and network management to monitor student wellness, engagement, and digital distractions from a single dashboard.</p>
+                            <a href="#" class="flex items-center gap-2 text-xs font-semibold text-brand-gray hover:text-brand-neon transition-colors duration-300 w-fit pointer-events-auto mt-2" aria-label="Document embeddings">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                <span>Document embeddings</span>
+                            </a>
+                        </div>
+
+                        <!-- HUD Panel 3: Smart Attendance System -->
+                        <div class="hud-panel hud-panel-left-bottom" id="hud-panel-3">
+                            <!-- PCB Copper Trace SVG -->
+                            <svg class="pcb-trace" viewBox="0 0 130 80" style="position: absolute; right: -130px; top: 12%; width: 130px; height: 80px; overflow: visible; pointer-events: none;">
+                                <defs>
+                                    <filter id="copper-glow-3" x="-30%" y="-30%" width="160%" height="160%">
+                                        <feGaussianBlur stdDeviation="2.5" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <!-- PCB Angled Copper Line from left to right -->
+                                <path d="M 0,50 L 60,50 L 90,20 L 130,20" stroke="#ff9f33" stroke-width="1.8" fill="none" filter="url(#copper-glow-3)" stroke-dasharray="300" stroke-dashoffset="300" class="trace-path" />
+                                <!-- Copper solder pad terminals -->
+                                <circle cx="0" cy="50" r="3.5" fill="#ffea00" stroke="#ff9f33" stroke-width="1" />
+                                <circle cx="130" cy="20" r="5" fill="#ffea00" stroke="#ff9f33" stroke-width="1.8" />
+                                <circle cx="130" cy="20" r="1.5" fill="#050505" />
+                            </svg>
+                            <div class="hud-header">
+                                <span class="hud-id">SYS.MEC_INT.03</span>
+                                <span class="hud-status">Active</span>
+                            </div>
+                            <h3 class="hud-title font-tech text-white">Smart Attendance System</h3>
+                            <div class="text-[10px] text-brand-neon font-mono uppercase tracking-widest mb-2">RFID + Face Recognition // 2025</div>
+                            <ul class="hud-desc list-none space-y-1.5 mt-2 text-xs">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-brand-neon mt-1 text-[8px]">■</span>
+                                    <span>Developed a multi-factor attendance system combining RFID-triggered authentication with live face embedding comparison.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-brand-neon mt-1 text-[8px]">■</span>
+                                    <span>Integrated Google Sheets API logging with automated email and WhatsApp notification workflows.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-brand-neon mt-1 text-[8px]">■</span>
+                                    <span>Prevented proxy attendance through dual-layer identity verification architecture.</span>
+                                </li>
+                            </ul>
+                            <a href="https://github.com/Mithunjagan/Smart-Attendance-System" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 text-xs font-semibold text-brand-gray hover:text-brand-neon transition-colors duration-300 w-fit pointer-events-auto mt-3" aria-label="Smart Attendance System GitHub Repository">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+                                <span>Smart-Attendance-System</span>
+                            </a>
+                        </div>
+
+                        <!-- HUD Panel 4: Ship Spy Live -->
+                        <div class="hud-panel hud-panel-right-bottom" id="hud-panel-4">
+                            <!-- PCB Copper Trace SVG -->
+                            <svg class="pcb-trace" viewBox="0 0 130 80" style="position: absolute; left: -130px; top: 12%; width: 130px; height: 80px; overflow: visible; pointer-events: none;">
+                                <defs>
+                                    <filter id="copper-glow-4" x="-30%" y="-30%" width="160%" height="160%">
+                                        <feGaussianBlur stdDeviation="2.5" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <!-- PCB Angled Copper Line from right to left -->
+                                <path d="M 130,50 L 70,50 L 40,20 L 0,20" stroke="#ff9f33" stroke-width="1.8" fill="none" filter="url(#copper-glow-4)" stroke-dasharray="300" stroke-dashoffset="300" class="trace-path" />
+                                <!-- Copper solder pad terminals -->
+                                <circle cx="130" cy="50" r="3.5" fill="#ffea00" stroke="#ff9f33" stroke-width="1" />
+                                <circle cx="0" cy="20" r="5" fill="#ffea00" stroke="#ff9f33" stroke-width="1.8" />
+                                <circle cx="0" cy="20" r="1.5" fill="#050505" />
+                            </svg>
+                            <div class="hud-header">
+                                <span class="hud-id">SYS.HND_ACT.04</span>
+                                <span class="hud-status">Standby</span>
+                            </div>
+                            <h3 class="hud-title font-tech text-white">Ship Spy Live</h3>
+                            <div class="text-[10px] text-brand-neon font-mono uppercase tracking-widest mb-2">The Radar Without Radar</div>
+                            <p class="hud-desc mb-3">An AI-driven coastal surveillance platform capable of identifying multiple vessel types from live camera feeds, storing detections in the cloud, and delivering real-time maritime intelligence through interactive visualizations.</p>
+                            <a href="https://github.com/Mithunjagan/Ship-Spy-Live" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 text-xs font-semibold text-brand-gray hover:text-brand-neon transition-colors duration-300 w-fit pointer-events-auto mt-2" aria-label="Ship Spy Live GitHub Repository">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+                                <span>Ship-Spy-Live</span>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section>
+
+        <!-- 5. SPECIFICATIONS SECTION -->
+        <section class="specs-section" id="specs-section">
+            <div class="section-header">
+                <div class="section-tag font-tech">Work Experience</div>
+                <h2 class="font-tech">Professional <span class="text-brand-neon">Journey</span></h2>
+            </div>
+            
+            <div class="specs-grid">
+                <div class="spec-card lg:col-span-2">
+                    <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                        <div class="flex items-start gap-3">
+                            <div class="spec-icon text-brand-neon m-0 flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="spec-title m-0 text-white font-tech text-base md:text-lg">Embedded electronics and automation engineer</h3>
+                                <div class="text-xs text-brand-neon font-mono mt-1">Akvosphere · Internship</div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:items-end gap-1 font-mono text-[10px] text-brand-gray">
+                            <div>Feb 2026 - Present · 5 mos</div>
+                            <div>Thirumudivakkam, Chennai</div>
+                            <span class="px-2 py-0.5 bg-green-500/10 border border-green-500/20 rounded text-[9px] text-green-400 font-mono flex items-center gap-1 w-fit mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Secured via AKVO Project
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <p class="spec-desc mb-3 font-semibold text-white">Building full-stack embedded and automation infrastructure for an atmospheric water generation (AWG) startup.</p>
+                    
+                    <ul class="spec-desc list-none space-y-2 text-xs mb-4 pl-0">
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-neon mt-1 text-[8px] flex-shrink-0">■</span>
+                            <span><strong>Hardware:</strong> Designed multi-sheet KiCad schematics for an ESP32-C3-WROOM-02-H4 parent PCB with a child board interfaced over USB-C, including I2C mux (TCA9543A) for a Raspberry Pi + ESP32 failover architecture. Debugged strapping pin conflicts, floating IO, and ESD wiring issues across revisions.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-neon mt-1 text-[8px] flex-shrink-0">■</span>
+                            <span><strong>Firmware & IoT:</strong> ESP32 firmware with MQTT-based telemetry, DHT22/GPS sensor integration, and RandomForest yield prediction via Flask REST API.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-neon mt-1 text-[8px] flex-shrink-0">■</span>
+                            <span><strong>Automation:</strong> Built an n8n-based workflow engine for the company website — combining customer support, lead generation, and onboarding flows with a custom HTML/JS chat widget.</span>
+                        </li>
+                    </ul>
+
+                    <div class="flex flex-wrap gap-2 pt-3 border-t border-brand-border/40">
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Printed Circuit Board (PCB) Design</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Workflow Automation</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">n8n</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">KiCAD</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Machine Learning</span>
+                    </div>
+                </div>
+                
+                <div class="spec-card lg:col-span-2">
+                    <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                        <div class="flex items-start gap-3">
+                            <div class="spec-icon text-brand-neon m-0 flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="spec-title m-0 text-white font-tech text-base md:text-lg">Embedded electronics engineer</h3>
+                                <div class="text-xs text-brand-neon font-mono mt-1">MEDxAI Innovations Private Limited · Internship</div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:items-end gap-1 font-mono text-[10px] text-brand-gray">
+                            <div>Jun 2025 - Sep 2025 · 4 mos</div>
+                            <div>Chennai, Tamil Nadu · Hybrid</div>
+                        </div>
+                    </div>
+                    
+                    <p class="spec-desc mb-3 font-semibold text-white">Developed an intelligent intoxication detection system that combines real-time voice analysis with alcohol sensor data to improve reliability and reduce false positives.</p>
+                    
+                    <ul class="spec-desc list-none space-y-2 text-xs mb-4 pl-0">
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-neon mt-1 text-[8px] flex-shrink-0">■</span>
+                            <span>Speech characteristics (e.g., slurring and irregularities) are captured via microphone and analyzed using AI/ML, then cross-verified with breath alcohol readings from an MQ-series sensor.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-neon mt-1 text-[8px] flex-shrink-0">■</span>
+                            <span>Built an end-to-end IoT pipeline integrating microcontrollers, cloud database services, and automated SMS/notification alert triggers when thresholds are exceeded.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-neon mt-1 text-[8px] flex-shrink-0">■</span>
+                            <span>Designed architecture for critical real-time deployments such as driver safety monitoring, industrial workforce safety, and smart transit systems.</span>
+                        </li>
+                    </ul>
+
+                    <div class="flex flex-wrap gap-2 pt-3 border-t border-brand-border/40">
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Embedded Systems</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">ESP32 Microcontrollers</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Raspberry Pi</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Internet of Things (IoT)</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Sensor Integration</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">UART & Serial Communication</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Electronics Hardware Design</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Embedded C</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Real-Time Systems</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Audio Signal Processing</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Machine Learning</span>
+                    </div>
+                </div>
+                
+                <div class="spec-card lg:col-span-2">
+                    <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                        <div class="flex items-start gap-3">
+                            <div class="spec-icon text-brand-neon m-0 flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="spec-title m-0 text-white font-tech text-base md:text-lg">Technical Team Member</h3>
+                                <div class="text-xs text-brand-neon font-mono mt-1">IEEE Robotics And Automation Society VIT Chennai Student Chapter · Part-time</div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:items-end gap-1 font-mono text-[10px] text-brand-gray">
+                            <div>Aug 2024 - Present · 1 yr 11 mos</div>
+                            <div>Chennai, Tamil Nadu · On-site</div>
+                        </div>
+                    </div>
+                    
+                    <p class="spec-desc mb-3 font-semibold text-white">Collaborated in designing a scalable prototype involving real-time data acquisition, IoT communication, and autonomous monitoring concepts.</p>
+                    
+                    <ul class="spec-desc list-none space-y-2 text-xs mb-4 pl-0">
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-neon mt-1 text-[8px] flex-shrink-0">■</span>
+                            <span>Contributed to rapid prototyping, debugging, hardware-software integration, and technical presentation during robotics and automation competitions.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-neon mt-1 text-[8px] flex-shrink-0">■</span>
+                            <span>Strengthened practical understanding of robotics-oriented system design, embedded intelligence, interdisciplinary engineering, and innovation-driven problem solving.</span>
+                        </li>
+                    </ul>
+
+                    <div class="flex flex-wrap gap-2 pt-3 border-t border-brand-border/40">
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Projects member</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Electronic Engineering</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Electronics Design</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Electronics Prototyping</span>
+                    </div>
+                </div>
+
+                <div class="spec-card lg:col-span-2">
+                    <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                        <div class="flex items-start gap-3">
+                            <div class="spec-icon text-brand-neon m-0 flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="spec-title m-0 text-white font-tech text-base md:text-lg">Technical Team Member</h3>
+                                <div class="text-xs text-brand-neon font-mono mt-1">Shaurya Racing · Part-time</div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:items-end gap-1 font-mono text-[10px] text-brand-gray">
+                            <div>Feb 2025 - Apr 2026 · 1 yr 3 mos</div>
+                            <div>Chennai, Tamil Nadu · On-site</div>
+                        </div>
+                    </div>
+                    
+                    <p class="spec-desc mb-3 font-semibold text-white">Designed applications and analyzed the complete architecture of electric vehicle (EV) technology, studying drivetrain integration and power drain characteristics.</p>
+                    
+                    <ul class="spec-desc list-none space-y-2 text-xs mb-4 pl-0">
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-neon mt-1 text-[8px] flex-shrink-0">■</span>
+                            <span>Designed custom applications and interfaces to monitor EV telemetry and performance parameter fields.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-neon mt-1 text-[8px] flex-shrink-0">■</span>
+                            <span>Analyzed traction battery power drain mechanics and studied the complete hardware architecture of EV drivetrains.</span>
+                        </li>
+                    </ul>
+
+                    <div class="flex flex-wrap gap-2 pt-3 border-t border-brand-border/40">
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Electronics</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Electrical Engineering</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">Power Electronics</span>
+                        <span class="px-2 py-0.5 bg-brand-neon/10 border border-brand-neon/20 rounded text-[10px] text-brand-neon font-mono">PCB Designing</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5.5 REVIEW / RATING SECTION (React-mounted) -->
+        <div id="review-section-mount"></div>
+
+        <!-- 6. ENDCARD -->
+        <section class="endcard-section py-28 px-6 lg:px-16 max-w-4xl mx-auto w-full z-20 relative text-center flex flex-col justify-center items-center border-t border-brand-border/30">
+            <div class="spec-card max-w-md w-full p-12 rounded-3xl relative overflow-hidden group/endcard flex flex-col justify-center items-center">
+                <div class="section-tag font-tech text-brand-neon tracking-[0.2em] text-xs uppercase mb-4">[ TERMINAL_OFFLINE ]</div>
+                <h2 class="font-tech text-4xl md:text-5xl font-black text-white tracking-widest uppercase mb-4 transition-all duration-300 group-hover/endcard:text-brand-neon">THE END</h2>
+                <div class="w-12 h-[1px] bg-brand-neon mb-6 shadow-[0_0_8px_#00d2ff]"></div>
+                <p class="text-brand-gray text-xs font-mono uppercase tracking-[0.15em] mb-2">System Core Shutdown Sequence Complete</p>
+                <p class="text-brand-gray/60 text-[10px] font-mono">[ 0x00000000 -> NULL_POINTER ]</p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Custom Cursor Glow -->
+    <div id="cursor-glow" class="fixed top-0 left-0 w-96 h-96 bg-brand-neon/10 rounded-full blur-[100px] pointer-events-none z-0 transform -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300 opacity-0 hidden md:block"></div>
+
+    <!-- Custom Cursor Elements -->
+    <div class="custom-cursor-dot">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="28" height="28">
+            <polygon class="engine-flame" points="12,12 14,18 26,26 22,22" fill="var(--accent-cyan)" opacity="0" />
+            <polygon points="12,12 10,28 14,18" fill="#4a4a4a" />
+            <polygon points="12,12 28,10 14,18" fill="#222222" />
+            <polygon points="0,0 12,12 10,28" fill="#b0b0b0" stroke="#777777" stroke-width="0.5" />
+            <polygon points="0,0 28,10 12,12" fill="#ffffff" stroke="#dddddd" stroke-width="0.5" />
+        </svg>
+    </div>
+    <div class="custom-cursor-ring"></div>
+
+
+
+    <!-- Scripts -->
+    <!-- GSAP Core -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- GSAP ScrollTrigger Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Lenis Smooth Scroll Library -->
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+    <!-- Main Application Script -->
+    <script src="/script.js?v=1.9"></script>
+    <!-- Chatbot Widget Integration -->
+    <script type="module" src="/components/chat/ChatWidget.js?v=1.4"></script>
+    <!-- Reviews Data (Offline/Fallback Telemetry) -->
+    <script src="/data/reviewsData.js"></script>
+    <!-- Feedback Section (React) -->
+    <script type="module" src="/components/FeedbackSection_v2.js?v=2.2"></script>
+</body>
 </html>

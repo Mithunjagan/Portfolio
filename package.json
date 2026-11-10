@@ -6,8 +6,7 @@
   "main": "server.js",
   "scripts": {
     "build": "esbuild components/chat/ChatWidget.tsx --bundle --minify --outfile=components/chat/ChatWidget.js && esbuild data/portfolioKnowledge.ts --bundle --minify --format=esm --outfile=data/portfolioKnowledge.js && esbuild components/FeedbackSection.tsx --bundle --minify --format=esm --outfile=components/FeedbackSection_v2.js",
-    "start": "node --use-env-proxy server.js",
-    "test": "node --test"
+    "start": "node server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -18,8 +17,5 @@
   },
   "devDependencies": {
     "esbuild": "^0.20.2"
-  },
-  "engines": {
-    "node": ">=24.5.0"
   }
 }
