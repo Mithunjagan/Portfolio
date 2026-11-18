@@ -203,12 +203,8 @@ ${relevantContext}`;
 
     messages.push({ role: 'user', content: message });
 
-    const responseText = await requestChatReply(provider, messages);
-    if (!responseText) {
-      return res.status(500).json({ error: "The AI service is temporarily unavailable. Please try again in a few moments." });
-    }
-
-    res.json({ response: responseText });
+    const { status = 200, ...payload } = await requestChatReply(provider, messages);
+    return res.status(status).json(payload);
 
   } catch (error) {
     console.error("General error handling chat request:", error);
