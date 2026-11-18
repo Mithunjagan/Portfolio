@@ -21,6 +21,8 @@ const imageSequenceObj = { frame: 0 };
 // DOM Selectors
 const canvas = document.getElementById('scroll-canvas');
 const context = canvas.getContext('2d');
+let canvasVisible = false;
+let lastDrawnImage = null;
 const loaderBar = document.getElementById('loader-bar');
 const loaderPercentage = document.getElementById('loader-percentage');
 const loaderStatusText = document.getElementById('loader-status-text');
@@ -388,6 +390,7 @@ function loadRemainingImages() {
   setTimeout(() => {
     let currentIndex = initialFramesToPreload;
     const BATCH_SIZE = 4; // Load 4 frames concurrently
+    let redrawPending = false;
 
     function loadBatch() {
       if (currentIndex >= totalFrames) {
@@ -406,9 +409,13 @@ function loadRemainingImages() {
 
         img.onload = () => {
           images[idx] = img;
-          // Redraw current frame to update if this image is now the closest loaded frame
-          if (typeof imageSequenceObj !== 'undefined' && typeof drawFrame === 'function') {
-            drawFrame(Math.floor(imageSequenceObj.frame));
+          // Coalesce completed loads into one redraw per animation frame.
+          if (canvasVisible && !redrawPending) {
+            redrawPending = true;
+            requestAnimationFrame(() => {
+              redrawPending = false;
+              drawFrame(Math.floor(imageSequenceObj.frame));
+            });
           }
           pending--;
           if (pending === 0) {
@@ -433,6 +440,8 @@ function loadRemainingImages() {
 
 // Draw a frame centered on the canvas using 'cover' aspect ratio logic to fill the frame
 function drawFrame(index) {
+  if (!canvasVisible) return;
+
   let img = images[index];
   if (!img) {
     // Search outwards from target index to find the nearest loaded frame
@@ -447,7 +456,8 @@ function drawFrame(index) {
       }
     }
   }
-  if (!img) return;
+  // Scroll easing and image loads can resolve to the frame already on screen.
+  if (!img || img === lastDrawnImage) return;
 
   const scale = window.devicePixelRatio || 1;
   const cw = canvas.width / scale;
@@ -517,16 +527,21 @@ function drawFrame(index) {
 
   // Restore default composition operation
   context.globalCompositeOperation = 'source-over';
+  lastDrawnImage = img;
 }
 
 // Scale canvas for high-DPI displays to ensure clean vector lines and image crispness
 function resizeCanvas() {
   const scale = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
+  const width = Math.floor(rect.width * scale);
+  const height = Math.floor(rect.height * scale);
 
-  canvas.width = rect.width * scale;
-  canvas.height = rect.height * scale;
-  context.scale(scale, scale);
+  if (canvas.width === width && canvas.height === height && context.getTransform().a === scale) return;
+  canvas.width = width;
+  canvas.height = height;
+  context.setTransform(scale, 0, 0, scale, 0, 0);
+  lastDrawnImage = null;
 
   drawFrame(Math.floor(imageSequenceObj.frame));
 }
@@ -568,8 +583,11 @@ function initializeApplication() {
   window.addEventListener('resize', resizeCanvas);
   resizeCanvas();
 
-  // Render the initial frame
-  drawFrame(0);
+  const canvasObserver = new IntersectionObserver(([entry]) => {
+    canvasVisible = entry.isIntersecting;
+    if (canvasVisible) drawFrame(Math.floor(imageSequenceObj.frame));
+  });
+  canvasObserver.observe(canvas);
 
   // 4. Setup ScrollTrigger Animation for the Canvas
   gsap.to(imageSequenceObj, {
@@ -1166,11 +1184,13 @@ function initGravityButtons() {
   function update() {
     const time = Date.now();
 
-    buttonData.forEach(data => {
+    // Read all positions before writing transforms to avoid repeated layout work.
+    const rects = buttonData.map(data => data.wrapper.getBoundingClientRect());
+    buttonData.forEach((data, index) => {
       // 1. Get original center position of the button relative to the viewport.
       // To get the untranslated center, we compute its current viewport rect
       // and subtract the current translation offset.
-      const rect = data.wrapper.getBoundingClientRect();
+      const rect = rects[index];
       const origCenterX = rect.left + rect.width / 2 - data.currentX;
       const origCenterY = rect.top + rect.height / 2 - data.currentY;
 
@@ -1224,11 +1244,19 @@ function initGravityButtons() {
       data.wrapper.style.transform = `translate3d(${data.currentX.toFixed(2)}px, ${data.currentY.toFixed(2)}px, 0)`;
     });
 
-    requestAnimationFrame(update);
+    animationFrame = requestAnimationFrame(update);
   }
 
-  // Start gravity animation loop
-  requestAnimationFrame(update);
+  let animationFrame = null;
+  const heroObserver = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting && animationFrame === null) {
+      animationFrame = requestAnimationFrame(update);
+    } else if (!entry.isIntersecting && animationFrame !== null) {
+      cancelAnimationFrame(animationFrame);
+      animationFrame = null;
+    }
+  });
+  heroObserver.observe(wrappers[0].closest('#hero-section'));
 }
 
 // Interactive Starfield Background Creation & Animation
@@ -1289,6 +1317,7 @@ function initStars() {
 
   function drawStars() {
     ctx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
+    ctx.fillStyle = '#fff';
 
     // Slow parallax inertia calculation
     const targetOffsetX = (window.innerWidth / 2 - targetMouseX) * 0.015;
@@ -1315,10 +1344,11 @@ function initStars() {
       }
 
       // Render star glow
-      ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+      ctx.globalAlpha = star.alpha;
       ctx.arc(px, py, star.radius, 0, Math.PI * 2);
       ctx.fill();
     });
+    ctx.globalAlpha = 1;
 
     requestAnimationFrame(drawStars);
   }
@@ -1344,8 +1374,18 @@ let currentX = globalMouseX;
 let currentY = globalMouseY;
 let ringX = globalMouseX;
 let ringY = globalMouseY;
+let cursorFrame = null;
+const moveCursorDot = cursorDot && {
+  x: gsap.quickSetter(cursorDot, 'x', 'px'),
+  y: gsap.quickSetter(cursorDot, 'y', 'px')
+};
+const moveCursorRing = cursorRing && {
+  x: gsap.quickSetter(cursorRing, 'x', 'px'),
+  y: gsap.quickSetter(cursorRing, 'y', 'px')
+};
 
 if (cursorDot && cursorRing) {
+  gsap.set(cursorRing, { xPercent: -50, yPercent: -50 });
   // Smoothly fade in the custom cursor immediately so it's visible on the preloader screen
   gsap.to([cursorDot, cursorRing], { opacity: 1, duration: 0.5, ease: "power1.out" });
 }
@@ -1355,9 +1395,10 @@ window.addEventListener('mousemove', (e) => {
   liveMouseY = e.clientY;
 
   // Smooth custom cursor glow on movement
-  if (cursorGlow) {
+  if (cursorGlow && cursorGlow.style.opacity !== '1') {
     cursorGlow.style.opacity = '1';
   }
+  scheduleCursorUpdate();
 }, { passive: true });
 
 window.addEventListener('mouseleave', () => {
@@ -1366,6 +1407,7 @@ window.addEventListener('mouseleave', () => {
   }
   liveMouseX = window.innerWidth / 2;
   liveMouseY = window.innerHeight / 2;
+  scheduleCursorUpdate();
 });
 
 // Attach hover styles for clickable links
@@ -1619,32 +1661,39 @@ window.addEventListener('mousedown', (e) => {
 });
 
 // Parallax calculations loop
+function scheduleCursorUpdate() {
+  if (cursorFrame === null) cursorFrame = requestAnimationFrame(animateParallax);
+}
+
 function animateParallax() {
-  currentX += (liveMouseX - currentX) * 0.1;
-  currentY += (liveMouseY - currentY) * 0.1;
+  cursorFrame = null;
+  const settle = (position, target, speed) => {
+    const distance = target - position;
+    return Math.abs(distance) < 0.1 ? target : position + distance * speed;
+  };
 
-  ringX += (liveMouseX - ringX) * 0.22;
-  ringY += (liveMouseY - ringY) * 0.22;
-
-  const centerX = window.innerWidth / 2;
-  const centerY = window.innerHeight / 2;
-  const offsetX = currentX - centerX;
-  const offsetY = currentY - centerY;
+  currentX = settle(currentX, liveMouseX, 0.1);
+  currentY = settle(currentY, liveMouseY, 0.1);
+  ringX = settle(ringX, liveMouseX, 0.22);
+  ringY = settle(ringY, liveMouseY, 0.22);
 
   if (cursorGlow) {
-    cursorGlow.style.left = `${currentX}px`;
-    cursorGlow.style.top = `${currentY}px`;
+    cursorGlow.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
   }
 
-  if (cursorDot) {
-    cursorDot.style.transform = `translate3d(${liveMouseX}px, ${liveMouseY}px, 0)`;
+  if (moveCursorDot) {
+    moveCursorDot.x(liveMouseX);
+    moveCursorDot.y(liveMouseY);
   }
 
-  if (cursorRing) {
-    cursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate3d(-50%, -50%, 0)`;
+  if (moveCursorRing) {
+    moveCursorRing.x(ringX);
+    moveCursorRing.y(ringY);
   }
 
-  requestAnimationFrame(animateParallax);
+  if (currentX !== liveMouseX || currentY !== liveMouseY || ringX !== liveMouseX || ringY !== liveMouseY) {
+    scheduleCursorUpdate();
+  }
 }
 
 // Start cursor parallax immediately
