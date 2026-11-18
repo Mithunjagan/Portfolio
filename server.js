@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import { getChatProvider, requestChatReply } from './lib/chatProvider.js';
 
 // Initialize dotenv configuration
 dotenv.config();
@@ -138,9 +139,9 @@ app.post('/api/chat', async (req, res) => {
       });
     }
 
-    const apiKey = process.env.OPENROUTER_API_KEY;
-    if (!apiKey || apiKey === 'your_openrouter_api_key_here') {
-      console.error("Missing or placeholder OPENROUTER_API_KEY environment variable.");
+    const provider = getChatProvider('http://localhost:8080');
+    if (!provider) {
+      console.error("Missing GEMINI_API_KEY or OPENROUTER_API_KEY environment variable.");
       return res.status(500).json({ error: "Chat service is currently unavailable. Please verify API configuration." });
     }
 
@@ -194,7 +195,7 @@ ${relevantContext}`;
     if (Array.isArray(history)) {
       const recentHistory = history.slice(-10);
       recentHistory.forEach(msg => {
-        if (msg.role && msg.content) {
+        if ((msg?.role === 'user' || msg?.role === 'assistant') && typeof msg.content === 'string' && msg.content.trim()) {
           messages.push({ role: msg.role, content: msg.content });
         }
       });
@@ -202,78 +203,9 @@ ${relevantContext}`;
 
     messages.push({ role: 'user', content: message });
 
-    // 4. Try Primary Model
-    const primaryModel = "google/gemma-4-31b-it:free";
-    const fallbackModel = "liquid/lfm-2.5-1.2b-instruct:free";
-
-    let responseText = "";
-    let callSucceeded = false;
-
-    console.log(`Sending query to primary model: ${primaryModel}`);
-    try {
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "HTTP-Referer": "http://localhost:8080",
-          "X-Title": "Mithun Portfolio Chatbot"
-        },
-        body: JSON.stringify({
-          model: primaryModel,
-          messages: messages,
-          temperature: 0.3
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Primary model returned status ${response.status}`);
-      }
-
-      const data = await response.json();
-      if (data && data.choices && data.choices[0] && data.choices[0].message) {
-        responseText = data.choices[0].message.content;
-        callSucceeded = true;
-      } else {
-        throw new Error("Invalid response format from primary model");
-      }
-    } catch (primaryErr) {
-      console.warn(`Primary model failed: ${primaryErr.message}. Attempting fallback model: ${fallbackModel}`);
-    }
-
-    // 5. Try Fallback Model if primary failed
-    if (!callSucceeded) {
-      try {
-        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
-            "HTTP-Referer": "http://localhost:8080",
-            "X-Title": "Mithun Portfolio Chatbot (Fallback)"
-          },
-          body: JSON.stringify({
-            model: fallbackModel,
-            messages: messages,
-            temperature: 0.3
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error(`Fallback model returned status ${response.status}`);
-        }
-
-        const data = await response.json();
-        if (data && data.choices && data.choices[0] && data.choices[0].message) {
-          responseText = data.choices[0].message.content;
-          callSucceeded = true;
-        } else {
-          throw new Error("Invalid response format from fallback model");
-        }
-      } catch (fallbackErr) {
-        console.error(`Fallback model also failed: ${fallbackErr.message}`);
-        return res.status(500).json({ error: "The AI service is temporarily overloaded. Please try again in a few moments." });
-      }
+    const responseText = await requestChatReply(provider, messages);
+    if (!responseText) {
+      return res.status(500).json({ error: "The AI service is temporarily unavailable. Please try again in a few moments." });
     }
 
     res.json({ response: responseText });
