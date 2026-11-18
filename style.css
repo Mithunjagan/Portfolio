@@ -2185,6 +2185,154 @@ footer {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
 }
 
+.swarm-rebuilding [data-swarm-state] {
+  transition-property: none !important;
+}
+
+.swarm-rebuilding [data-swarm-state="pending"] {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+.swarm-rebuilding #hero-section .fade-up:has(> .gravity-btn-wrapper[data-swarm-state="pending"]) {
+  border-top-color: transparent;
+}
+
+.swarm-rebuilding .custom-cursor-dot,
+.swarm-rebuilding .custom-cursor-ring {
+  visibility: hidden !important;
+}
+
+.swarm-rebuild {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 12000;
+  pointer-events: none;
+  color: #eefbff;
+}
+
+.swarm-rebuild__effects,
+.swarm-rebuild__traces {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.swarm-rebuild__effects {
+  contain: strict;
+}
+
+.swarm-rebuild__outline,
+.swarm-rebuild__trail {
+  fill: none;
+  stroke: var(--swarm-ink);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+}
+
+.swarm-rebuild__outline {
+  stroke-width: 1.3;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.swarm-rebuild__trail {
+  stroke-width: 1.75;
+}
+
+.swarm-rebuild__cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 25px;
+  height: 25px;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.swarm-rebuild__cursor svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 4px var(--swarm-ink));
+}
+
+.swarm-rebuild__controls {
+  position: absolute;
+  left: 50%;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100% - 20px);
+  padding: 8px;
+  border: 1px solid #226479;
+  border-radius: 12px;
+  background: #071217;
+  box-shadow: 0 0 24px #00d2ff26, 0 10px 24px #0009;
+  font: 11px var(--font-mono);
+  pointer-events: auto;
+}
+
+.swarm-rebuild__meter {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 0 5px;
+  color: #9feafa;
+  white-space: nowrap;
+}
+
+.swarm-rebuild__meter progress {
+  display: block;
+  width: 100%;
+  height: 3px;
+  accent-color: #00d2ff;
+  border: 0;
+  border-radius: 8px;
+  background: #1c3a46;
+}
+
+.swarm-rebuild__meter progress::-webkit-progress-bar {
+  border-radius: inherit;
+  background: #1c3a46;
+}
+
+.swarm-rebuild__meter progress::-webkit-progress-value {
+  border-radius: inherit;
+  background: #00d2ff;
+}
+
+.swarm-rebuild__meter progress::-moz-progress-bar {
+  border-radius: inherit;
+  background: #00d2ff;
+}
+
+.swarm-rebuild__controls button {
+  min-height: 34px;
+  padding: 4px 9px;
+  border: 1px solid #28505f;
+  border-radius: 7px;
+  cursor: pointer !important;
+  white-space: nowrap;
+}
+
+.swarm-rebuild__controls button:hover,
+.swarm-rebuild__controls button:focus-visible {
+  border-color: #63e7ff;
+  outline: none;
+  background: #143340;
+}
+
+.swarm-rebuild__controls kbd {
+  color: #91b0bb;
+}
+
 
 
 

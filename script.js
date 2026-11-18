@@ -566,6 +566,25 @@ function initializeApplication() {
   });
   gsap.ticker.lagSmoothing(0);
 
+  let loadingSwarm = false;
+  window.addEventListener('keydown', async event => {
+    const chordKey = event.key === 'Alt' || event.key === 'Control';
+    if (!chordKey || !event.altKey || !event.ctrlKey || event.repeat || event.metaKey || event.shiftKey ||
+        event.getModifierState('AltGraph') || event.defaultPrevented || loadingSwarm ||
+        !document.getElementById('app-container').classList.contains('woke')) return;
+
+    event.preventDefault();
+    loadingSwarm = true;
+    try {
+      const { toggleSwarmRebuild } = await import('./swarm-rebuild.js');
+      toggleSwarmRebuild(lenis, { x: globalMouseX, y: globalMouseY });
+    } catch (error) {
+      console.error('Portfolio rebuild could not start.', error);
+    } finally {
+      loadingSwarm = false;
+    }
+  });
+
   // 2. Play Hero Intro Entrance Animation
   const fadeElements = document.querySelectorAll('.fade-up');
   fadeElements.forEach(el => el.classList.add('visible'));
