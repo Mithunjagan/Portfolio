@@ -10,6 +10,8 @@ const PANEL_TARGETS = [
   '#more-projects .spec-card', '#specs-section .spec-card', '#review-section-mount', '.endcard-section .spec-card'
 ].join(', ');
 const STEERING_KEYS = new Set(['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ']);
+const SCROLL_SPEED = { desktop: 210, mobile: 165 };
+const TYPING_STEPS = 18;
 
 let activeRebuild;
 
@@ -66,9 +68,11 @@ function makeOverlay(sourceCursor, origin) {
   const actors = CREW_COLORS.map((color, index) => {
     const outline = svgElement('path', 'swarm-rebuild__outline');
     const trail = svgElement('line', 'swarm-rebuild__trail');
-    for (const path of [outline, trail]) path.style.setProperty('--swarm-ink', color);
+    const guide = svgElement('path', 'swarm-rebuild__guide');
+    const readout = svgElement('text', 'swarm-rebuild__readout');
+    for (const node of [outline, trail, guide, readout]) node.style.setProperty('--swarm-ink', color);
     outline.setAttribute('pathLength', '1');
-    traces.append(outline, trail);
+    traces.append(outline, trail, guide, readout);
 
     const cursor = document.createElement('div');
     cursor.className = 'swarm-rebuild__cursor';
@@ -76,7 +80,7 @@ function makeOverlay(sourceCursor, origin) {
     const ship = sourceCursor.cloneNode(true);
     effects.append(cursor);
     cursor.append(ship);
-    return { ...origin, index, cursor, trail, outline, job: null };
+    return { ...origin, index, cursor, trail, outline, guide, readout, job: null };
   });
   return {
     root,
@@ -216,11 +220,11 @@ class SwarmRebuild {
       const scrollY = window.scrollY;
       const end = this.lenis.limit;
       if (now >= this.dispatchAt && actors.some(actor => !actor.job)) this.dispatch(now);
-      const activeRects = actors.map(actor => actor.job?.target.element.getBoundingClientRect());
+      const bounds = actors.map(actor => actor.job && this.getBounds(actor.job.target.element));
+      const work = actors.filter(actor => actor.job?.target.kind === 'panel' && bounds[actor.index]);
       for (const actor of actors) {
-        const rect = activeRects[actor.index];
-        if (actor.job && rect) this.build(actor, rect, now);
-        else this.drift(actor, elapsed, delta);
+        if (actor.job) this.build(actor, bounds[actor.index], now);
+        else this.assist(actor, work.length ? work[actor.index % work.length] : null, bounds, elapsed, delta);
       }
       this.scroll(now, delta, scrollY, end);
     }
@@ -247,70 +251,134 @@ class SwarmRebuild {
       if (!target) break;
       target.state = 'building';
       actor.job = { target, startedAt: now, x: actor.x, y: actor.y, revealed: false };
+      actor.assisting = null;
+      actor.guide.style.strokeDasharray = '';
+      this.hideGuides(actor);
     }
     this.hasQueuedWork = visible.length > 0;
   }
 
-  build(actor, rect, now) {
-    const { job, outline } = actor;
-    const travel = this.reduceMotion ? 70 : 215 + actor.index * 28;
-    const isText = job.target.kind === 'text';
-    const draw = this.reduceMotion ? 100 : isText ? 430 : 480;
-    const elapsed = now - job.startedAt;
+  getBounds(element) {
+    const rect = element.getBoundingClientRect();
     const left = Math.max(4, rect.left - this.viewLeft);
     const top = Math.max(4, rect.top - this.viewTop);
     const right = Math.min(this.viewWidth - 5, rect.right - this.viewLeft);
     const bottom = Math.min(this.viewHeight - 5, rect.bottom - this.viewTop);
-
-    if (right <= left || bottom <= top) {
-      this.complete(job.target);
-      this.release(actor);
-      return;
-    }
-    const y = isText ? bottom : top;
-    if (elapsed < travel) {
-      const progress = easeOut(elapsed / travel);
-      this.moveActor(actor, mix(job.x, left, progress), mix(job.y, y, progress));
-      return;
-    }
-
-    const progress = Math.min(1, (elapsed - travel) / draw);
-    outline.setAttribute('d', isText
-      ? `M ${left} ${y} H ${right}`
-      : `M ${left} ${top} H ${right} V ${bottom} H ${left} Z`);
-    outline.style.strokeDashoffset = 1 - progress;
-    outline.style.opacity = progress < 0.82 ? '0.92' : (1 - progress) * 5;
-
-    if (isText) {
-      this.moveActor(actor, mix(left, right, progress), y);
-    } else {
-      const width = right - left;
-      const height = bottom - top;
-      const distance = progress * 2 * (width + height);
-      if (distance < width) this.moveActor(actor, left + distance, top);
-      else if (distance < width + height) this.moveActor(actor, right, top + distance - width);
-      else if (distance < 2 * width + height) this.moveActor(actor, right - (distance - width - height), bottom);
-      else this.moveActor(actor, left, bottom - (distance - 2 * width - height));
-    }
-    if (!job.revealed && progress >= 0.2) {
-      job.revealed = true;
-      this.reveal(job.target, draw * 0.78);
-    }
-    if (progress === 1) {
-      this.complete(job.target);
-      this.release(actor);
-    }
+    if (right <= left || bottom <= top) return null;
+    return { left, top, right, bottom, width: rect.width, height: rect.height };
   }
 
-  reveal(target, duration) {
-    const { element, kind } = target;
+  build(actor, bounds, now) {
+    const { job } = actor;
+    if (!bounds) {
+      this.release(actor);
+      return;
+    }
+    const { left, top, bottom } = bounds;
+    const travel = this.reduceMotion ? 70 : 235 + actor.index * 25;
+    const elapsed = now - job.startedAt;
+    const isText = job.target.kind === 'text';
+    if (elapsed < travel) {
+      const progress = easeOut(elapsed / travel);
+      this.moveActor(actor, mix(job.x, left, progress), mix(job.y, isText ? bottom : top, progress));
+      return;
+    }
+    const workingTime = elapsed - travel;
+    const finished = isText ? this.typeLine(actor, bounds, workingTime) : this.buildPanel(actor, bounds, workingTime);
+    if (finished) this.release(actor);
+  }
+
+  typeLine(actor, { left, top, right, bottom }, elapsed) {
+    const duration = this.reduceMotion ? 100 : 720;
+    const progress = Math.min(1, elapsed / duration);
+    this.beginReveal(actor.job, duration);
+    const caret = mix(left, right, Math.floor(progress * TYPING_STEPS) / TYPING_STEPS);
+    this.trace(actor, `M ${left} ${bottom} H ${right}`, progress, 0.65);
+    this.guide(actor, `M ${caret} ${Math.max(top, bottom - 17)} V ${bottom + 2}`, 0.9);
+    this.moveActor(actor, caret, bottom, false);
+    return progress === 1;
+  }
+
+  buildPanel(actor, { left, top, right, bottom, width, height }, elapsed) {
+    const measure = this.reduceMotion ? 0 : 360;
+    const draw = this.reduceMotion ? 0 : 690;
+    const setup = this.reduceMotion ? 0 : 185;
+    const sweep = this.reduceMotion ? 100 : 650;
+
+    if (elapsed < measure) {
+      const progress = easeOut(elapsed / measure);
+      const x = mix(left, right, progress);
+      const y = mix(top, bottom, progress);
+      this.guide(actor, `M ${left} ${y} H ${x} V ${top} M ${x - 5} ${y} H ${x + 5} M ${x} ${y - 5} V ${y + 5}`, 0.74);
+      const alignLeft = x > this.viewWidth - 112;
+      actor.readout.setAttribute('x', alignLeft ? x - 8 : x + 28);
+      actor.readout.setAttribute('y', y > this.viewHeight - 23 ? y - 8 : y + 16);
+      actor.readout.setAttribute('text-anchor', alignLeft ? 'end' : 'start');
+      actor.readout.textContent = `${Math.round(width * progress)} × ${Math.round(height * progress)}`;
+      actor.readout.style.opacity = '1';
+      this.moveActor(actor, x, y);
+      return false;
+    }
+
+    actor.readout.style.opacity = '0';
+    const perimeter = `M ${right} ${bottom} H ${left} V ${top} H ${right} Z`;
+    if (elapsed < measure + draw) {
+      const progress = (elapsed - measure) / draw;
+      const w = right - left;
+      const h = bottom - top;
+      const distance = progress * 2 * (w + h);
+      this.trace(actor, perimeter, progress, 0.95);
+      this.guide(actor, '', 0);
+      if (distance < w) this.moveActor(actor, right - distance, bottom);
+      else if (distance < w + h) this.moveActor(actor, left, bottom - (distance - w));
+      else if (distance < 2 * w + h) this.moveActor(actor, left + (distance - w - h), top);
+      else this.moveActor(actor, right, top + (distance - 2 * w - h));
+      return false;
+    }
+
+    const scanTime = elapsed - measure - draw;
+    if (scanTime < setup) {
+      this.trace(actor, perimeter, 1, 0.8);
+      this.moveActor(actor, right, mix(bottom, top, easeOut(scanTime / setup)));
+      return false;
+    }
+
+    this.beginReveal(actor.job, sweep);
+    const progress = Math.min(1, (scanTime - setup) / sweep);
+    const y = mix(top, bottom, progress);
+    this.trace(actor, perimeter, 1, (1 - progress) * 0.66);
+    this.guide(actor, `M ${left} ${y} H ${right}`, 0.88);
+    this.moveActor(actor, mix(right, left, progress), y);
+    return progress === 1;
+  }
+
+  trace(actor, path, progress, opacity) {
+    actor.outline.setAttribute('d', path);
+    actor.outline.style.strokeDashoffset = 1 - progress;
+    actor.outline.style.opacity = opacity;
+  }
+
+  guide(actor, path, opacity) {
+    actor.guide.setAttribute('d', path);
+    actor.guide.style.opacity = opacity;
+  }
+
+  hideGuides(actor) {
+    actor.guide.style.opacity = '0';
+    actor.readout.style.opacity = '0';
+  }
+
+  beginReveal(job, duration) {
+    if (job.revealed) return;
+    job.revealed = true;
+    const { element, kind } = job.target;
     element.dataset.swarmState = 'revealing';
     // The real portfolio markup stays in place during the reveal.
     const animation = element.animate(kind === 'text'
       ? [{ clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0)' }]
-      : [{ opacity: 0, clipPath: 'inset(0 0 85% 0)' }, { opacity: 1, clipPath: 'inset(0)' }], {
+      : [{ opacity: 0.72, clipPath: 'inset(0 0 100% 0)' }, { opacity: 1, clipPath: 'inset(0)' }], {
       duration,
-      easing: kind === 'text' && !this.reduceMotion ? 'steps(15, end)' : 'ease-out'
+      easing: kind === 'text' && !this.reduceMotion ? `steps(${TYPING_STEPS}, end)` : 'linear'
     });
     this.activeAnimations.add(animation);
     animation.addEventListener('finish', () => this.activeAnimations.delete(animation), { once: true });
@@ -325,7 +393,9 @@ class SwarmRebuild {
   }
 
   release(actor) {
+    this.complete(actor.job.target);
     actor.outline.style.opacity = '0';
+    this.hideGuides(actor);
     actor.job = null;
   }
 
@@ -351,11 +421,47 @@ class SwarmRebuild {
     this.moveActor(actor, mix(actor.x, x, damping), mix(actor.y, y, damping));
   }
 
+  assist(actor, builder, bounds, elapsed, delta) {
+    const panel = builder?.job && bounds[builder.index];
+    if (!panel || this.reduceMotion) {
+      if (actor.assisting) this.hideGuides(actor);
+      actor.assisting = null;
+      this.drift(actor, elapsed, delta);
+      return;
+    }
+
+    if (actor.assisting !== builder.job) {
+      actor.assisting = builder.job;
+      actor.assistStarted = elapsed;
+      actor.guide.style.strokeDasharray = '3 5';
+    }
+    const { left, right, top, bottom } = panel;
+    const progress = easeOut(Math.min(1, (elapsed - actor.assistStarted) / 640));
+    const side = actor.index % 4;
+    const lane = actor.index < 4 ? 11 : 21;
+    const damping = 1 - Math.exp(-delta / 105);
+    if (actor.index % 2) {
+      const rightEdge = Math.min(this.viewWidth - 5, right + lane);
+      const x = side === 1 && left > lane ? left - lane : rightEdge;
+      const startY = side === 1 ? top : bottom;
+      const y = mix(startY, side === 1 ? bottom : top, progress);
+      this.guide(actor, `M ${x} ${startY} V ${y} H ${x < left ? left : right}`, 0.42);
+      this.moveActor(actor, mix(actor.x, x, damping), mix(actor.y, y, damping));
+    } else {
+      const bottomEdge = Math.min(this.viewHeight - 5, bottom + lane);
+      const y = side === 0 && top > lane ? top - lane : bottomEdge;
+      const startX = side === 0 ? left : right;
+      const x = mix(startX, side === 0 ? right : left, progress);
+      this.guide(actor, `M ${startX} ${y} H ${x} V ${y < top ? top : bottom}`, 0.42);
+      this.moveActor(actor, mix(actor.x, x, damping), mix(actor.y, y, damping));
+    }
+  }
+
   scroll(now, delta, position, end) {
     if (position < end - 2) {
       this.bottomSince = null;
       if (!this.paused && now >= this.manualUntil) {
-        const speed = this.mobile.matches ? 290 : 360;
+        const speed = this.mobile.matches ? SCROLL_SPEED.mobile : SCROLL_SPEED.desktop;
         const previous = this.scrollY ?? position;
         const synchronized = Math.abs(previous - position) > 1 ? position : previous;
         this.scrollY = Math.min(end, synchronized + delta * speed / 1000);
@@ -374,6 +480,7 @@ class SwarmRebuild {
   merge(now) {
     for (const target of this.targets) this.complete(target);
     for (const actor of this.overlay.actors) {
+      this.hideGuides(actor);
       actor.mergeX = actor.x;
       actor.mergeY = actor.y;
     }

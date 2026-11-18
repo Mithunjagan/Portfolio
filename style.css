@@ -2226,7 +2226,8 @@ footer {
 }
 
 .swarm-rebuild__outline,
-.swarm-rebuild__trail {
+.swarm-rebuild__trail,
+.swarm-rebuild__guide {
   fill: none;
   stroke: var(--swarm-ink);
   stroke-linecap: round;
@@ -2242,6 +2243,20 @@ footer {
 
 .swarm-rebuild__trail {
   stroke-width: 1.75;
+}
+
+.swarm-rebuild__guide {
+  stroke-width: 1;
+}
+
+.swarm-rebuild__readout {
+  fill: var(--swarm-ink);
+  stroke: #041018;
+  stroke-width: 5;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+  font: 10px var(--font-mono);
+  opacity: 0;
 }
 
 .swarm-rebuild__cursor {

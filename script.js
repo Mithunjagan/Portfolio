@@ -576,7 +576,7 @@ function initializeApplication() {
     event.preventDefault();
     loadingSwarm = true;
     try {
-      const { toggleSwarmRebuild } = await import('./swarm-rebuild.js');
+      const { toggleSwarmRebuild } = await import('./swarm-rebuild.js?v=2');
       toggleSwarmRebuild(lenis, { x: globalMouseX, y: globalMouseY });
     } catch (error) {
       console.error('Portfolio rebuild could not start.', error);
