@@ -140,7 +140,7 @@ function triggerScramble(el, duration = 800) {
 function getFramePath(index) {
   const frameNum = index + frameIndexStart;
   const paddedNum = String(frameNum).padStart(3, '0');
-  return `ezgif-frame-${paddedNum}.jpg`;
+  return `images/ezgif-frame-${paddedNum}.jpg`;
 }
 
 // Track image load progress
