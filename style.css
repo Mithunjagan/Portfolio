@@ -1047,6 +1047,7 @@ footer {
 @media (max-width: 768px) {
   .hud-container {
     position: relative;
+    width: 100%;
     height: auto;
     display: flex;
     flex-direction: column;
@@ -1063,11 +1064,18 @@ footer {
     height: auto;
   }
   .canvas-container {
-    height: 60vh;
+    height: auto;
+    flex-direction: column;
+  }
+  .bg-watermark,
+  .phone-spotlight {
+    top: 30vh;
   }
   .phone-frame {
     height: 50vh;
     max-height: 450px;
+    margin-block: 5vh;
+    flex-shrink: 0;
     border-width: 8px;
     border-radius: 32px;
   }
@@ -1387,6 +1395,16 @@ footer {
   opacity: 1;
   clip-path: inset(0 0 0% 0);
   transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  :is(#hud-panel-1, #hud-panel-2, #hud-panel-3, #hud-panel-4) {
+    clip-path: none;
+  }
+
+  .pcb-trace {
+    display: none;
+  }
 }
 
 /* Laser sweep bar indicator */

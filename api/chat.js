@@ -1,5 +1,6 @@
 import { portfolioKnowledge } from '../data/portfolioKnowledge.js';
 import { getChatProvider, requestChatReply } from '../lib/chatProvider.js';
+import { getRelevantContext } from '../lib/portfolioContext.js';
 
 // Prompt injection detection helper
 function isPromptInjection(query) {
@@ -25,60 +26,6 @@ function isPromptInjection(query) {
     "print your prompt"
   ];
   return suspiciousPatterns.some(pattern => q.includes(pattern));
-}
-
-// Lightweight retrieval logic
-function getRelevantContext(query) {
-  const q = query.toLowerCase();
-  let contextParts = [];
-
-  // Personal Info
-  if (q.includes("mithun") || q.includes("who is") || q.includes("about") || q.includes("bio") || q.includes("background") || q.includes("interest") || q.includes("profile") || q.includes("personal") || q.includes("hello") || q.includes("hi")) {
-    contextParts.push(`Personal Info:\n${JSON.stringify(portfolioKnowledge.personal, null, 2)}`);
-  }
-
-  // Education
-  if (q.includes("education") || q.includes("degree") || q.includes("college") || q.includes("university") || q.includes("study") || q.includes("studied") || q.includes("student") || q.includes("course") || q.includes("major")) {
-    contextParts.push(`Education:\n${JSON.stringify(portfolioKnowledge.education, null, 2)}`);
-  }
-
-  // Skills
-  if (q.includes("skills") || q.includes("skill") || q.includes("technologies") || q.includes("languages") || q.includes("programming") || q.includes("tools") || q.includes("stack") || q.includes("altium") || q.includes("kicad") || q.includes("stm32") || q.includes("opencv") || q.includes("pytorch") || q.includes("c++") || q.includes("assembly") || q.includes("rtos") || q.includes("embedded")) {
-    contextParts.push(`Skills:\n${JSON.stringify(portfolioKnowledge.skills, null, 2)}`);
-  }
-
-  // Projects
-  if (q.includes("projects") || q.includes("project") || q.includes("build") || q.includes("built") || q.includes("develop") || q.includes("ship spy") || q.includes("shipspy") || q.includes("surveillance") || q.includes("robotic arm") || q.includes("gesture") || q.includes("kernel") || q.includes("real-time") || q.includes("os")) {
-    if (q.includes("ship spy") || q.includes("shipspy")) {
-      const shipSpy = portfolioKnowledge.projects.find(p => p.id === "ship-spy-live");
-      contextParts.push(`Project Details (Ship Spy Live):\n${JSON.stringify(shipSpy, null, 2)}`);
-    } else if (q.includes("kernel") || q.includes("rtos") || q.includes("real-time")) {
-      const rtos = portfolioKnowledge.projects.find(p => p.id === "embedded-rtos-kernel");
-      contextParts.push(`Project Details (Embedded RTOS Kernel):\n${JSON.stringify(rtos, null, 2)}`);
-    } else if (q.includes("gesture") || q.includes("robotic") || q.includes("arm")) {
-      const arm = portfolioKnowledge.projects.find(p => p.id === "gesture-robotic-arm");
-      contextParts.push(`Project Details (Gesture-Controlled Robotic Arm):\n${JSON.stringify(arm, null, 2)}`);
-    } else {
-      contextParts.push(`Projects:\n${JSON.stringify(portfolioKnowledge.projects, null, 2)}`);
-    }
-  }
-
-  // Achievements
-  if (q.includes("achievements") || q.includes("achievement") || q.includes("hackathon") || q.includes("first place") || q.includes("certificate") || q.includes("certification") || q.includes("awards") || q.includes("award") || q.includes("won")) {
-    contextParts.push(`Achievements:\n${JSON.stringify(portfolioKnowledge.achievements, null, 2)}`);
-  }
-
-  // Contact
-  if (q.includes("contact") || q.includes("email") || q.includes("github") || q.includes("linkedin") || q.includes("hire") || q.includes("reach") || q.includes("message") || q.includes("find") || q.includes("locate") || q.includes("social")) {
-    contextParts.push(`Contact Info:\n${JSON.stringify(portfolioKnowledge.contact, null, 2)}`);
-  }
-
-  if (contextParts.length === 0) {
-    contextParts.push(`Personal Info:\n${JSON.stringify(portfolioKnowledge.personal, null, 2)}`);
-    contextParts.push(`Available categories to query: Personal Info, Education, Skills (Hardware/Software/Tools), Projects (Ship Spy Live, Embedded RTOS Kernel, Gesture-Controlled Robotic Arm), Achievements (Hackathon win, ARM specialist certification), Contact Details.`);
-  }
-
-  return contextParts.join("\n\n");
 }
 
 export default async function handler(req, res) {
@@ -108,22 +55,14 @@ export default async function handler(req, res) {
     }
 
     // 1. Load context
-    const relevantContext = getRelevantContext(message);
+    const relevantContext = getRelevantContext(message, portfolioKnowledge);
 
     // 2. Build system prompt
     const systemPrompt = `You are Mithun's AI assistant.
 
-Your job is to answer questions about Mithun, his projects, and his fields of expertise (Embedded Systems, ARM Architecture, AI, Computer Vision, and general engineering topics) using the provided portfolio context and your technical knowledge.
+Your job is to answer questions about Mithun, his projects, and his fields of expertise (embedded systems, FPGA and digital design, RF simulation, and applied AI) using the provided portfolio context and your technical knowledge.
 
-About Mithun:
-
-* Electronics and Communication Engineering student.
-* Interested in Embedded Systems.
-* Interested in ARM Architecture.
-* Interested in AI.
-* Interested in Computer Vision.
-* Interested in Electronics Design.
-* Builds engineering projects.
+Mithun Kumar J is an Electronics and Communication Engineering undergraduate at VIT Chennai.
 
 Rules:
 
@@ -134,10 +73,10 @@ Rules:
 5. Never invent certifications.
 6. If the question is specifically about Mithun's personal details (such as his specific projects, achievements, certificates, or internships) and the information is not in the portfolio, say:
    "I don't currently have that information in Mithun's portfolio."
-7. Be concise. Do not include any source citations, references, headings, or structural notes (e.g., "Source: ...", "according to the context"). Answer directly.
+7. Answer directly and concisely. If asked for a link, use the exact public URL provided in the portfolio context.
 8. Be professional.
 9. Be technically accurate.
-10. Prioritize portfolio data over model assumptions for Mithun's personal details. For general engineering, programming, or technical questions in his domains (Embedded Systems, ARM, AI, Computer Vision), answer using your broad knowledge to showcase Mithun's fields of expertise.
+10. Prioritize portfolio data over model assumptions for Mithun's personal details. For general engineering questions, use technical knowledge without attributing unsupported work to Mithun.
 
 PROVIDED PORTFOLIO CONTEXT:
 ${relevantContext}`;
